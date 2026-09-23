@@ -377,7 +377,22 @@ table.stack td,table.stack th{vertical-align:top;text-align:left;font-size:14px}
 }
 .prnt{margin-left:auto}
 @media(max-width:600px){.prnt{margin-left:0}}
-.prnt-lnk{align-self:center}@media print{.prnt-lnk{display:none!important}}
+/* оргструктура: готов только дизайн, остальные подразделения пока не кликаются */
+.orgd.off{opacity:.5}.orgd.off h2{color:var(--mu)}
+.orgrole.off{background:var(--bg);border-style:dashed;cursor:default}
+.orgrole.off .chip{background:transparent;border:1px dashed var(--bd);color:var(--mu)}
+/* печатный комплект: страница на компетенцию */
+.pdfset .pgs{margin-top:40px;padding-top:24px;border-top:2px solid var(--soft)}
+@media print{
+ .pdfset .pgs{break-before:page;page-break-before:always;margin:0;padding:0;border:0}
+ .pdfset .lvgrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+ .pdfset .lvsub li{font-size:9.5px;line-height:1.3;padding:5px 7px}.pdfset .lvsub{gap:5px;padding-top:7px;margin-left:16px;padding-left:10px}
+ .pdfset .lvhead{padding:6px 8px}.pdfset .lvhead .lv{width:20px;height:20px;font-size:11px}
+ .pdfset .lvsub li::before{top:12px;left:-12px;width:10px}
+ .pdfset h2{font-size:13px;margin:10px 0 4px}
+ .pdfset .lvcol{break-inside:avoid}.pdfset h1{font-size:19px}.pdfset .lead{font-size:12px}
+ .pdfset p{font-size:11px}
+}
 </style>
 </head>
 <body>
@@ -576,9 +591,13 @@ const PEOPLE=(()=>{const pool=S.people||S.team.names,out={};let k=0;M.roles.forE
 const people=ri=>PEOPLE[ri]||[];
 const rqOpen={};let stkOpen=false;
 const LVWORD={1:'по образцу',2:'самостоятельно',3:'по ситуации',4:'для других'};
-PAGES.org=()=>`${crumbs(['Оргструктура'])}<h1>Оргструктура</h1><p class="lead">Выберите подразделение, должность или сотрудника. На странице должности — какие компетенции нужны и на каком уровне.</p><p class="muted small">Подразделения, должности и сотрудники подтягиваются из Synergy Chat. Здесь они показаны на условных данных <span class="ex">пример</span>. Фамилия ведёт на ту же страницу: требования задаёт должность, а не человек.</p>
- ${M.divisions.map((d,di)=>`<section class="orgd"><h2>${d.name} <span class="muted small" style="font-weight:400">${d.roles.length} ${plural(d.roles.length,['должность','должности','должностей'])}</span></h2><div class="grid">${d.roles.map(n=>{const ri=roleIdx(n),it=isIT(M.roles[ri]);
-   return `<div class="card orgrole"><a class="orgtitle" href="#/role/${ri}"><b>${n}</b></a><div class="muted small">${M.roles[ri].oneliner||''}</div><div class="chips">${people(ri).map((p,k)=>`<a class="chip" href="#/role/${ri}/${it?'middle':'-'}/${k}" title="Сотрудник — пример">${p}</a>`).join('')}</div></div>`;}).join('')}</div></section>`).join('')}`;
+PAGES.org=()=>{const order=[...M.divisions].sort((a,b)=>(b.name==='Дизайн')-(a.name==='Дизайн'));
+ const card=(n,live)=>{const ri=roleIdx(n),r=M.roles[ri],it=isIT(r),pp=people(ri);
+  return live?`<div class="card orgrole"><a class="orgtitle" href="#/role/${ri}"><b>${n}</b></a><div class="muted small">${r.oneliner||''}</div><div class="chips">${pp.map((p,k)=>`<a class="chip" href="#/role/${ri}/${it?'middle':'-'}/${k}" title="Сотрудник — пример">${p}</a>`).join('')}</div></div>`
+   :`<div class="card orgrole off" aria-disabled="true"><b>${n}</b><div class="muted small">${r.oneliner||''}</div><div class="chips">${pp.map(p=>`<span class="chip">${p}</span>`).join('')}</div></div>`;};
+ return `${crumbs(['Оргструктура'])}<h1>Оргструктура</h1><p class="lead">Выберите подразделение, должность или сотрудника. На странице должности — какие компетенции нужны и на каком уровне.</p><p class="muted small">Подразделения, должности и сотрудники подтягиваются из Synergy Chat. Здесь они показаны на условных данных <span class="ex">пример</span>. Фамилия ведёт на ту же страницу: требования задаёт должность, а не человек.</p>
+ ${order.map(d=>{const live=d.name==='Дизайн';
+  return `<section class="orgd${live?'':' off'}"><h2>${d.name} <span class="muted small" style="font-weight:400">${d.roles.length} ${plural(d.roles.length,['должность','должности','должностей'])}${live?'':' · готовим, скоро откроем'}</span></h2><div class="grid">${d.roles.map(n=>card(n,live)).join('')}</div></section>`;}).join('')}`;};
 function reqsHTML(ri,g){const r=M.roles[ri],all=Object.keys(r.requirements).map(Number).sort((a,b)=>COMP[a].layer-COMP[b].layer||a-b),rq=Object.fromEntries(reqs(ri,g).map(q=>[q.comp,q.thr]));
  return all.map(cid=>{const c=COMP[cid],thr=rq[cid],open=!!rqOpen[cid],at=compAtoms(cid).filter(a=>thr&&a.level<=thr);
   const body=open&&thr?`<div class="rqbody">${[1,2,3,4].filter(l=>l<=thr).map(l=>{const list=at.filter(a=>a.level===l);if(!list.length)return '';
@@ -608,6 +627,17 @@ PAGES.role=(i,g,emp)=>{const ri=+i,r=M.roles[ri];if(!r)return PAGES.notfound();c
 PAGES.role.after=(i,g,emp)=>{const box=$('#reqs');if(!box)return;const ri=+box.dataset.ri,gg=box.dataset.g||null;
   box.onclick=e=>{const b=e.target.closest('[data-rq]');if(!b)return;const c=+b.dataset.rq;rqOpen[c]=!rqOpen[c];box.innerHTML=reqsHTML(ri,gg);};
   const st=$('#stk');if(st)st.onclick=e=>{if(!e.target.closest('[data-stk]'))return;stkOpen=!stkOpen;st.innerHTML=roleStackHTML(ri,gg);};};
+/* уровни компетенции с разбором на навыки — общий кусок для страницы компетенции и PDF */
+function levelsHTML(c){return `<div class="lvgrid">${[1,2,3,4].filter(n=>c.levels[n]).map(n=>{const at=compAtoms(c.id).filter(a=>a.level===n);
+ return `<div class="lvcol"><div class="lvhead"><span class="lv">${n}</span><div><b>${M.levels[n]}</b><div class="muted small">${at.length} ${plural(at.length,['навык','навыка','навыков'])}</div></div></div><ul class="lvsub">${at.map(a=>`<li${a.anchor?' class="anc"':''}>${a.text}${a.anchor?' <span class="tag">для всех</span>':''}${a.task_type===5?' <span class="tag">результат</span>':''}</li>`).join('')}</ul></div>`;}).join('')}</div>`;}
+/* печатный комплект: первая страница — матрица, дальше по странице на компетенцию с разбором на навыки */
+PAGES.print=()=>{const md=MX.scale==='company'?null:mxModel();
+ const codes=md?md.groups.flatMap(g=>g[1]):M.competencies.slice().sort((a,b)=>a.layer-b.layer||a.id-b.id).map(c=>c.code);
+ const title=MX.scale==='design'?'Шесть ролей дизайна: общий фундамент, четыре направления и одна главная компетенция у каждой':md?`${md.title}: ${md.roles.length} ${plural(md.roles.length,['роль','роли','ролей'])}`:'';
+ const head=md?`<h1>Матрица компетенций${MX.scale==='design'?' · дизайн':''}</h1><h2>${title}</h2><ol class="mins">${mxInsights(md).map(([k,t])=>`<li>${t}</li>`).join('')}</ol>${mxMatrix(md)}`:`<h1>Матрица компетенций · вся компания</h1>${mxCompany()}`;
+ return `<div class="pdfset">${head}
+ ${codes.map(code=>{const c=C2[code];if(!c)return '';
+  return `<section class="pgs"><h1>${c.name}</h1><p class="lead">${c.tagline}</p><h2>Как это выглядит</h2><p>${c.how_it_looks.charAt(0).toUpperCase()+c.how_it_looks.slice(1)}</p><h2>Уровни</h2>${levelsHTML(c)}<p class="muted small">Кому нужна: ${M.roles.map((r,ri)=>({r,ri})).filter(o=>reqs(o.ri,'middle').some(q=>q.comp===c.id)).map(o=>o.r.name).join(', ')||'—'}</p></section>`;}).join('')}</div>`;};
 PAGES.comp=id=>{const c=COMP[+id];if(!c)return PAGES.notfound();
   const who=M.roles.map((r,ri)=>{const q=reqs(ri,'middle').find(q=>q.comp===c.id);return q&&{ri,r,thr:q.thr};}).filter(Boolean).sort((a,b)=>b.thr-a.thr);
   const tryIds=compAtoms(c.id).filter(a=>TASKS[a.id]).sort((a,b)=>Math.abs(a.level-2)-Math.abs(b.level-2)||b.task_type-a.task_type).map(a=>a.id),tryId=tryIds[0];
@@ -615,7 +645,7 @@ PAGES.comp=id=>{const c=COMP[+id];if(!c)return PAGES.notfound();
   const art=compAtoms(c.id).find(a=>a.task_type===5);
   return `${crumbs(['Компетенции','#/comps'],[c.name])}<h1>${c.name}</h1><p class="lead">${c.tagline}</p>
   <h2>Как это выглядит</h2><p>${c.how_it_looks.charAt(0).toUpperCase()+c.how_it_looks.slice(1)}</p>
-  <h2>Уровни</h2><div class="lvgrid">${[1,2,3,4].filter(n=>c.levels[n]).map(n=>{const at=compAtoms(c.id).filter(a=>a.level===n);return `<div class="lvcol"><div class="lvhead"><span class="lv">${n}</span><div><b>${M.levels[n]}</b><div class="muted small">${at.length} ${plural(at.length,['навык','навыка','навыков'])}</div></div></div><ul class="lvsub">${at.map(a=>`<li${a.anchor?' class="anc"':''}>${a.text}${a.anchor?' <span class="tag">для всех</span>':''}${a.task_type===5?' <span class="tag">результат</span>':''}</li>`).join('')}</ul></div>`;}).join('')}</div>
+  <h2>Уровни</h2>${levelsHTML(c)}
   ${art?`<p class="muted small" style="margin-top:10px">Уровень 4 подтверждается не заданием, а рабочим результатом: «${art.task_brief}» — его смотрит эксперт.</p>`:''}
   ${tryId?`<p style="margin-top:20px"><button class="btn big" id="tryBtn">Попробовать задание</button></p><p class="muted small">Оценка в прототипе упрощённая.</p><div id="tryBox" class="card" style="display:none;margin-top:10px" data-ids="${tryIds.join(',')}"></div>`:''}
   ${stackHTML(c)}
@@ -880,10 +910,10 @@ PAGES.matrix=()=>{const seg=(k,opts)=>`<div class="seg" role="group">${opts.map(
   const md=MX.scale==='company'?null:mxModel(),grades=md&&md.roles.some(hasGrades);
   const title=MX.scale==='design'?'Шесть ролей дизайна: общий фундамент, четыре направления и одна главная компетенция у каждой':md?`${md.title}: ${md.roles.length} ${plural(md.roles.length,['роль','роли','ролей'])}`:'';
   const ins=md&&MX.view==='matrix'?`<ol class="mins">${mxInsights(md).map(([k,t])=>`<li data-hl="${k}">${t}</li>`).join('')}</ol>`:'';
-  return `${crumbs(['Матрица'])}<h1>Матрица компетенций</h1><div class="tbar">${seg('scale',[['design','Дизайн'],['company','Вся компания']].concat(MX.scale!=='design'&&MX.scale!=='company'?[[MX.scale,DIV_SHORT[MX.scale]||MX.scale]]:[]))}${md?seg('view',[['matrix','Матрица'],['roles','Роли'],['together','Что учить вместе']]):''}${md&&grades?seg('grade',[['junior','Junior'],['middle','Middle'],['senior','Senior']]):''}<button class="btn sec prnt" data-print="1" title="Откроется окно печати — выберите «Сохранить как PDF»">Сохранить в PDF</button><a class="small muted prnt-lnk" href="${MX.scale==='company'?'matrix-company.pdf':'matrix.pdf'}" download>готовый PDF</a></div>
+  return `${crumbs(['Матрица'])}<h1>Матрица компетенций</h1><div class="tbar">${seg('scale',[['design','Дизайн'],['company','Вся компания']].concat(MX.scale!=='design'&&MX.scale!=='company'?[[MX.scale,DIV_SHORT[MX.scale]||MX.scale]]:[]))}${md?seg('view',[['matrix','Матрица'],['roles','Роли'],['together','Что учить вместе']]):''}${md&&grades?seg('grade',[['junior','Junior'],['middle','Middle'],['senior','Senior']]):''}${location.protocol==='file:'?`<button class="btn sec prnt" data-print="1" title="Откроется окно печати — выберите «Сохранить как PDF»">Сохранить в PDF</button>`:`<a class="btn sec prnt" href="${MX.scale==='company'?'matrix-company.pdf':'matrix.pdf'}" download>Скачать PDF</a>`}</div>
   <div id="mxbody">${md?`<h2>${title}</h2>${ins}${MX.view==='matrix'?mxMatrix(md):MX.view==='roles'?mxRoles(md):mxTogether(md)}`:mxCompany()}</div><div id="mxpanel">${mxPanel()}</div>`;};
 PAGES.matrix.after=()=>{const app=$('#app');
-  app.onclick=e=>{const b=e.target.closest('[data-mx],[data-role],[data-comp],[data-div],[data-close]');if(!b||!app.contains(b))return;const d=b.dataset;
+  app.onclick=e=>{const b=e.target.closest('[data-mx],[data-role],[data-comp],[data-div],[data-close],[data-print]');if(!b||!app.contains(b))return;const d=b.dataset;
     if(d.print){MX.panel=null;$('#mxpanel').innerHTML='';window.print();return;}
     if(d.close){MX.panel=null;$('#mxpanel').innerHTML='';return;}
     if(d.mx){if(d.mx==='grade'&&MX.view==='matrix'&&MX.scale!=='company'){MX.grade=d.v;mxRegrade();return;}MX[d.mx]=d.v;if(d.mx==='scale')MX.view='matrix';MX.panel=null;render('#/matrix');return;}
