@@ -393,6 +393,8 @@ table.stack td,table.stack th{vertical-align:top;text-align:left;font-size:14px}
  .pdfset .lvcol{break-inside:avoid}.pdfset h1{font-size:19px}.pdfset .lead{font-size:12px}
  .pdfset p{font-size:11px}
 }
+.pdfset .pgs .lvsub li.anc{background:#fff4f4;border-left:3px solid #ED131C;border-radius:0 var(--r-sm) var(--r-sm) 0}
+.pdfnote{margin-top:10px}
 </style>
 </head>
 <body>
@@ -628,16 +630,16 @@ PAGES.role.after=(i,g,emp)=>{const box=$('#reqs');if(!box)return;const ri=+box.d
   box.onclick=e=>{const b=e.target.closest('[data-rq]');if(!b)return;const c=+b.dataset.rq;rqOpen[c]=!rqOpen[c];box.innerHTML=reqsHTML(ri,gg);};
   const st=$('#stk');if(st)st.onclick=e=>{if(!e.target.closest('[data-stk]'))return;stkOpen=!stkOpen;st.innerHTML=roleStackHTML(ri,gg);};};
 /* уровни компетенции с разбором на навыки — общий кусок для страницы компетенции и PDF */
-function levelsHTML(c){return `<div class="lvgrid">${[1,2,3,4].filter(n=>c.levels[n]).map(n=>{const at=compAtoms(c.id).filter(a=>a.level===n);
- return `<div class="lvcol"><div class="lvhead"><span class="lv">${n}</span><div><b>${M.levels[n]}</b><div class="muted small">${at.length} ${plural(at.length,['навык','навыка','навыков'])}</div></div></div><ul class="lvsub">${at.map(a=>`<li${a.anchor?' class="anc"':''}>${a.text}${a.anchor?' <span class="tag">для всех</span>':''}${a.task_type===5?' <span class="tag">результат</span>':''}</li>`).join('')}</ul></div>`;}).join('')}</div>`;}
+function levelsHTML(c,o={}){return `<div class="lvgrid">${[1,2,3,4].filter(n=>c.levels[n]).map(n=>{const at=compAtoms(c.id).filter(a=>a.level===n);
+ return `<div class="lvcol"><div class="lvhead"><span class="lv">${n}</span><div><b>${M.levels[n]}</b><div class="muted small">${at.length} ${plural(at.length,['навык','навыка','навыков'])}</div></div></div><ul class="lvsub">${at.map(a=>`<li${a.anchor?' class="anc"':''}>${a.text}${o.noBadges?'':`${a.anchor?' <span class="tag">для всех</span>':''}${a.task_type===5?' <span class="tag">результат</span>':''}`}</li>`).join('')}</ul></div>`;}).join('')}</div>`;}
 /* печатный комплект: первая страница — матрица, дальше по странице на компетенцию с разбором на навыки */
 PAGES.print=()=>{const md=MX.scale==='company'?null:mxModel();
  const codes=md?md.groups.flatMap(g=>g[1]):M.competencies.slice().sort((a,b)=>a.layer-b.layer||a.id-b.id).map(c=>c.code);
  const title=MX.scale==='design'?'Шесть ролей дизайна: общий фундамент, четыре направления и одна главная компетенция у каждой':md?`${md.title}: ${md.roles.length} ${plural(md.roles.length,['роль','роли','ролей'])}`:'';
  const head=md?`<h1>Матрица компетенций${MX.scale==='design'?' · дизайн':''}</h1><h2>${title}</h2><ol class="mins">${mxInsights(md).map(([k,t])=>`<li>${t}</li>`).join('')}</ol>${mxMatrix(md)}`:`<h1>Матрица компетенций · вся компания</h1>${mxCompany()}`;
- return `<div class="pdfset">${head}
+ return `<div class="pdfset">${head}<p class="muted small pdfnote">Красной отметкой выделены навыки, обязательные для всех.</p>
  ${codes.map(code=>{const c=C2[code];if(!c)return '';
-  return `<section class="pgs"><h1>${c.name}</h1><p class="lead">${c.tagline}</p><h2>Как это выглядит</h2><p>${c.how_it_looks.charAt(0).toUpperCase()+c.how_it_looks.slice(1)}</p><h2>Уровни</h2>${levelsHTML(c)}<p class="muted small">Кому нужна: ${M.roles.map((r,ri)=>({r,ri})).filter(o=>reqs(o.ri,'middle').some(q=>q.comp===c.id)).map(o=>o.r.name).join(', ')||'—'}</p></section>`;}).join('')}</div>`;};
+  return `<section class="pgs"><h1>${c.name}</h1><p class="lead">${c.tagline}</p><h2>Как это выглядит</h2><p>${c.how_it_looks.charAt(0).toUpperCase()+c.how_it_looks.slice(1)}</p><h2>Уровни</h2>${levelsHTML(c,{noBadges:true})}</section>`;}).join('')}</div>`;};
 PAGES.comp=id=>{const c=COMP[+id];if(!c)return PAGES.notfound();
   const who=M.roles.map((r,ri)=>{const q=reqs(ri,'middle').find(q=>q.comp===c.id);return q&&{ri,r,thr:q.thr};}).filter(Boolean).sort((a,b)=>b.thr-a.thr);
   const tryIds=compAtoms(c.id).filter(a=>TASKS[a.id]).sort((a,b)=>Math.abs(a.level-2)-Math.abs(b.level-2)||b.task_type-a.task_type).map(a=>a.id),tryId=tryIds[0];
