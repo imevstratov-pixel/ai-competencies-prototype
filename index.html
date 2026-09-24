@@ -395,6 +395,65 @@ table.stack td,table.stack th{vertical-align:top;text-align:left;font-size:14px}
 }
 .pdfset .pgs .lvsub li.anc{background:#fff4f4;border-left:3px solid #ED131C;border-radius:0 var(--r-sm) var(--r-sm) 0}
 .pdfnote{margin-top:10px}
+
+/* ---------- система движения и поверхностей (по Fluid Functionalism, MIT: fluidfunctionalism.com) ----------
+   Три пресета пружин: быстрый — ховеры и фокус, средний — вкладки и панели (без отскока), медленный — шторки.
+   Выход всегда быстрее входа: закрытие не «тянет». linear() приближает пружину, cubic-bezier — запасной вариант. */
+:root{
+  --sp-fast-in:80ms;   --sp-fast-out:60ms;
+  --sp-mod-in:160ms;   --sp-mod-out:120ms;
+  --sp-slow-in:240ms;  --sp-slow-out:160ms;
+  --ease-fast:cubic-bezier(.32,.72,0,1);
+  --ease-mod:cubic-bezier(.2,0,0,1);
+  --ease-slow:linear(0,.35 12%,.73 24%,.93 34%,1.03 44%,1.05 54%,1.02 70%,1);
+  /* поверхности */
+  --s-0:var(--bg); --s-1:#fff; --s-2:#fff;
+  --s-border:var(--stroke);
+  --s-shadow-1:0 1px 2px rgba(16,16,16,.04);
+  --s-shadow-2:0 8px 24px rgba(16,16,16,.10);
+  --s-shadow-3:-8px 0 30px rgba(16,16,16,.12);
+  /* размеры контролов */
+  --ctl-sm:32px; --ctl-md:40px; --ctl-lg:44px;
+  /* подсветка курсора */
+  --fluid-tint:rgba(91,123,234,.10);
+  --fluid-ring:rgba(91,123,234,.55);
+}
+/* тонкие скроллбары везде, где есть своя прокрутка */
+.scroll,.fbwrap,.mx,.mpanel,.hdr nav,.tbar .seg{scrollbar-width:thin;scrollbar-color:#c7c7c7 transparent}
+.scroll::-webkit-scrollbar,.fbwrap::-webkit-scrollbar,.mx::-webkit-scrollbar,.mpanel::-webkit-scrollbar{height:8px;width:8px}
+.scroll::-webkit-scrollbar-thumb,.fbwrap::-webkit-scrollbar-thumb,.mx::-webkit-scrollbar-thumb,.mpanel::-webkit-scrollbar-thumb{background:#c7c7c7;border-radius:8px}
+.scroll::-webkit-scrollbar-track,.fbwrap::-webkit-scrollbar-track,.mx::-webkit-scrollbar-track,.mpanel::-webkit-scrollbar-track{background:transparent}
+/* пружины на существующие состояния */
+.btn{transition:background-color var(--sp-fast-in) var(--ease-fast),border-color var(--sp-fast-in) var(--ease-fast),color var(--sp-fast-in) var(--ease-fast),transform var(--sp-fast-in) var(--ease-fast)}
+.btn:active{transform:scale(.985)}
+a.card,.chip,.seg button,.opts button,.dtile,.mcell,.mname,.mcol{transition:background-color var(--sp-fast-in) var(--ease-fast),border-color var(--sp-fast-in) var(--ease-fast),color var(--sp-fast-in) var(--ease-fast)}
+:focus-visible{transition:box-shadow var(--sp-fast-in) var(--ease-fast)}
+.hb{transition:--p var(--sp-mod-in) var(--ease-mod),width var(--sp-fast-in) var(--ease-fast),height var(--sp-fast-in) var(--ease-fast)}
+.mbar i{transition:width var(--sp-mod-in) var(--ease-mod)}
+.tlx span{transition:transform var(--sp-fast-in) var(--ease-fast)}
+/* появление шторки и подложки — медленный пресет, закрытие быстрее */
+.mpanel{animation:sheet-in var(--sp-slow-in) var(--ease-slow) both;box-shadow:var(--s-shadow-3)}
+.mpanel-bg{animation:fade-in var(--sp-mod-in) var(--ease-mod) both}
+@keyframes sheet-in{from{transform:translateX(18px);opacity:0}to{transform:none;opacity:1}}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}
+@media(max-width:600px){.mpanel{animation-name:sheet-up}@keyframes sheet-up{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}}
+/* раскрытие навыков и уровней — средний пресет */
+.rqbody,.lvsub li,.outc-i{animation:reveal var(--sp-mod-in) var(--ease-mod) both}
+@keyframes reveal{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+/* ---------- подсветка «выигрывает ближайший»: одна плашка на контейнер, ездит трансформом ---------- */
+.fluid-host{position:relative}
+.fluid{position:absolute;left:0;top:0;pointer-events:none;opacity:0;border-radius:10px;z-index:0;
+  transition:opacity var(--sp-fast-in) var(--ease-fast),transform var(--sp-mod-in) var(--ease-mod),width var(--sp-mod-in) var(--ease-mod),height var(--sp-mod-in) var(--ease-mod)}
+.fluid.on{opacity:1}
+.fluid.fill{background:var(--fluid-tint)}
+.fluid.ring{box-shadow:inset 0 0 0 1.5px var(--fluid-ring);background:transparent;z-index:2}
+.seg,.mx,.reqs,.chips,.grid,.rcards,.pcards,.outgrid,.dgrid{position:relative}
+.seg button,.mcell,.rq,.chip,.dtile{position:relative;z-index:1}
+@media (prefers-reduced-motion:reduce){
+  .fluid{transition:opacity .01ms}
+  .mpanel,.mpanel-bg,.rqbody,.lvsub li,.outc-i{animation:none}
+  .btn:active{transform:none}
+}
 </style>
 </head>
 <body>
@@ -950,6 +1009,39 @@ function typo(root){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,
   const nodes=[];while(w.nextNode())nodes.push(w.currentNode);
   nodes.forEach(n=>{let t=n.data,prev;do{prev=t;t=t.replace(NB,(m,a,b)=>a+b+' ');}while(t!==prev);t=t.replace(/(\d)\s+(?=[а-яёa-z%₽])/gi,'$1 ').replace(/\s+([—–])\s/g,' $1 ');if(t!==n.data)n.data=t;});}
 new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1)typo(n);else if(n.nodeType===3&&n.parentNode)typo(n.parentNode);}))).observe(document.body,{childList:true,subtree:true});
+
+/* ---------- подсветка курсора «выигрывает ближайший» (идея Fluid Functionalism, MIT) ----------
+   Одна плашка на контейнер: не привязана к зоне элемента, поэтому нет мёртвых зон между целями.
+   Работает на делегировании — переживает перерисовку страницы. */
+const FLUID=[['.seg','button','fill'],['#mx','.mcell','fill'],['.reqs','.rq','fill'],['.lvsub','li','fill'],
+             ['.chips','.chip','ring'],['.grid','.card','ring'],['.rcards','.rcard','ring'],['.pcards','.pcard','ring'],
+             ['.outgrid','.outc-i','ring'],['.dgrid','.dtile','ring']];
+function fluidFor(el){for(const [host,item,mode] of FLUID){const h=el.closest(host);if(h)return {h,item,mode};}return null;}
+function fluidShow(h,item,mode,x,y){
+  h.classList.add('fluid-host');
+  let f=h.querySelector(':scope > .fluid');
+  if(!f){f=document.createElement('div');f.className='fluid '+mode;h.appendChild(f);}
+  const items=[...h.querySelectorAll(':scope '+item)].filter(n=>n.offsetParent!==null);
+  if(!items.length)return;
+  const hb=h.getBoundingClientRect();let best=null,bd=1e9;
+  items.forEach(n=>{const b=n.getBoundingClientRect(),dx=Math.max(b.left-x,0,x-b.right),dy=Math.max(b.top-y,0,y-b.bottom);
+    const d=Math.hypot(dx,dy);if(d<bd){bd=d;best={n,b};}});
+  if(!best||bd>90){f.classList.remove('on');return;}
+  const {b}=best,st=getComputedStyle(best.n);
+  f.style.width=b.width+'px';f.style.height=b.height+'px';
+  f.style.borderRadius=st.borderRadius&&st.borderRadius!=='0px'?st.borderRadius:'10px';
+  f.style.transform=`translate(${b.left-hb.left+h.scrollLeft}px,${b.top-hb.top+h.scrollTop}px)`;
+  f.classList.add('on');
+}
+function fluidHide(h){const f=h&&h.querySelector(':scope > .fluid');if(f)f.classList.remove('on');}
+document.addEventListener('pointermove',e=>{
+  if(e.pointerType==='touch')return;
+  const t=e.target instanceof Element?e.target:document.elementFromPoint(e.clientX,e.clientY);if(!t)return;
+  const cur=fluidFor(t);
+  document.querySelectorAll('.fluid.on').forEach(f=>{if(!cur||f.parentElement!==cur.h)f.classList.remove('on');});
+  if(cur)fluidShow(cur.h,cur.item,cur.mode,e.clientX,e.clientY);
+},{passive:true});
+document.addEventListener('pointerleave',()=>document.querySelectorAll('.fluid.on').forEach(f=>f.classList.remove('on')),true);
 
 /* ---------- роутер ---------- */
 function render(h){  /* h — маршрут без смены адреса (для автотестов) */
