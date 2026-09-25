@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Скилл-древо компетенций — концепт</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Токены и компоненты по мотивам shadcn/ui (new-york): шкала серого zinc, радиусы, кольцо фокуса,
+   карточка / кнопка / бейдж / переключатель / тултип / шторка. Код не копировался — только параметры. */
+:root{
+ --red:#ED131C;--fg:#18181B;--mu:#71717A;--muted:#F4F4F5;--border:#E4E4E7;--input:#D4D4D8;--ring:#18181B;
+ --bg:#FAFAFA;--card:#fff;--r:10px;--r-lg:14px;--r-sm:6px;
+ --shadow-xs:0 1px 2px rgba(24,24,27,.05);--shadow:0 1px 3px rgba(24,24,27,.08),0 1px 2px rgba(24,24,27,.04);
+ --sp-fast:80ms;--sp-mod:160ms;--ease:cubic-bezier(.2,0,0,1);
+ --title:var(--fg);--stroke:var(--border)}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 Raleway,system-ui,sans-serif;color:var(--fg);background:var(--bg);-webkit-font-smoothing:antialiased}
+header{background:linear-gradient(100deg,#ED131C,#D20F18 55%,#A80A11);color:#fff;padding:16px 24px}
+header b{font-size:18px;letter-spacing:-.01em}header span{display:block;opacity:.9;font-size:13.5px;margin-top:2px}
+main{max-width:1440px;margin:0 auto;padding:18px 16px 60px}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 336px;gap:16px;align-items:start}
+@media(max-width:1100px){.wrap{grid-template-columns:1fr}}
+/* card */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;box-shadow:var(--shadow-xs)}
+.stage{position:relative;padding:6px}
+svg.tree{display:block;width:100%;height:auto;overflow:visible}
+.node{cursor:pointer}.node .hit{fill:transparent}
+.nlabel{font-size:12px;fill:var(--fg);font-weight:600;paint-order:stroke;stroke:#fff;stroke-width:3.4px}
+.nsub{font-size:11px;fill:var(--mu);paint-order:stroke;stroke:#fff;stroke-width:3.4px}
+h2{font-size:15px;margin:0 0 2px;font-weight:700;letter-spacing:-.01em}
+h3{font-size:12px;margin:16px 0 6px;color:var(--mu);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+/* progress */
+.pbar{height:8px;border-radius:999px;background:var(--muted);overflow:hidden;margin:8px 0 4px}
+.pbar i{display:block;height:100%;border-radius:999px;background:var(--fg);transition:width var(--sp-mod) var(--ease)}
+/* list item (по мотивам command item) */
+.first{display:flex;gap:10px;align-items:flex-start;padding:8px;margin:0 -8px;border-radius:var(--r-sm);cursor:pointer;
+ transition:background-color var(--sp-fast) var(--ease)}
+.first:hover{background:var(--muted)}
+.first .ic{width:30px;height:30px;border-radius:var(--r-sm);display:grid;place-items:center;flex:none}
+.first b{display:block;font-size:13.5px;line-height:1.3}
+.first span{font-size:12px;color:var(--mu)}
+.leg{font-size:12.5px;color:var(--mu);display:grid;gap:8px;margin-top:2px}
+.leg div{display:flex;align-items:center;gap:9px}
+label{display:block;font-size:13px;font-weight:500;margin:14px 0 5px}
+/* select trigger */
+select{width:100%;height:36px;padding:0 30px 0 10px;border:1px solid var(--input);border-radius:var(--r);font:inherit;font-size:13.5px;background:#fff
+ url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2371717A' stroke-width='1.6'><path d='M4 6l4 4 4-4'/></svg>") right 9px center no-repeat;
+ -webkit-appearance:none;appearance:none;cursor:pointer;box-shadow:var(--shadow-xs);transition:border-color var(--sp-fast) var(--ease),box-shadow var(--sp-fast) var(--ease)}
+select:focus-visible{outline:none;border-color:var(--ring);box-shadow:0 0 0 3px rgba(24,24,27,.12)}
+/* switch */
+.row{display:flex;align-items:center;gap:10px;font-size:13.5px;margin:10px 0}
+.row label{margin:0;font-weight:400;flex:1;cursor:pointer}
+.row input{-webkit-appearance:none;appearance:none;width:34px;height:20px;border-radius:999px;background:var(--input);position:relative;flex:none;cursor:pointer;margin:0;
+ transition:background-color var(--sp-mod) var(--ease)}
+.row input:after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:var(--shadow-xs);
+ transition:transform var(--sp-mod) var(--ease)}
+.row input:checked{background:var(--fg)}
+.row input:checked:after{transform:translateX(14px)}
+.row input:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(24,24,27,.12)}
+/* badge-кнопки направлений */
+.bch{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.bch button{border:1px solid var(--border);background:#fff;border-radius:999px;padding:4px 11px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;
+ transition:border-color var(--sp-fast) var(--ease),background-color var(--sp-fast) var(--ease),opacity var(--sp-fast) var(--ease)}
+.bch button.on{border-color:currentColor;background:color-mix(in srgb,currentColor 8%,#fff)}
+.bch button:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(24,24,27,.12)}
+/* sheet */
+.panel{position:fixed;right:0;top:0;bottom:0;width:min(420px,100%);background:#fff;z-index:20;padding:24px;overflow:auto;border-left:1px solid var(--border);
+ box-shadow:-12px 0 40px rgba(24,24,27,.10);animation:in 240ms var(--ease) both}
+.panel-bg{position:fixed;inset:0;background:rgba(24,24,27,.5);z-index:19;animation:fade 160ms var(--ease) both}
+@keyframes in{from{transform:translateX(18px);opacity:0}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.close{position:absolute;top:14px;right:14px;width:32px;height:32px;border:0;border-radius:var(--r-sm);background:transparent;color:var(--mu);font-size:19px;cursor:pointer;
+ transition:background-color var(--sp-fast) var(--ease)}
+.close:hover{background:var(--muted);color:var(--fg)}
+/* badge */
+.tag{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:600;background:var(--muted);color:var(--mu);border:1px solid transparent}
+.ex{display:inline-block;background:#FEF9C3;border:1px solid #FDE68A;border-radius:999px;padding:1px 9px;font-size:11.5px;font-weight:600;color:#854D0E}
+.note{font-size:12.5px;color:var(--mu);line-height:1.5;margin-top:14px}
+/* button */
+.btn{height:36px;border:1px solid var(--input);background:#fff;border-radius:var(--r);padding:0 14px;font:inherit;font-size:13.5px;font-weight:500;cursor:pointer;
+ box-shadow:var(--shadow-xs);transition:background-color var(--sp-fast) var(--ease),border-color var(--sp-fast) var(--ease)}
+.btn:hover{background:var(--muted)}
+.btn.pri{background:var(--red);border-color:var(--red);color:#fff;font-weight:600}
+.btn.pri:hover{background:#D20F18}
+.btn:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(24,24,27,.12)}
+.segs{display:flex;gap:4px;margin:8px 0}
+.segs i{height:8px;flex:1;border-radius:999px;background:var(--muted);border:1px solid var(--border)}
+/* tooltip */
+#tip{position:fixed;z-index:30;pointer-events:none;background:var(--fg);color:#fff;border-radius:var(--r-sm);padding:6px 9px;font-size:12px;line-height:1.35;
+ box-shadow:var(--shadow);opacity:0;transform:translateY(3px);transition:opacity var(--sp-fast) var(--ease),transform var(--sp-fast) var(--ease);max-width:240px}
+#tip.on{opacity:1;transform:none}
+#tip i{display:block;font-style:normal;opacity:.7;font-size:11.5px}
+::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:#0000001f;border-radius:999px;border:2px solid transparent;background-clip:content-box}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header><b>Скилл-древо компетенций</b><span>Концепт. В центре — сотрудник, вокруг четыре направления, дальше компетенции по часовой стрелке в порядке освоения. Данные условные.</span></header>
+<main>
+<div class="wrap">
+  <div class="card stage" id="stage">
+    <svg class="tree" id="svg" viewBox="0 0 1200 1120" role="img" aria-label="Скилл-древо компетенций"></svg>
+  </div>
+  <div>
+    <div class="card">
+      <h2>Прогресс</h2>
+      <div id="prog"></div>
+      <h3>Что учить первым</h3>
+      <div id="first"></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h2>Настройки</h2>
+      <label for="role">Должность</label><select id="role"></select>
+      <label>Направления</label><div class="bch" id="branches"></div>
+      <div class="row"><label for="locks">Замки: следующий после предыдущего</label><input type="checkbox" id="locks" checked role="switch"></div>
+      <div class="row"><label for="gaps">Показать только пробелы</label><input type="checkbox" id="gaps" role="switch"></div>
+      <div class="row"><label for="labels">Подписи у узлов</label><input type="checkbox" id="labels" checked role="switch"></div>
+      <h3>Как читать</h3>
+      <div class="leg" id="leg"></div>
+      <p class="note"><span class="ex">концепт</span> Направление «ИИ» — на данных модели компетенций. Ремесло, люди и процесс придуманы для этого концепта и в модель не входят.</p>
+    </div>
+  </div>
+</div>
+</main>
+<div id="panel"></div>
+<div id="tip" role="tooltip"></div>
+<script>const DATA={"branches": [{"key": "ai", "name": "ИИ", "color": "#2A7BE4", "icon": "ai", "about": "Работа с ИИ в ежедневных задачах должности. Единственное направление, которое уже описано в модели компетенций."}, {"key": "craft", "name": "Ремесло", "color": "#7A4DD1", "icon": "craft", "about": "Профессиональные навыки без ИИ: сетка, типографика, цвет, дизайн-система, печать. Придумано для концепта."}, {"key": "people", "name": "Люди", "color": "#0EA900", "icon": "people", "about": "Коммуникация: вопросы по брифу, статус, защита решения, обратная связь. Придумано для концепта."}, {"key": "process", "name": "Процесс", "color": "#E08A00", "icon": "process", "about": "Как устроена работа: постановка задачи, версии, оценка, приёмка. Придумано для концепта."}], "roles": {"SMM-дизайнер": {"ai": [{"name": "Промптинг и проверка ответов", "short": "Промптинг", "icon": "req", "req": 2, "got": 1, "freq": 5, "what": "Компетенция модели: нужно «Промптинг и проверка ответов» на уровне 2, сейчас 1."}, {"name": "Генерация изображений по брифу", "short": "Генерация", "icon": "image", "req": 2, "got": 1, "freq": 5, "what": "Компетенция модели: нужно «Генерация изображений по брифу» на уровне 2, сейчас 1."}, {"name": "Пакеты макетов и презентаций", "short": "Пакеты макетов", "icon": "pack", "req": 3, "got": 1, "freq": 5, "what": "Компетенция модели: нужно «Пакеты макетов и презентаций» на уровне 3, сейчас 1."}, {"name": "Правка и печать изображений", "short": "Правка и печать", "icon": "fix", "req": 2, "got": 1, "freq": 4, "what": "Компетенция модели: нужно «Правка и печать изображений» на уровне 2, сейчас 1."}, {"name": "Сборка роликов из шаблона", "short": "Ролики из шаблона", "icon": "pack", "req": 2, "got": 1, "freq": 4, "what": "Компетенция модели: нужно «Сборка роликов из шаблона» на уровне 2, сейчас 1."}, {"name": "Генерация видео", "short": "Генерация видео", "icon": "image", "req": 1, "got": 0, "freq": 3, "what": "Компетенция модели: нужно «Генерация видео» на уровне 1, сейчас 0."}]}, "Веб-дизайнер": {"ai": [{"name": "Промптинг и проверка ответов", "short": "Промптинг", "icon": "req", "req": 2, "got": 1, "freq": 5, "what": "Компетенция модели: нужно «Промптинг и проверка ответов» на уровне 2, сейчас 1."}, {"name": "Прототипирование интерфейсов", "short": "Прототипы", "icon": "frame", "req": 3, "got": 1, "freq": 5, "what": "Компетенция модели: нужно «Прототипирование интерфейсов» на уровне 3, сейчас 1."}, {"name": "Генерация изображений по брифу", "short": "Генерация", "icon": "image", "req": 2, "got": 1, "freq": 3, "what": "Компетенция модели: нужно «Генерация изображений по брифу» на уровне 2, сейчас 1."}, {"name": "Правка и печать изображений", "short": "Правка и печать", "icon": "fix", "req": 1, "got": 0, "freq": 2, "what": "Компетенция модели: нужно «Правка и печать изображений» на уровне 1, сейчас 0."}, {"name": "Пакеты макетов и презентаций", "short": "Пакеты макетов", "icon": "pack", "req": 1, "got": 0, "freq": 2, "what": "Компетенция модели: нужно «Пакеты макетов и презентаций» на уровне 1, сейчас 0."}]}, "Видео/моушен-дизайнер": {"ai": [{"name": "Промптинг и проверка ответов", "short": "Промптинг", "icon": "req", "req": 2, "got": 1, "freq": 5, "what": "Компетенция модели: нужно «Промптинг и проверка ответов» на уровне 2, сейчас 1."}, {"name": "Анимация, озвучка и дубляж", "short": "Анимация и звук", "icon": "cycle", "req": 3, "got": 1, "freq": 5, "what": "Компетенция модели: нужно «Анимация, озвучка и дубляж» на уровне 3, сейчас 1."}, {"name": "Сборка роликов из шаблона", "short": "Ролики из шаблона", "icon": "pack", "req": 2, "got": 0, "freq": 4, "what": "Компетенция модели: нужно «Сборка роликов из шаблона» на уровне 2, сейчас 0."}, {"name": "Генерация видео", "short": "Генерация видео", "icon": "image", "req": 2, "got": 0, "freq": 4, "what": "Компетенция модели: нужно «Генерация видео» на уровне 2, сейчас 0."}]}, "Графический дизайнер": {"ai": [{"name": "Промптинг и проверка ответов", "short": "Промптинг", "icon": "req", "req": 2, "got": 1, "freq": 5, "what": "Компетенция модели: нужно «Промптинг и проверка ответов» на уровне 2, сейчас 1."}, {"name": "Правка и печать изображений", "short": "Правка и печать", "icon": "fix", "req": 3, "got": 0, "freq": 5, "what": "Компетенция модели: нужно «Правка и печать изображений» на уровне 3, сейчас 0."}, {"name": "Генерация изображений по брифу", "short": "Генерация", "icon": "image", "req": 2, "got": 1, "freq": 4, "what": "Компетенция модели: нужно «Генерация изображений по брифу» на уровне 2, сейчас 1."}, {"name": "Пакеты макетов и презентаций", "short": "Пакеты макетов", "icon": "pack", "req": 2, "got": 1, "freq": 4, "what": "Компетенция модели: нужно «Пакеты макетов и презентаций» на уровне 2, сейчас 1."}]}, "Продуктовый дизайнер": {"ai": [{"name": "Промптинг и проверка ответов", "short": "Промптинг", "icon": "req", "req": 2, "got": 1, "freq": 5, "what": "Компетенция модели: нужно «Промптинг и проверка ответов» на уровне 2, сейчас 1."}, {"name": "Прототипирование интерфейсов", "short": "Прототипы", "icon": "frame", "req": 3, "got": 1, "freq": 5, "what": "Компетенция модели: нужно «Прототипирование интерфейсов» на уровне 3, сейчас 1."}, {"name": "Анализ отзывов и интервью", "short": "Анализ отзывов", "icon": "check", "req": 2, "got": 2, "freq": 3, "what": "Компетенция модели: нужно «Анализ отзывов и интервью» на уровне 2, сейчас 2."}]}, "Средовой (3D) дизайнер": {"ai": [{"name": "Промптинг и проверка ответов", "short": "Промптинг", "icon": "req", "req": 2, "got": 1, "freq": 5, "what": "Компетенция модели: нужно «Промптинг и проверка ответов» на уровне 2, сейчас 1."}, {"name": "Визуализация пространств", "short": "Визуализация", "icon": "system", "req": 2, "got": 0, "freq": 5, "what": "Компетенция модели: нужно «Визуализация пространств» на уровне 2, сейчас 0."}, {"name": "Генерация изображений по брифу", "short": "Генерация", "icon": "image", "req": 2, "got": 0, "freq": 3, "what": "Компетенция модели: нужно «Генерация изображений по брифу» на уровне 2, сейчас 0."}, {"name": "Правка и печать изображений", "short": "Правка и печать", "icon": "fix", "req": 1, "got": 0, "freq": 3, "what": "Компетенция модели: нужно «Правка и печать изображений» на уровне 1, сейчас 0."}, {"name": "Пакеты макетов и презентаций", "short": "Пакеты макетов", "icon": "pack", "req": 2, "got": 1, "freq": 3, "what": "Компетенция модели: нужно «Пакеты макетов и презентаций» на уровне 2, сейчас 1."}]}}, "extra": {"craft": [{"name": "Модульная сетка и отступы", "short": "Сетка", "icon": "grid", "req": 2, "got": 2, "freq": 5, "what": "Собирает макет на сетке: колонки, поля, ритм отступов — и держит его во всех форматах."}, {"name": "Типографика: пара и иерархия", "short": "Типографика", "icon": "type", "req": 3, "got": 2, "freq": 5, "what": "Подбирает шрифтовую пару, выстраивает иерархию кеглей и не даёт заголовкам спорить с текстом."}, {"name": "Цвет и контраст", "short": "Цвет", "icon": "color", "req": 2, "got": 1, "freq": 4, "what": "Строит палитру от задачи, проверяет контраст текста и элементов по требованиям доступности."}, {"name": "Композиция и фокус внимания", "short": "Композиция", "icon": "frame", "req": 3, "got": 1, "freq": 4, "what": "Ведёт взгляд по макету: что человек видит первым, вторым и что можно убрать."}, {"name": "Работа в дизайн-системе", "short": "Дизайн-система", "icon": "system", "req": 3, "got": 1, "freq": 4, "what": "Собирает экран из компонентов, а отклонения от системы объясняет и фиксирует."}, {"name": "Айдентика и защита знака", "short": "Айдентика", "icon": "brand", "req": 2, "got": 0, "freq": 2, "what": "Делает знак так, чтобы его можно было зарегистрировать: фиксирует этапы и свой вклад."}, {"name": "Препресс и печать", "short": "Препресс", "icon": "print", "req": 2, "got": 0, "freq": 3, "what": "Готовит файл по требованиям типографии: профиль, вылеты, пробная печать."}, {"name": "Стандарт макета для команды", "short": "Стандарт макета", "icon": "ruler", "req": 1, "got": 0, "freq": 1, "what": "Описывает, как команда собирает и сдаёт макеты, и следит, что стандартом пользуются."}], "people": [{"name": "Уточняющие вопросы по брифу", "short": "Вопросы по брифу", "icon": "qbubble", "req": 2, "got": 2, "freq": 5, "what": "До старта задаёт вопросы, без ответов на которые задача решается наугад."}, {"name": "Статус без напоминаний", "short": "Статус", "icon": "flag", "req": 2, "got": 1, "freq": 5, "what": "Сам сообщает, что сделано, что мешает и когда будет результат."}, {"name": "Защита решения", "short": "Защита решения", "icon": "target", "req": 3, "got": 1, "freq": 4, "what": "Объясняет решение через задачу заказчика, а не через вкус: что и почему выбрано."}, {"name": "Приём и разбор правок", "short": "Разбор правок", "icon": "notes", "req": 2, "got": 1, "freq": 4, "what": "Отделяет правку по делу от вкусовой и переводит «мне не нравится» в требование."}, {"name": "Разговор о сроках и объёме", "short": "Сроки и объём", "icon": "hour", "req": 2, "got": 0, "freq": 3, "what": "Обсуждает сроки до старта: что успеваем, чем жертвуем, что переносим."}, {"name": "Обратная связь коллеге", "short": "Обратная связь", "icon": "bubbles", "req": 2, "got": 0, "freq": 2, "what": "Даёт обратную связь по работе, а не по человеку, и с конкретным примером."}, {"name": "Наставничество над джуном", "short": "Наставничество", "icon": "mentor", "req": 1, "got": 0, "freq": 1, "what": "Ведёт джуна: ставит задачи по силам, разбирает результат, не переделывает молча."}], "process": [{"name": "Постановка задачи себе", "short": "Постановка задачи", "icon": "task", "req": 2, "got": 2, "freq": 5, "what": "Фиксирует срок, критерий готовности и формат результата до начала работы."}, {"name": "Версии и передача файлов", "short": "Версии файлов", "icon": "files", "req": 2, "got": 1, "freq": 5, "what": "Именует и хранит версии так, что коллега находит нужную без вопросов."}, {"name": "Оценка трудоёмкости", "short": "Оценка", "icon": "weight", "req": 3, "got": 1, "freq": 4, "what": "Оценивает работу в часах и называет, что делает оценку неточной."}, {"name": "Приёмка: чек-лист до сдачи", "short": "Приёмка", "icon": "clipboard", "req": 2, "got": 0, "freq": 3, "what": "Проверяет работу по чек-листу до сдачи, а не после замечаний."}, {"name": "Ритуалы команды", "short": "Ритуалы команды", "icon": "cycle", "req": 1, "got": 0, "freq": 1, "what": "Заводит и закрывает задачи по общему порядку: статусы, сроки, передача."}]}};</script>
+<script>
+/* ---------- иконки: у каждого навыка свой силуэт, 24×24, штрих 1.8 ---------- */
+const ICON={
+ req:'<path d="M4 6h16M4 10h11M4 14h16M4 18h8"/>',
+ check:'<circle cx="10.5" cy="10.5" r="5.5"/><path d="M15 15l5 5M8 8.5c0-1 .8-1.5 1.6-1.2"/>',
+ image:'<rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="M6 15l3.5-4 3 3.5 2-2L18 16"/><path d="M17 4.5l.7 1.8L19.5 7l-1.8.7L17 9.5l-.7-1.8L14.5 7l1.8-.7z"/>',
+ fix:'<path d="M4 20l3-1 9-9-2-2-9 9z"/><path d="M14 8l2-2a2 2 0 013 3l-2 2"/><path d="M4 4h4M6 2v4"/>',
+ pack:'<rect x="3" y="7" width="12" height="13" rx="2"/><path d="M7 4h11a2 2 0 012 2v11"/>',
+ chain:'<circle cx="5" cy="12" r="2.5"/><circle cx="12" cy="6" r="2.5"/><circle cx="19" cy="12" r="2.5"/><path d="M7 11l3-3M14 7l3 3M12 8.5v9"/><circle cx="12" cy="19" r="2"/>',
+ shield:'<path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/>',
+ scroll:'<rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8 8h5M8 12h8M8 16h6"/>',
+ grid:'<rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="M9 3.5v17M15 3.5v17M3.5 9h17M3.5 15h17"/>',
+ type:'<path d="M3 18l4.5-11L12 18M4.8 14h5.4"/><path d="M20 18v-5.5a2.5 2.5 0 00-5 0M20 14.5c-3 0-5 .6-5 2.2 0 1 .9 1.6 2 1.6 1.6 0 3-1 3-2.6"/>',
+ color:'<circle cx="9.5" cy="12" r="6"/><circle cx="14.5" cy="12" r="6"/>',
+ frame:'<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M9.2 4.5v15M14.8 4.5v15M3.5 9.5h17M3.5 14.5h17"/><circle cx="14.8" cy="9.5" r="1.6" fill="currentColor" stroke="none"/>',
+ system:'<rect x="3.5" y="3.5" width="7.5" height="7.5" rx="1.5"/><rect x="13" y="3.5" width="7.5" height="7.5" rx="1.5"/><rect x="3.5" y="13" width="7.5" height="7.5" rx="1.5"/><rect x="13" y="13" width="7.5" height="7.5" rx="1.5"/>',
+ brand:'<circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="9" stroke-dasharray="3 3"/>',
+ print:'<path d="M6 3.5h12v17H6z"/><path d="M8.5 3.5v17M15.5 3.5v17" stroke-dasharray="2 2"/><path d="M19 7l3 2-3 2"/>',
+ ruler:'<rect x="2.5" y="8" width="19" height="8" rx="1.5"/><path d="M7 8v3M11 8v4M15 8v3M19 8v4"/>',
+ qbubble:'<path d="M4 5.5h16v10H12l-5 4v-4H4z"/><path d="M10.6 9.2c.3-1 1.2-1.6 2.2-1.4 1 .2 1.6 1 1.4 1.9-.2 1-1.6 1.1-1.6 2.2"/><circle cx="12.5" cy="13.6" r=".7" fill="currentColor" stroke="none"/>',
+ flag:'<path d="M6 21V4"/><path d="M6 5h11l-2 3 2 3H6"/>',
+ target:'<rect x="3" y="5" width="12" height="14" rx="2"/><path d="M17 8h4v4"/><path d="M21 8l-6 6"/>',
+ notes:'<path d="M6 3.5h12v17H6z"/><path d="M9 8h6M9 12h6M9 16h3"/><path d="M3.5 8h2.5M3.5 12h2.5M3.5 16h2.5"/>',
+ hour:'<path d="M4 5.5h16v10H12l-5 4v-4H4z"/><path d="M10 8h4l-2 2.6L14 13h-4l2-2.4z"/>',
+ bubbles:'<path d="M3 5h12v8H8l-4 3v-3H3z"/><path d="M9 11h12v7h-3l-3 3v-3H9z" fill="#fff"/>',
+ mentor:'<circle cx="8" cy="8" r="3"/><path d="M3 20c0-3 2.2-5 5-5s5 2 5 5"/><circle cx="17" cy="11" r="2"/><path d="M14 20c0-2 1.3-3.5 3-3.5s3 1.5 3 3.5"/><path d="M19 6l2-2m0 0h-2m2 0v2"/>',
+ task:'<rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M8 12l3 3 5-6"/>',
+ files:'<rect x="3" y="7" width="11" height="13" rx="2"/><path d="M7 4h9a2 2 0 012 2v11"/><path d="M6 12h5M6 16h4"/>',
+ weight:'<path d="M5 20h14l-2-9H7z"/><circle cx="12" cy="7" r="2.5"/><path d="M12 9.5v1.5"/>',
+ clipboard:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2.8h6V4"/><path d="M8.5 10l1.5 1.5L13 8.5M8.5 15l1.5 1.5L13 13.5"/>',
+ cycle:'<path d="M20 12a8 8 0 11-3-6.2"/><path d="M20 4v4.5h-4.5"/><circle cx="8" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="1.2" fill="currentColor" stroke="none"/>',
+ user:'<circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20c0-4 3.4-6.5 7.5-6.5s7.5 2.5 7.5 6.5"/>',
+ lock:'<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8.5 10V7.5a3.5 3.5 0 017 0V10"/>',
+ ai:'<path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4z"/><path d="M18.5 15l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z"/>',
+ craft:'<path d="M3 17l8-8"/><path d="M9 5l4 4-2 2-4-4z"/><path d="M14 10l6 6-2 2-6-6z"/>',
+ people:'<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9.5" r="2.4"/><path d="M3 19c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M15.5 19c0-2.2 1.4-3.8 3.2-3.8 1.4 0 2.3.7 2.3.7"/>',
+ process:'<rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="13" width="7" height="7" rx="1.5"/><path d="M10 7.5h5a2.5 2.5 0 012.5 2.5v3"/>'};
+const svgIcon=(key,size,color)=>`<g transform="translate(${-size/2},${-size/2}) scale(${size/24})" stroke="${color}" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round">${ICON[key]||ICON.task}</g>`;
+
+/* ---------- состояние ---------- */
+const BR=DATA.branches, ROLES=Object.keys(DATA.roles);
+let role=ROLES[0], nodes=[], on={}, opts={locks:true,gaps:false,labels:true}, picked=null;
+BR.forEach(b=>on[b.key]=true);
+const FR={5:'каждый день',4:'каждую неделю',3:'пару раз в месяц',2:'раз в квартал',1:'реже раза в квартал'};
+const LVW={0:'ещё не начинал',1:'по образцу',2:'самостоятельно',3:'по ситуации',4:'для других'};
+
+/* приоритет: частота задач × размер пробела; закрытые уходят в конец */
+const prio=n=>(n.req-n.got>0?1:0)*100+n.freq*10+(n.req-n.got);
+function build(){
+  const r=DATA.roles[role];
+  nodes=[];
+  BR.forEach(b=>{
+    const list=(b.key==='ai'?r.ai:DATA.extra[b.key]).map(n=>({...n,branch:b.key}));
+    list.sort((a,c)=>prio(c)-prio(a)||c.freq-a.freq);
+    list.forEach((n,i)=>{n.order=i;n.id=b.key+i;nodes.push(n);});
+  });
+  /* замок: узел открыт, если предыдущий в ветке закрыт или у самого уже есть уровень */
+  BR.forEach(b=>{const list=nodes.filter(n=>n.branch===b.key);
+    list.forEach((n,i)=>{const prev=list[i-1];
+      n.locked=opts.locks&&i>0&&n.got===0&&!(prev.got>=prev.req);
+      n.prev=prev?prev.name:null;});});
+}
+/* ---------- геометрия: сектор на направление, внутри — дуга по часовой с равным шагом ---------- */
+const CX=600,CY=560,HUBR=122;
+function layout(){
+  const vis=BR.filter(b=>on[b.key]), k=vis.length, sector=2*Math.PI/k;
+  vis.forEach((b,bi)=>{
+    const A=-Math.PI/2+sector*(bi+.5);                      /* ось направления */
+    b.hx=CX+Math.cos(A)*HUBR; b.hy=CY+Math.sin(A)*HUBR; b.a0=A;
+    const list=nodes.filter(n=>n.branch===b.key&&(!opts.gaps||n.req>n.got)), n=list.length;
+    const R0=215, R1=458, dr=n>1?(R1-R0)/(n-1):0, SEP=66;
+    const off=[0]; for(let i=1;i<n;i++) off.push(off[i-1]+SEP/(R0+i*dr));
+    let span=off[n-1]||0; const max=sector-.26;             /* не залезаем в соседний сектор */
+    const kk=span>max?max/span:1; span*=kk;
+    list.forEach((nd,i)=>{const a=A-span/2+off[i]*kk, rr=R0+dr*i;
+      nd.x=CX+Math.cos(a)*rr; nd.y=CY+Math.sin(a)*rr; nd.a=a;});
+    b.list=list;
+  });
+}
+/* ---------- подписи: ставим по радиусу наружу и отодвигаем, пока не пересекаемся ---------- */
+let boxes=[];
+function labelAt(n){
+  const dx=Math.cos(n.a),dy=Math.sin(n.a),an=dx>.35?'start':dx<-.35?'end':'middle';
+  const txt=n.short||n.name, w=txt.length*6.6+6, h=n.locked?16:30;
+  for(let step=0;step<7;step++){
+    const sh=32+step*15, lx=n.x+dx*sh, ly=n.y+dy*sh+(Math.abs(dx)>.35?4:(dy>0?15:-13));
+    const x0=an==='start'?lx-4:an==='end'?lx-w+4:lx-w/2, y0=ly-12;
+    const box={x0,y0,x1:x0+w,y1:y0+h};
+    const hitNode=nodes.some(o=>o.x!=null&&o!==n&&Math.abs(o.x-(box.x0+box.x1)/2)<w/2+22&&Math.abs(o.y-(box.y0+box.y1)/2)<h/2+22);
+    const hitBox=boxes.some(o=>box.x0<o.x1&&box.x1>o.x0&&box.y0<o.y1&&box.y1>o.y0);
+    if((!hitNode&&!hitBox)||step===6){
+      boxes.push(box);
+      return `<text class="nlabel" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${an}">${txt}</text>`+
+        (n.locked?'':`<text class="nsub" x="${lx.toFixed(1)}" y="${(ly+14).toFixed(1)}" text-anchor="${an}">${n.got} из ${n.req}</text>`);
+    }
+  }
+}
+/* ---------- отрисовка ---------- */
+const svg=document.getElementById('svg');
+function ring(n,col){ /* сегментов столько, сколько требует должность; залитые — сколько есть */
+  const R=25,g=6,segs=Math.max(n.req,1),per=360/segs;let s='';
+  for(let k=0;k<segs;k++){const a1=-90+k*per+g/2,a2=-90+(k+1)*per-g/2;
+    const p=(a,r)=>[n.x+Math.cos(a*Math.PI/180)*r,n.y+Math.sin(a*Math.PI/180)*r];
+    const [x1,y1]=p(a1,R),[x2,y2]=p(a2,R),big=per-g>180?1:0;
+    const done=k<Math.min(n.got,segs);
+    s+=`<path d="M${x1.toFixed(1)},${y1.toFixed(1)}A${R},${R} 0 ${big} 1 ${x2.toFixed(1)},${y2.toFixed(1)}" fill="none" stroke="${done?col:'#DAD7D2'}" stroke-width="${done?4.5:3}" stroke-linecap="round"/>`;}
+  if(n.got>n.req){const R2=31;const p=(a,r)=>[n.x+Math.cos(a*Math.PI/180)*r,n.y+Math.sin(a*Math.PI/180)*r];
+    const [x1,y1]=p(-90,R2),[x2,y2]=p(-90+((n.got-n.req)/n.got)*360,R2);
+    s+=`<path d="M${x1.toFixed(1)},${y1.toFixed(1)}A${R2},${R2} 0 0 1 ${x2.toFixed(1)},${y2.toFixed(1)}" fill="none" stroke="${col}" stroke-opacity=".4" stroke-width="2"/>`;}
+  return s;
+}
+function draw(){
+  boxes=[];
+  layout();
+  let links='',hubs='',ns='';
+  BR.filter(b=>on[b.key]).forEach(b=>{
+    const col=b.color, pts=[[b.hx,b.hy],...b.list.map(n=>[n.x,n.y])];
+    for(let i=1;i<pts.length;i++){const [x1,y1]=pts[i-1],[x2,y2]=pts[i],n=b.list[i-1];
+      const mx=(x1+x2)/2+(y2-y1)*.18,my=(y1+y2)/2-(x2-x1)*.18;
+      links+=`<path d="M${x1.toFixed(1)},${y1.toFixed(1)}Q${mx.toFixed(1)},${my.toFixed(1)} ${x2.toFixed(1)},${y2.toFixed(1)}" fill="none" stroke="${col}" stroke-opacity="${n.locked?.28:.65}" stroke-width="${n.locked?1.6:2.4}" ${n.locked?'stroke-dasharray="5 6"':''} stroke-linecap="round"/>`;}
+    links+=`<path d="M${CX},${CY}L${b.hx.toFixed(1)},${b.hy.toFixed(1)}" stroke="${col}" stroke-opacity=".5" stroke-width="2.6"/>`;
+    const closed=b.list.filter(n=>n.got>=n.req).length;
+    hubs+=`<g class="node" data-b="${b.key}"><circle cx="${b.hx.toFixed(1)}" cy="${b.hy.toFixed(1)}" r="40" fill="#fff" stroke="${col}" stroke-width="2.5"/>
+      <g transform="translate(${b.hx.toFixed(1)},${b.hy.toFixed(1)})">${svgIcon(b.icon,30,col)}</g>
+      <text class="nlabel" x="${b.hx.toFixed(1)}" y="${(b.hy+56).toFixed(1)}" text-anchor="middle" font-size="13">${b.name}</text>
+      <text class="nsub" x="${b.hx.toFixed(1)}" y="${(b.hy+71).toFixed(1)}" text-anchor="middle">${closed} из ${b.list.length}</text></g>`;
+    b.list.forEach(n=>{
+      const col2=n.locked?'#B9B6B0':col, done=n.got>=n.req;
+      ns+=`<g class="node" data-id="${n.id}" role="button" aria-label="${n.name}">
+        ${n.locked?'':`<circle cx="${n.x.toFixed(1)}" cy="${n.y.toFixed(1)}" r="30" fill="${col}" opacity="${done?.10:.06}"/>`}
+        <circle cx="${n.x.toFixed(1)}" cy="${n.y.toFixed(1)}" r="20" fill="#fff" stroke="${n.locked?'#E2DFDA':'#fff'}" stroke-width="1.5"/>
+        ${ring(n,col2)}
+        <g transform="translate(${n.x.toFixed(1)},${n.y.toFixed(1)})">${svgIcon(n.locked?'lock':n.icon,20,col2)}</g>
+        ${done?`<circle cx="${(n.x+19).toFixed(1)}" cy="${(n.y-19).toFixed(1)}" r="8" fill="${col}"/><path d="M${(n.x+15.5).toFixed(1)},${(n.y-19).toFixed(1)}l2.4,2.4 4-4.4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`:''}
+        ${opts.labels?labelAt(n):''}
+        <circle class="hit" cx="${n.x.toFixed(1)}" cy="${n.y.toFixed(1)}" r="34"/></g>`;});
+  });
+  const me=`<g><circle cx="${CX}" cy="${CY}" r="54" fill="#fff" stroke="#E8E5E0" stroke-width="2"/><circle cx="${CX}" cy="${CY}" r="46" fill="#FFF7E8" stroke="#F0B429" stroke-width="2"/>
+    <g transform="translate(${CX},${CY})">${svgIcon('user',36,'#C98500')}</g></g>`;
+  svg.innerHTML=links+me+hubs+ns;
+  side();
+}
+/* ---------- правая колонка ---------- */
+function side(){
+  const vis=nodes.filter(n=>on[n.branch]), need=vis.reduce((s,n)=>s+n.req,0), got=vis.reduce((s,n)=>s+Math.min(n.got,n.req),0);
+  const closed=vis.filter(n=>n.got>=n.req).length;
+  document.getElementById('prog').innerHTML=`<div style="display:flex;justify-content:space-between;font-size:14px"><span>Закрыто компетенций</span><b>${closed} из ${vis.length}</b></div>
+    <div class="pbar"><i style="width:${Math.round(got/Math.max(need,1)*100)}%"></i></div>
+    <div style="font-size:12.5px;color:var(--mu)">По уровням: ${got} из ${need}</div>`;
+  const open=vis.filter(n=>!n.locked&&n.req>n.got).sort((a,b)=>prio(b)-prio(a)).slice(0,3);
+  document.getElementById('first').innerHTML=open.map(n=>{const b=BR.find(x=>x.key===n.branch);
+    return `<div class="first" data-id="${n.id}"><span class="ic" style="background:${b.color}14"><svg width="18" height="18" viewBox="0 0 24 24">${svgIcon(n.icon,18,b.color).replace('translate(-9,-9)','translate(3,3)')}</svg></span>
+    <span><b>${n.name}</b><span>${FR[n.freq]} · не хватает ${n.req-n.got} ${n.req-n.got===1?'уровня':'уровней'}</span></span></div>`;}).join('')
+    ||'<div style="font-size:13px;color:var(--mu)">Всё, что открыто, уже закрыто. Дальше — снять замки следующего круга.</div>';
+  document.getElementById('leg').innerHTML=`
+   <div><svg width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="9" fill="none" stroke="#DAD7D2" stroke-width="3"/><path d="M13 4a9 9 0 018.5 6" fill="none" stroke="#2A7BE4" stroke-width="4" stroke-linecap="round"/></svg>Сегментов столько, сколько уровней нужно должности; залитые — сколько есть</div>
+   <div><svg width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="9" fill="none" stroke="#2A7BE4" stroke-width="4"/></svg>Кольцо сомкнулось — требование закрыто</div>
+   <div><svg width="26" height="26" viewBox="0 0 26 26"><g transform="translate(13,13)">${svgIcon('lock',16,'#B9B6B0')}</g></svg>Замок — откроется, когда закроешь предыдущую</div>
+   <div><span style="width:26px;text-align:center">↻</span>По часовой от значка направления — порядок освоения</div>`;
+}
+/* ---------- карточка узла ---------- */
+function card(n){
+  const b=BR.find(x=>x.key===n.branch),segs=Math.max(n.req,1);
+  document.getElementById('panel').innerHTML=`<div class="panel-bg" data-close="1"></div><aside class="panel" role="dialog" aria-label="${n.name}">
+   <button class="close" data-close="1" aria-label="Закрыть">×</button>
+   <div style="display:flex;gap:12px;align-items:center"><span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:${b.color}14">
+     <svg width="24" height="24" viewBox="0 0 24 24"><g transform="translate(12,12)">${svgIcon(n.icon,22,b.color)}</g></svg></span>
+     <div><b style="font-size:18px">${n.name}</b><div style="font-size:13px;color:var(--mu)">${b.name}${n.branch==='ai'?'':' · <span class="ex">пример</span>'}</div></div></div>
+   <p style="font-size:14px">${n.what||''}</p>
+   <div class="segs">${Array.from({length:segs},(_,k)=>`<i style="${k<Math.min(n.got,segs)?'background:'+b.color+';border-color:'+b.color:''}"></i>`).join('')}</div>
+   <div style="font-size:13px;color:var(--mu)">Нужно: ${LVW[n.req]} · сейчас: ${LVW[n.got]} · ${FR[n.freq]}</div>
+   ${n.locked?`<p style="font-size:14px;margin-top:14px">Откроется после компетенции «${n.prev}».</p>`
+     :n.got>=n.req?`<p style="font-size:14px;margin-top:14px">Требование должности закрыто. Дальше — следующий узел по часовой стрелке.</p>`
+     :`<p style="font-size:14px;margin-top:14px">Не хватает ${n.req-n.got} ${n.req-n.got===1?'уровня':'уровней'}. В продукте отсюда открывается урок.</p><p><button class="btn pri">Открыть урок</button></p>`}
+   </aside>`;
+}
+/* ---------- события ---------- */
+document.addEventListener('click',e=>{
+  if(e.target.closest('[data-close]')){document.getElementById('panel').innerHTML='';return;}
+  const f=e.target.closest('.first'); const g=e.target.closest('.node');
+  const id=f?f.dataset.id:(g?g.dataset.id:null);
+  if(id){const n=nodes.find(x=>x.id===id);if(n)card(n);return;}
+  if(g&&g.dataset.b){const b=BR.find(x=>x.key===g.dataset.b);
+    document.getElementById('panel').innerHTML=`<div class="panel-bg" data-close="1"></div><aside class="panel"><button class="close" data-close="1">×</button>
+      <b style="font-size:18px">${b.name}</b><p style="font-size:14px">${b.about}</p>
+      ${b.list.map(n=>`<div class="first" data-id="${n.id}"><span class="ic" style="background:${b.color}14"></span><span><b>${n.name}</b><span>${n.locked?'под замком':n.got+' из '+n.req+' · '+FR[n.freq]}</span></span></div>`).join('')}</aside>`;}
+});
+const tip=document.getElementById('tip');
+document.addEventListener('pointermove',e=>{
+  const g=e.target.closest?e.target.closest('.node'):null;
+  if(!g){tip.classList.remove('on');return;}
+  const n=g.dataset.id?nodes.find(x=>x.id===g.dataset.id):null, b=g.dataset.b?BR.find(x=>x.key===g.dataset.b):null;
+  if(!n&&!b){tip.classList.remove('on');return;}
+  tip.innerHTML=n?`<b>${n.name}</b><i>${n.locked?'под замком · '+FR[n.freq]:n.got+' из '+n.req+' уровней · '+FR[n.freq]}</i>`
+                 :`<b>${b.name}</b><i>${b.list.filter(x=>x.got>=x.req).length} из ${b.list.length} закрыто</i>`;
+  tip.classList.add('on');
+  const w=tip.offsetWidth,h=tip.offsetHeight;
+  tip.style.left=Math.min(innerWidth-w-8,Math.max(8,e.clientX-w/2))+'px';
+  tip.style.top=(e.clientY-h-14<8?e.clientY+18:e.clientY-h-14)+'px';
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('panel').innerHTML='';});
+const sel=document.getElementById('role');
+sel.innerHTML=ROLES.map(r=>`<option>${r}</option>`).join('');
+sel.onchange=()=>{role=sel.value;build();draw();};
+document.getElementById('branches').innerHTML=BR.map(b=>`<button data-k="${b.key}" class="on" style="color:${b.color}">${b.name}</button>`).join('');
+document.getElementById('branches').onclick=e=>{const b=e.target.closest('button');if(!b)return;
+  on[b.dataset.k]=!on[b.dataset.k];b.classList.toggle('on',on[b.dataset.k]);b.style.opacity=on[b.dataset.k]?1:.45;draw();};
+['locks','gaps','labels'].forEach(k=>document.getElementById(k).onchange=e=>{opts[k]=e.target.checked;build();draw();});
+build();draw();
+</script>
+</body>
+</html>
