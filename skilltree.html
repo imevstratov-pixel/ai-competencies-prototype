@@ -38,6 +38,15 @@ svg.tree{display:block;width:100%;height:auto;overflow:visible}
 .node{cursor:pointer}.node .hit{fill:transparent}
 .node .halo{transition:opacity var(--sp-mod) var(--ease)}
 .node.hl .halo{opacity:.2}
+.node.lk .body{opacity:.45}
+.node.cur .nlabel{font-weight:800}
+.lkg{opacity:.65;font-size:12px}
+.tbl tr.rw.lk td{background:#FCFCFC}
+.tbl tr.rw.lk .nm b,.tbl tr.rw.lk .lvt{opacity:.62}
+.tbl tr.rw.cur td{background:color-mix(in srgb,var(--bc) 8%,#fff)}
+.tbl tr.rw.cur td:first-child{box-shadow:inset 3px 0 0 var(--bc)}
+.chip.now{background:var(--bc);color:#fff;margin-left:6px;vertical-align:1px}
+.lockline{font-size:13px;color:var(--ink);background:var(--muted);border-radius:var(--r-sm);padding:9px 11px;margin:14px 0 0;line-height:1.45}
 .nlabel{font-size:11.5px;fill:var(--fg);font-weight:600;paint-order:stroke;stroke:#fff;stroke-width:3.4px}
 .node.hl .nlabel{font-weight:800}
 .nsub{font-size:11px;fill:var(--ink);font-weight:500;paint-order:stroke;stroke:#fff;stroke-width:3.4px}
@@ -227,6 +236,7 @@ select:focus-visible{outline:none;border-color:var(--fg);box-shadow:0 0 0 3px rg
       <h2>Настройки</h2>
       <label for="role">Смотреть требования для:</label><select id="role"></select>
       <label>Направления</label><div class="bch" id="branches"></div>
+      <div class="row"><label for="locks">Замки: следующая после предыдущей</label><input type="checkbox" id="locks" checked role="switch"></div>
       <div class="row"><label for="gaps">Только то, что не закрыто</label><input type="checkbox" id="gaps" role="switch"></div>
       <div class="row" id="labelrow"><label for="labels">Подписи на карте</label><input type="checkbox" id="labels" checked role="switch"></div>
       <p class="note"><span class="ex">пример</span> Направление «ИИ» — на данных модели компетенций. Ремесло, люди и процесс придуманы для этого концепта и в модель не входят.</p>
@@ -283,7 +293,8 @@ const checkIcon=(c,s)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill
 /* ---------- состояние и словари ---------- */
 const BR=DATA.branches, ROLES=Object.keys(DATA.roles), OWN=DATA.own;
 let role=OWN, nodes=[], on={}, picked=null, sortKey='prio', sortDir=1, foldOpen=false, hoverId=null;
-let opts={gaps:false,labels:true,view:(innerWidth<760?'list':'both')};
+let opts={gaps:false,labels:true,locks:true,view:(innerWidth<760?'list':'both')};
+let cur=null;   /* компетенция, которую человек закрывает сейчас */
 BR.forEach(b=>on[b.key]=true);
 const FR={5:'каждый день',4:'каждую неделю',3:'пару раз в месяц',2:'раз в квартал',1:'реже раза в квартал'};
 const LVW={0:'ещё не начинал',1:'по образцу',2:'самостоятельно',3:'по ситуации',4:'для других'};
@@ -298,14 +309,30 @@ const gap=n=>Math.max(0,n.req-n.got);
 const prio=n=>gap(n)*n.freq;
 const byPrio=(a,b)=>(prio(a)?1:0)-(prio(b)?1:0)||prio(b)-prio(a)||b.freq-a.freq||gap(b)-gap(a)||a.name.localeCompare(b.name,'ru');
 
+const ORDER={};   /* порядок внутри ветки считаем один раз на должность: пока человек закрывает уровни,
+                     очередь не должна пересобираться под ним — иначе начатая компетенция уезжает под замок */
 function build(){
   nodes=[];
   BR.forEach(b=>{
     const list=(b.key==='ai'?DATA.roles[role].ai:DATA.extra[b.key]).map(n=>Object.assign({},n,{branch:b.key}));
-    list.sort(byPrio);
+    const key=role+'|'+b.key;
+    if(ORDER[key]){const ix=ORDER[key]; list.sort((x,y)=>ix.indexOf(x.name)-ix.indexOf(y.name));}
+    else {list.sort(byPrio); ORDER[key]=list.map(n=>n.name);}
     let step=0;
     list.forEach((n,i)=>{n.order=i;n.id=b.key+i;n.step=prio(n)?++step:null;nodes.push(n);});
+    /* замок: компетенция с номером N открывается, когда закрыта компетенция с номером N−1.
+       Закрытые не запираются никогда — человек мог принести уровень с прошлой работы. */
+    const num=list.filter(n=>n.step!==null);
+    num.forEach((n,i)=>{const prev=num[i-1];
+      n.after=prev?prev.name:null; n.afterId=prev?prev.id:null;
+      n.locked=!!(opts.locks&&prev);});
+    list.filter(n=>n.step===null).forEach(n=>{n.locked=false;n.after=null;n.afterId=null;});
   });
+  /* текущая держится за человеком, пока он её не закрыл */
+  const keep=cur&&nodes.find(n=>n.id===cur&&!n.locked&&gap(n)>0);
+  const open=nodes.filter(n=>!n.locked&&gap(n)>0).sort(byPrio);
+  cur=keep?keep.id:(open.length?open[0].id:null);
+  nodes.forEach(n=>n.cur=(n.id===cur));
 }
 
 /* ---------- геометрия: сектор на направление, внутри — дуга от значка наружу ---------- */
@@ -354,8 +381,16 @@ function badges(n,c){
       : `<circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="8" fill="${c}"/>${tick(bx,by,'#fff')}`;
   }
   if(n.step!==null){const bx=n.x-21, by=n.y+21;
-    s+=`<circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="9" fill="${c}"/>`+
+    s+=`<circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="9" fill="${n.locked?'#A1A1AA':c}"/>`+
        `<text x="${bx.toFixed(1)}" y="${by.toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#fff">${n.step}</text>`;}
+  if(n.locked){const bx=n.x+21, by=n.y+21;
+    s+=`<circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="9" fill="#fff" stroke="#A1A1AA" stroke-width="1.4"/>`+
+       `<g transform="translate(${(bx-5).toFixed(1)},${(by-5).toFixed(1)}) scale(.42)" stroke="#52525B" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round">`+
+       `<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8.5 10V7.5a3.5 3.5 0 017 0V10"/></g>`;}
+  if(n.cur){
+    s+=`<circle cx="${n.x.toFixed(1)}" cy="${n.y.toFixed(1)}" r="35" fill="none" stroke="${c}" stroke-width="2"/>`+
+       `<g transform="translate(${n.x.toFixed(1)},${(n.y-46).toFixed(1)})"><rect x="-31" y="-10" width="62" height="20" rx="10" fill="${c}"/>`+
+       `<text x="0" y="0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#fff">сейчас</text></g>`;}
   return s;
 }
 
@@ -401,7 +436,7 @@ function draw(){
     let px=b.hx, py=b.hy;
     b.list.forEach(n=>{
       const mx=(px+n.x)/2+(n.y-py)*.18, my=(py+n.y)/2-(n.x-px)*.18;
-      links+=`<path d="M${px.toFixed(1)} ${py.toFixed(1)}Q${mx.toFixed(1)} ${my.toFixed(1)} ${n.x.toFixed(1)} ${n.y.toFixed(1)}" stroke="${c}" stroke-opacity=".55" stroke-width="2.2" fill="none"/>`;
+      links+=`<path d="M${px.toFixed(1)} ${py.toFixed(1)}Q${mx.toFixed(1)} ${my.toFixed(1)} ${n.x.toFixed(1)} ${n.y.toFixed(1)}" stroke="${c}" stroke-opacity="${n.locked?.3:.55}" stroke-width="2.2" fill="none"${n.locked?' stroke-dasharray="5 5"':''}/>`;
       px=n.x; py=n.y;});
     const closed=b.list.filter(n=>gap(n)===0).length;
     hubs+=`<g class="node" data-b="${b.key}"><circle cx="${b.hx.toFixed(1)}" cy="${b.hy.toFixed(1)}" r="40" fill="#fff" stroke="${c}" stroke-width="2.5"/>`+
@@ -411,11 +446,12 @@ function draw(){
       `<circle class="hit" cx="${b.hx.toFixed(1)}" cy="${b.hy.toFixed(1)}" r="42"/></g>`;
     boxes.push({x0:b.hx-62,x1:b.hx+62,y0:b.hy+44,y1:b.hy+78});   /* подпись направления — тоже занятое место */
     b.list.forEach(n=>{
-      ns+=`<g class="node" data-id="${n.id}">`+
-        `<circle class="halo" cx="${n.x.toFixed(1)}" cy="${n.y.toFixed(1)}" r="33" fill="${c}" opacity="${gap(n)===0?.10:.06}"/>`+
-        `<circle cx="${n.x.toFixed(1)}" cy="${n.y.toFixed(1)}" r="20" fill="#fff"/>`+
-        ring(n,c)+`<g transform="translate(${n.x.toFixed(1)},${n.y.toFixed(1)})">${svgIcon(n.icon,20,c)}</g>`+badges(n,c)+
+      ns+=`<g class="node${n.locked?' lk':''}${n.cur?' cur':''}" data-id="${n.id}">`+
+        `<circle class="halo" cx="${n.x.toFixed(1)}" cy="${n.y.toFixed(1)}" r="${n.cur?38:33}" fill="${c}" opacity="${n.cur?.16:(gap(n)===0?.10:.06)}"/>`+
+        `<g class="body"><circle cx="${n.x.toFixed(1)}" cy="${n.y.toFixed(1)}" r="20" fill="#fff"/>`+
+        ring(n,c)+`<g transform="translate(${n.x.toFixed(1)},${n.y.toFixed(1)})">${svgIcon(n.icon,20,c)}</g></g>`+badges(n,c)+
         `<circle class="hit" cx="${n.x.toFixed(1)}" cy="${n.y.toFixed(1)}" r="38"/></g>`;
+      if(n.cur) boxes.push({x0:n.x-34,x1:n.x+34,y0:n.y-60,y1:n.y-32});   /* метка «сейчас» — занятое место */
       if(opts.labels) labels+=labelAt(n,c);});
   });
   const center=`<g><circle cx="${CX}" cy="${CY}" r="36" fill="#FFF7E6" stroke="#E0A000" stroke-width="2.5"/>`+
@@ -444,13 +480,13 @@ function listDraw(){
   const rows=nodes.filter(n=>vis.includes(n.branch)&&(!opts.gaps||gap(n)>0)).slice().sort((a,b)=>cmp(a,b)*sortDir);
   const open=rows.filter(n=>gap(n)>0), done=rows.filter(n=>gap(n)===0);
   const tr=n=>{const c=col(n.branch);
-    return `<tr class="rw" data-id="${n.id}" style="--bc:${c}">`+
-      `<td class="c-n${n.step!==null?' num':''}">${n.step!==null?n.step:checkIcon(c,14)}</td>`+
-      `<td><div class="nm">${htmlIcon(n.icon,18,c)}<span style="min-width:0"><b>${n.name}</b><i>${n.hint}</i></span></div></td>`+
+    return `<tr class="rw${n.locked?' lk':''}${n.cur?' cur':''}" data-id="${n.id}" style="--bc:${c}">`+
+      `<td class="c-n${n.step!==null?' num':''}">${n.step!==null?n.step:checkIcon(c,14)}${n.locked?' <span class="lkg" aria-label="под замком">🔒</span>':''}</td>`+
+      `<td><div class="nm">${htmlIcon(n.icon,18,c)}<span style="min-width:0"><b>${n.name}${n.cur?' <span class="chip now">сейчас</span>':''}</b><i>${n.locked?'откроется после: '+n.after:n.hint}</i></span></div></td>`+
       `<td><div class="lv">${cells(n,c)}<span class="lvt">${n.got} из 4 · ${LVW[n.got]}<small>${srcWord(n)}</small></span></div></td>`+
       `<td>${gapChip(n)}</td>`+
       `<td><span class="chip soft">${FR[n.freq]}</span></td>`+
-      `<td>${gap(n)>0?'<button class="act" aria-label="Открыть урок"><span class="ar-l">→</span><span class="mcap">Открыть урок</span></button>':'<span style="color:var(--mu)">—</span>'}</td></tr>`;};
+      `<td>${gap(n)>0?(n.locked?'<span class="lkg" title="откроется после предыдущей">🔒</span>':'<button class="act" aria-label="Открыть урок"><span class="ar-l">→</span><span class="mcap">Открыть урок</span></button>'):'<span style="color:var(--mu)">—</span>'}</td></tr>`;};
   const fold=done.length?`<tr><td colspan="6" class="fold" data-fold="1">${foldOpen?'▾':'▸'} Закрыто: ${done.length}</td></tr>`+(foldOpen?done.map(tr).join(''):''):'';
   document.querySelector('#tbl tbody').innerHTML=open.map(tr).join('')+fold;
   document.querySelectorAll('#tbl th[data-sort]').forEach(th=>{
@@ -472,7 +508,7 @@ function side(){
     `<div class="pline"><span>Добрать уровней</span><b>${need||'все требования закрыты'}</b></div>`+
     `<div class="pline"><span>Закрыто в частой работе</span><b>${oc} из ${often.length}</b></div>`+
     `<p class="note">Уровни — по оценке ${DATA.date}. Что отметили сами, помечено. <button class="lnk" data-what="closed">Что значит «закрыто»</button></p>`;
-  const top=list.slice().sort(byPrio).filter(n=>gap(n)>0)[0];
+  const top=list.slice().sort(byPrio).filter(n=>gap(n)>0&&!n.locked)[0];
   document.getElementById('focusbody').innerHTML=top
     ? `<div class="first" data-id="${top.id}"><span class="ic" style="background:${col(top.branch)}14">${htmlIcon(top.icon,18,col(top.branch))}</span>`+
       `<span><b>${top.name}</b><span>${FR[top.freq]} · не хватает ${gap(top)} ${plural(gap(top),'уровня','уровней')}</span></span></div>`+
@@ -485,7 +521,11 @@ function side(){
     `<div><svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="9" fill="#2A7BE4"/><text x="11" y="11" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#fff">1</text></svg>`+
       `<span>Номер — порядок изучения внутри направления: чаще в работе и больше разрыв — раньше. Закрытое стоит ближе к центру.</span></div>`+
     `<div><svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" fill="#2A7BE4"/><path d="M7.4 11l2.4 2.4 4.4-4.6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`+
-      `<span>Галочка — требование закрыто; пунктирная — уровень отметил сам, без подтверждения.</span></div>`;
+      `<span>Галочка — требование закрыто; пунктирная — уровень отметил сам, без подтверждения.</span></div>`+
+    `<div><svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="9" fill="#fff" stroke="#A1A1AA" stroke-width="1.4"/><g transform="translate(5.5,5.5) scale(.46)" stroke="#52525B" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8.5 10V7.5a3.5 3.5 0 017 0V10"/></g></svg>`+
+      `<span>Замок — компетенция откроется, когда закроете предыдущую по номеру. Имя и уровень видны и под замком.</span></div>`+
+    `<div><svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="9" fill="none" stroke="#2A7BE4" stroke-width="2"/><circle cx="11" cy="11" r="4" fill="#2A7BE4"/></svg>`+
+      `<span>Обводка и метка «сейчас» — то, что вы закрываете сейчас: самая частая из открытых с наибольшим разрывом.</span></div>`;
 }
 
 /* ---------- шторка ---------- */
@@ -509,15 +549,20 @@ function card(n){
     `<div><span class="k">Частота задач</span><b>${FR[n.freq]}</b></div></div>`;
   const src=n.src?`Оценка: ${SRC[n.src]}, ${n.date}`:'Оценки пока нет — уровень не подтверждён';
   const first=nodes.find(x=>x.branch===n.branch&&x.step===1);
-  const later=n.step>3&&first?`<p class="note">Рекомендуем позже: сначала «${first.name}» в этом направлении.</p>`:'';
-  const status=g>0?`Не хватает ${g} ${plural(g,'уровня','уровней')}. В продукте отсюда открывается урок.`
+  const later=!n.locked&&n.step>3&&first?`<p class="note">Рекомендуем позже: сначала «${first.name}» в этом направлении.</p>`:'';
+  const lock=n.locked?`<p class="lockline">🔒 Откроется после компетенции «${n.after}» — она идёт раньше по частоте и размеру разрыва.</p>`:'';
+  const status=n.locked?`Не хватает ${g} ${plural(g,'уровня','уровней')}. Пока закрыта: сначала идёт «${n.after}».`
+    :g>0?`Не хватает ${g} ${plural(g,'уровня','уровней')}. В продукте отсюда открывается урок.`
     :(n.src==='self'?`Требование должности закрыто. Уровень «${LVW[n.got]}» отметил сотрудник сам, ${n.date} — подтверждения пока нет.`
       :(n.src?`Требование должности закрыто. Уровень «${LVW[n.got]}» подтверждён — ${SRC[n.src]}, ${n.date}.`:'Требование должности закрыто.'));
   sheet(`<div class="phead">${htmlIcon(n.icon,26,c)}<span><b>${n.name}</b><em>${b.name}</em></span></div>`+
     `<p class="hint">${n.what}</p>`+scale+kv+
     `<p class="src">${src}${b.key==='ai'?'':' <span class="ex">пример</span>'}</p>`+
-    `<p class="status">${status}</p>`+later+
-    (g>0?`<p style="margin-top:16px;display:flex;gap:8px"><button class="btn pri">Открыть урок</button><button class="btn">Взять в трек</button></p>`:''));
+    `<p class="status">${status}</p>`+lock+later+
+    (g>0?(n.locked
+      ? `<p style="margin-top:16px;display:flex;gap:8px"><button class="btn" data-goto="${n.afterId}">Открыть «${n.after}»</button></p>`
+      : `<p style="margin-top:16px;display:flex;gap:8px"><button class="btn pri">Открыть урок</button><button class="btn">Взять в трек</button></p>`
+        + `<p class="note"><span class="ex">демо</span> <button class="lnk" data-pass="${n.id}">Закрыть один уровень и посмотреть, что откроется</button></p>`):''));
 }
 const branchSheet=b=>sheet(`<div class="phead">${htmlIcon(b.icon,26,b.color)}<span><b>${b.name}</b><em>${b.list.filter(n=>gap(n)===0).length} из ${b.list.length} закрыто</em></span></div>`+
   `<p class="hint">${b.about}</p>`+
@@ -546,6 +591,15 @@ document.addEventListener('click',e=>{
   if(e.target.closest('[data-close]')){document.getElementById('panel').innerHTML='';return;}
   if(e.target.closest('[data-what="closed"]')){
     sheet('<b style="font-size:17px">Что значит «закрыто»</b><p class="hint">Закрыто — требование должности выполнено, и уровень подтвердила оценка или руководитель. Если уровень отметил сотрудник сам, галочка пунктирная.</p>');return;}
+  const goto=e.target.closest('[data-goto]');
+  if(goto){const n=nodes.find(x=>x.id===goto.dataset.goto); if(n){pick(n.id);card(n);} return;}
+  const pass=e.target.closest('[data-pass]');
+  if(pass){const id=pass.dataset.pass, n=nodes.find(x=>x.id===id);
+    if(n){const src=n.branch==='ai'?DATA.roles[role].ai:DATA.extra[n.branch];
+      const raw=src.find(x=>x.name===n.name); if(raw&&raw.got<raw.req){raw.got++; if(!raw.src)raw.src='assess'; if(!raw.date)raw.date=DATA.date;}
+      build();draw();
+      const again=nodes.find(x=>x.name===n.name); if(again){pick(again.id);card(again);}}
+    return;}
   if(e.target.closest('[data-golist]')){setView('list');document.getElementById('listcard').scrollIntoView({block:'start',behavior:'smooth'});return;}
   if(e.target.closest('[data-fold]')){foldOpen=!foldOpen;listDraw();return;}
   const th=e.target.closest('#tbl th[data-sort]');
@@ -563,7 +617,7 @@ document.addEventListener('pointermove',e=>{
   if(!t){tip.classList.remove('on');return;}
   const n=id?nodes.find(x=>x.id===id):null, b=t.dataset&&t.dataset.b?BR.find(x=>x.key===t.dataset.b):null;
   if(!n&&!b){tip.classList.remove('on');return;}
-  tip.innerHTML=n?`<b>${n.name}</b><i>${n.hint}</i><u>${n.got} из 4 · ${LVW[n.got]} · нужно: ${LVW[n.req]} · ${FR[n.freq]}</u>`
+  tip.innerHTML=n?`<b>${n.name}</b><i>${n.locked?'под замком: сначала «'+n.after+'»':n.hint}</i><u>${n.got} из 4 · ${LVW[n.got]} · нужно: ${LVW[n.req]} · ${FR[n.freq]}</u>`
                  :`<b>${b.name}</b><u>${b.list.filter(x=>gap(x)===0).length} из ${b.list.length} закрыто</u>`;
   tip.classList.add('on');
   const w=tip.offsetWidth,h=tip.offsetHeight;
@@ -575,11 +629,12 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementB
 /* ---------- настройки ---------- */
 const sel=document.getElementById('role');
 sel.innerHTML=ROLES.map(r=>`<option value="${r}">${r}${r===OWN?' — моя должность':''}</option>`).join('');
-sel.onchange=()=>{role=sel.value;picked=null;build();draw();};
+sel.onchange=()=>{role=sel.value;picked=null;cur=null;build();draw();};
 document.getElementById('branches').innerHTML=BR.map(b=>`<button data-k="${b.key}" class="on" style="color:${b.color}">${b.name}</button>`).join('');
 document.getElementById('branches').onclick=e=>{const b=e.target.closest('button');if(!b)return;
   on[b.dataset.k]=!on[b.dataset.k];b.classList.toggle('on',on[b.dataset.k]);b.style.opacity=on[b.dataset.k]?1:.45;draw();};
 ['gaps','labels'].forEach(k=>document.getElementById(k).onchange=e=>{opts[k]=e.target.checked;draw();});
+document.getElementById('locks').onchange=e=>{opts.locks=e.target.checked;build();draw();};
 document.getElementById('view').onclick=e=>{const b=e.target.closest('button');if(b)setView(b.dataset.view);};
 build();draw();setView(opts.view);
 </script>
