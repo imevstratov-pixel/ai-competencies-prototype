@@ -956,7 +956,8 @@ PAGES.fb=()=>{
   return `${crumbs(['Сводка фидбека'])}<h1>Сводка фидбека</h1>
   <p class="lead muted">Что сказали тимлиды про модель: покрытие, расхождения по уровням и частоте, комментарии. Источник — ${FBSUM.rows?'общая таблица':'этот браузер'}.</p>
   <div class="tbar"><button class="btn sec" data-fbload="1">${FB.hasEndpoint?'Обновить из таблицы':'Таблица не подключена'}</button>
-   <button class="btn sec" data-fbdl="1">Скачать CSV</button></div>
+   <button class="btn sec" data-fbping="1">Проверить связь</button>
+   <button class="btn sec" data-fbdl="1">Скачать CSV</button></div><p class="muted small" id="fbping"></p>
   <h2>Кто ответил</h2>
   <table class="fbt"><thead><tr><th>Тимлид</th><th>Отвечает за</th><th class="num">Ответов</th><th class="num">Навыков</th><th>Последний ответ</th></tr></thead><tbody>
   ${leads.map(l=>{const r=byLead[l.name]||byLead[l.slug]||[];
@@ -977,6 +978,13 @@ PAGES.fb=()=>{
 PAGES.fb.after=()=>{const app=$('#app');if(!app)return;
   app.onclick=e=>{
     if(e.target.closest('[data-fbdl]')){FB.download();return;}
+    if(e.target.closest('[data-fbping]')){
+      const out=$('#fbping');
+      if(!FB.hasEndpoint){out.textContent='Адрес таблицы не указан: data/site.json → feedback.endpoint.';return;}
+      out.textContent='Проверяем…';
+      FB.remote().then(rows=>{out.textContent=rows?`Связь есть: в таблице ${rows.length} ${plural(rows.length,['строка','строки','строк'])}.`
+        :'Адрес указан, но таблица не ответила. Проверьте, что развёртывание доступно всем и адрес заканчивается на /exec.';});
+      return;}
     if(e.target.closest('[data-fbload]')){FB.remote().then(rows=>{if(rows){FBSUM.rows=rows;render('#/fb');}else alert('Таблица не подключена или недоступна — показываем ответы этого браузера.');});return;}
     const l=e.target.closest('[data-fblead]');if(l){FBSUM.lead=l.dataset.fblead;render('#/fb');}
   };};
