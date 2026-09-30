@@ -189,12 +189,12 @@ details[open]>summary{margin-bottom:6px}
 .card.pick .seg{margin-top:8px}
 
 /* адаптив */
-@media(max-width:960px){
+@media screen and (max-width:960px){
  .grid4{grid-template-columns:repeat(2,minmax(0,1fr))}
  .facts{grid-template-columns:repeat(2,auto)}
  .diag{grid-template-columns:1fr}.diag .side{position:static}
 }
-@media(max-width:760px){
+@media screen and (max-width:760px){
  :root{--hdr-h:0px}
  h1{font-size:28px}h2{font-size:22px}h3{font-size:18px}.lead{font-size:17px}
  #hdr{position:static;padding-bottom:12px}
@@ -223,7 +223,7 @@ details[open]>summary{margin-bottom:6px}
  .unit{flex-wrap:wrap}
  .side .row{gap:6px}
 }
-@media(max-width:420px){.grid4{grid-template-columns:1fr}}
+@media screen and (max-width:420px){.grid4{grid-template-columns:1fr}}
 
 @media (prefers-reduced-motion:reduce){
  *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}
@@ -234,21 +234,31 @@ details[open]>summary{margin-bottom:6px}
 .nox .fbc .tln>b,.nox .fbc .tln>.muted{padding-left:0}
 #ftr:empty{display:none}
 /* экран руководителя на телефоне: подпись над столбиком, график на всю ширину */
-@media (max-width:600px){
+@media screen and (max-width:600px){
  .fbt{min-width:0}.fbr{grid-template-columns:1fr;row-gap:4px}.fbh>div:first-child{display:none}
  .fbc .tln>b,.fbc .tln>.muted,.fbr:not(.fbc) .tln{padding-left:0}
  .tbar .seg{max-width:100%;overflow-x:auto;scrollbar-width:none}.tbar .seg button{flex:none}
 }
 
-/* уровни компетенции: карточка уровня и под ней связанные навыки */
-.lvgrid{display:grid;gap:16px;grid-template-columns:repeat(4,minmax(0,1fr));align-items:start}
+/* уровни компетенции: строки — линии оценки, столбцы — уровни; пунктир = «то же, что слева» */
+.lvmx{display:grid;grid-template-columns:136px repeat(var(--cols),minmax(0,1fr));gap:10px 12px;align-items:start}
 .lvhead{display:flex;gap:10px;align-items:center;background:#fff;border:1.5px solid var(--stroke);border-radius:var(--r);padding:12px 14px}
-.lvsub{list-style:none;margin:0 0 0 22px;padding:10px 0 0 14px;border-left:2px solid var(--stroke);display:grid;gap:8px}
-.lvsub li{position:relative;background:var(--bg);border-radius:var(--r-sm);padding:10px 12px;font-size:14px;line-height:1.4}
-.lvsub li::before{content:"";position:absolute;left:-16px;top:18px;width:14px;border-top:2px solid var(--stroke)}
-.lvsub li.anc{background:#fff4f4}
-@media(max-width:960px){.lvgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:600px){.lvgrid{grid-template-columns:1fr}}
+.lnlab{font-size:12.5px;font-weight:600;color:var(--mu);line-height:1.3;padding-top:10px}
+.lnlab.hd{padding:0}
+.lvcell{display:grid;gap:6px;align-content:start;min-height:22px}
+.lvitem{background:var(--bg);border-radius:var(--r-sm);padding:10px 12px;font-size:14px;line-height:1.4}
+.lvitem.anc{background:#fff4f4;border-left:3px solid var(--red)}
+.lvcell.carry{position:relative}
+.lvcell.carry::before{content:"";position:absolute;left:-14px;right:-14px;top:14px;border-top:2px dashed var(--stroke)}
+@media screen and (max-width:860px){
+ .lvmx{display:block}
+ .lnlab{padding:16px 0 6px;font-size:13px;color:var(--title);border-top:1px solid var(--stroke)}
+ .lnlab.hd,.lvmx .lvhead{display:none}
+ .lvcell{margin:0 0 6px}
+ .lvcell::before{content:"Уровень " attr(data-lv);display:block;font-size:11.5px;color:var(--mu);margin-bottom:2px}
+ .lvcell.carry::before{content:"Уровень " attr(data-lv) " — " attr(data-note);position:static;border:0;color:var(--mu);font-size:11.5px}
+ .lvcell.none{display:none}
+}
 /* выбор должности: грейды всегда внутри карточки */
 .card.pick{display:flex;flex-direction:column;gap:6px}.card.pick p{flex:1}
 .card.pick .seg{display:flex;width:100%;margin-top:6px}.card.pick .seg button{flex:1 1 0;min-width:0;padding:6px 4px}
@@ -267,7 +277,7 @@ details[open]>summary{margin-bottom:6px}
 .tmx td.met{background:var(--ok-bg);color:var(--ok);font-weight:600;text-align:center}.tmx td.open{background:#fff6e0;color:#6b4a00;text-align:center}
 .pcards{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.pcard ul{margin:4px 0 10px;padding-left:18px;font-size:14px}.pcard .pg{margin-top:8px}
 .pcard.done{background:var(--ok-bg);border-color:#bfe6b9}.okline{color:var(--ok);font-weight:600}
-@media(max-width:600px){.tsum{grid-template-columns:1fr}}
+@media screen and (max-width:600px){.tsum{grid-template-columns:1fr}}
 .pviz .fbt{min-width:0}
 .sleg i.cur,.dots i.cur{outline:none;border:2px solid var(--title)}.sleg span{margin-right:2px}
 
@@ -323,7 +333,7 @@ table.stack td,table.stack th{vertical-align:top;text-align:left;font-size:14px}
 .mpanel{position:fixed;top:0;right:0;bottom:0;width:min(400px,100%);background:#fff;z-index:51;padding:24px 22px;overflow:auto;box-shadow:-8px 0 30px rgba(0,0,0,.12)}
 .mpanel h3{font-size:22px;margin-right:30px}.mpanel h4{margin:16px 0 6px}
 .mclose{position:absolute;top:14px;right:14px;border:0;background:var(--bg);border-radius:50%;width:34px;height:34px;font-size:22px;cursor:pointer}
-@media(max-width:600px){
+@media screen and (max-width:600px){
  .mpanel{top:auto;height:85vh;width:100%;border-radius:16px 16px 0 0}
  .mrow{padding:0 6px}.mname{font-size:12.5px}.mcol{font-size:12px}.hb{width:20px;height:20px}
  .mx .mcov .mbar{display:none}
@@ -337,7 +347,7 @@ table.stack td,table.stack th{vertical-align:top;text-align:left;font-size:14px}
 .ftrack{display:flex;align-items:center;gap:4px}.ftrack i{width:14px;height:6px;border-radius:3px;background:var(--soft)}.ftrack i.on{background:#b8bfcc}.ftrack .hb{margin-left:8px}
 .fhead .ftrack{justify-content:space-between;font-size:11px;color:var(--mu);width:120px}.fhead em{font-style:normal;white-space:nowrap}
 /* матрица на телефоне: без горизонтальной прокрутки — подписи ролей вертикально, колонка охвата уходит в вид «Что учить вместе» */
-@media(max-width:600px){
+@media screen and (max-width:600px){
  .mx .mrow{grid-template-columns:minmax(96px,1fr) repeat(var(--n),minmax(30px,38px))!important;padding:0 6px}
  .mx .mcov,.mx .mhead>div:last-child{display:none}
  .mx .mcol{writing-mode:vertical-rl;transform:rotate(180deg);font-size:12px;max-height:120px;justify-self:center;padding:4px 0}
@@ -354,7 +364,7 @@ table.stack td,table.stack th{vertical-align:top;text-align:left;font-size:14px}
 .rqlvl{display:inline-flex;align-items:center;gap:8px;font-size:14px;white-space:nowrap}
 .rqdesc{padding-left:24px;margin-top:2px}
 .rqbody{padding:6px 0 2px 24px}.rqbody .rqlv{margin-top:10px}.rqbody ul{margin:4px 0 0;padding-left:18px;font-size:14px}.rqbody li{margin:3px 0}
-@media(max-width:600px){.rqhead{align-items:flex-start}.rqdesc,.rqbody{padding-left:0}}
+@media screen and (max-width:600px){.rqhead{align-items:flex-start}.rqdesc,.rqbody{padding-left:0}}
 .rqtog{margin-left:6px;white-space:nowrap}
 
 /* ---------- печать: вкладка «Матрица» в PDF ---------- */
@@ -376,7 +386,7 @@ table.stack td,table.stack th{vertical-align:top;text-align:left;font-size:14px}
  a{text-decoration:none;color:#1c1c1c}
 }
 .prnt{margin-left:auto}
-@media(max-width:600px){.prnt{margin-left:0}}
+@media screen and (max-width:600px){.prnt{margin-left:0}}
 /* оргструктура: готов только дизайн, остальные подразделения пока не кликаются */
 .orgd.off{opacity:.5}.orgd.off h2{color:var(--mu)}
 .orgrole.off{background:var(--bg);border-style:dashed;cursor:default}
@@ -385,15 +395,19 @@ table.stack td,table.stack th{vertical-align:top;text-align:left;font-size:14px}
 .pdfset .pgs{margin-top:40px;padding-top:24px;border-top:2px solid var(--soft)}
 @media print{
  .pdfset .pgs{break-before:page;page-break-before:always;margin:0;padding:0;border:0}
- .pdfset .lvgrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
- .pdfset .lvsub li{font-size:9.5px;line-height:1.3;padding:5px 7px}.pdfset .lvsub{gap:5px;padding-top:7px;margin-left:16px;padding-left:10px}
+ .pdfset .lvmx{grid-template-columns:96px repeat(var(--cols),minmax(0,1fr));gap:7px 9px}
+ .pdfset .lvitem{font-size:9px;line-height:1.3;padding:5px 6px}
+ .pdfset .lnlab{font-size:8.5px;padding-top:6px}
  .pdfset .lvhead{padding:6px 8px}.pdfset .lvhead .lv{width:20px;height:20px;font-size:11px}
- .pdfset .lvsub li::before{top:12px;left:-12px;width:10px}
+ .pdfset .lvhead b{font-size:11px}.pdfset .lvhead .small{font-size:8.5px}
+ .pdfset .lvcell.carry::before{left:-10px;right:-10px;top:10px}
+ .pdfset .lnl li{font-size:11px;line-height:1.45;margin-bottom:4px}
  .pdfset h2{font-size:13px;margin:10px 0 4px}
- .pdfset .lvcol{break-inside:avoid}.pdfset h1{font-size:19px}.pdfset .lead{font-size:12px}
+ .pdfset .lvmx{break-inside:avoid}.pdfset h1{font-size:19px}.pdfset .lead{font-size:12px}
  .pdfset p{font-size:11px}
 }
-.pdfset .pgs .lvsub li.anc{background:#fff4f4;border-left:3px solid #ED131C;border-radius:0 var(--r-sm) var(--r-sm) 0}
+.pdfset .pgs .lvitem.anc{background:#fff4f4;border-left:3px solid #ED131C}
+.lnl{margin:6px 0 0;padding-left:20px}.lnl li{margin-bottom:6px;line-height:1.5}
 .pdfnote{margin-top:10px}
 
 /* ---------- система движения и поверхностей (по Fluid Functionalism, MIT: fluidfunctionalism.com) ----------
@@ -436,7 +450,7 @@ a.card,.chip,.seg button,.opts button,.dtile,.mcell,.mname,.mcol{transition:back
 .mpanel-bg{animation:fade-in var(--sp-mod-in) var(--ease-mod) both}
 @keyframes sheet-in{from{transform:translateX(18px);opacity:0}to{transform:none;opacity:1}}
 @keyframes fade-in{from{opacity:0}to{opacity:1}}
-@media(max-width:600px){.mpanel{animation-name:sheet-up}@keyframes sheet-up{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}}
+@media screen and (max-width:600px){.mpanel{animation-name:sheet-up}@keyframes sheet-up{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}}
 /* раскрытие навыков и уровней — средний пресет */
 .rqbody,.lvsub li,.outc-i{animation:reveal var(--sp-mod-in) var(--ease-mod) both}
 @keyframes reveal{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
@@ -648,7 +662,12 @@ PAGES.divisions=()=>`${crumbs(['Оргструктура','#/org'],['Подра�
 PAGES.division=i=>{const d=M.divisions[+i];if(!d)return PAGES.notfound();
   return `${crumbs(['Оргструктура','#/org'],[d.name])}<h1>${d.name}</h1><p class="lead">${S.divisions[d.name]||''}</p><div class="grid">${d.roles.map(n=>{const ri=roleIdx(n),r=M.roles[ri];return `<a class="card" href="#/role/${ri}"><h3>${n}</h3><div class="muted small">${r.step?'ступень '+r.step+' · '+STEPS[r.step]:'Junior · Middle · Senior'}</div><p class="small">${r.oneliner||''}</p></a>`;}).join('')}</div>`;};
 
-PAGES.comps=()=>`${crumbs(['Компетенции'])}<h1>Компетенции</h1><p class="lead muted">Умения работы с ИИ: одно нужно всем, два — тем, кто ведёт встречи и людей, остальные — профильные.</p>${[1,2,3].map(l=>`<h2>${S.layers[l]}</h2><div class="grid">${M.competencies.filter(c=>c.layer===l).map(c=>`<a class="card" href="#/comp/${c.id}"><h3>${c.name}</h3><p class="small muted">${c.tagline}</p></a>`).join('')}</div>`).join('')}`;
+/* слой дизайнеров: компетенции, которые требуются хотя бы одной дизайнерской должности */
+const DESIGN_COMPS=(()=>{const s=new Set();M.roles.forEach(r=>{if(r.group!=='Дизайн')return;
+  Object.entries(r.requirements).forEach(([k,v])=>{const lv=typeof v==='object'?Math.max(0,...Object.values(v).map(x=>x||0)):(v||0);if(lv)s.add(+k);});});
+  return s;})();
+PAGES.comps=()=>{const list=M.competencies.filter(c=>DESIGN_COMPS.has(c.id));
+  return `${crumbs(['Компетенции'])}<h1>Компетенции</h1><p class="lead muted">Умения работы с ИИ у дизайнеров: одно нужно всем, остальные — профильные. Компетенции других подразделений готовим.</p>${[1,2,3].map(l=>{const g=list.filter(c=>c.layer===l);return g.length?`<h2>${S.layers[l]}</h2><div class="grid">${g.map(c=>`<a class="card" href="#/comp/${c.id}"><h3>${c.name}</h3><p class="small muted">${c.tagline}</p></a>`).join('')}</div>`:'';}).join('')}`;};
 
 const GORD=['junior','middle','senior'];
 function skillsHTML(r,g){const all=SKILLS[r.name];if(!all)return '';const now=all.filter(s=>GORD.indexOf(s.grade)<=GORD.indexOf(g||'middle')),later=all.filter(s=>!now.includes(s));
@@ -698,19 +717,23 @@ PAGES.role.after=(i,g,emp)=>{const box=$('#reqs');if(!box)return;const ri=+box.d
   box.onclick=e=>{const b=e.target.closest('[data-rq]');if(!b)return;const c=+b.dataset.rq;rqOpen[c]=!rqOpen[c];box.innerHTML=reqsHTML(ri,gg);};
   const st=$('#stk');if(st)st.onclick=e=>{if(!e.target.closest('[data-stk]'))return;stkOpen=!stkOpen;st.innerHTML=roleStackHTML(ri,gg);};};
 /* уровни компетенции с разбором на навыки — общий кусок для страницы компетенции и PDF */
-function levelsHTML(c,o={}){const lines=c.lines||[];
- const lv=n=>compAtoms(c.id).filter(a=>a.level===n);
- const firstLevel=name=>{const l=compAtoms(c.id).filter(a=>a.line===name).map(a=>a.level);return l.length?Math.min(...l):0;};
- const prevLevel=(name,n)=>{const l=compAtoms(c.id).filter(a=>a.line===name&&a.level<n).map(a=>a.level);return l.length?Math.max(...l):0;};
- return `<div class="lvgrid">${[1,2,3,4].filter(n=>c.levels[n]).map(n=>{const at=lv(n);
- const body=lines.length?lines.map(L=>{const own=at.filter(a=>a.line===L.name);
-   const back=prevLevel(L.name,n);
-   if(own.length) return `<li class="lnb"><b class="lnm">${L.name}${back?` <span class="lnadd">в дополнение к уровню ${back}</span>`:''}</b><ul class="lvsub">${own.map(a=>`<li${a.anchor?' class="anc"':''}>${a.text}${o.noBadges?'':`${a.anchor?' <span class="tag">для всех</span>':''}${a.task_type===5?' <span class="tag">результат</span>':''}`}</li>`).join('')}</ul></li>`;
-   const prev=back, first=firstLevel(L.name);
-   const note=prev?`как на уровне ${prev} — нового нет`:(first?'отдельно не проверяется: на первом уровне работа идёт по образцу':'');
-   return note?`<li class="lnb lnq"><b class="lnm">${L.name}</b><div class="lnnote">${note}</div></li>`:'';}).join('')
-  :at.map(a=>`<li>${a.text}</li>`).join('');
- return `<div class="lvcol"><div class="lvhead"><span class="lv">${n}</span><div><b>${M.levels[n]}</b><div class="muted small">${at.length} ${plural(at.length,['навык','навыка','навыков'])}</div></div></div><ul class="lnlist">${body}</ul></div>`;}).join('')}</div>`;}
+function levelsHTML(c,o={}){
+ const lines=c.lines||[], lvs=[1,2,3,4].filter(n=>c.levels[n]);
+ const at=(name,n)=>compAtoms(c.id).filter(a=>a.line===name&&a.level===n);
+ const item=a=>`<div class="lvitem${a.anchor?' anc':''}">${a.text}${o.noBadges?'':`${a.anchor?' <span class="tag">для всех</span>':''}${a.task_type===5?' <span class="tag">результат</span>':''}`}</div>`;
+ const head=`<div class="lnlab hd"></div>`+lvs.map(n=>`<div class="lvhead"><span class="lv">${n}</span><div><b>${M.levels[n]}</b><div class="muted small">${compAtoms(c.id).filter(a=>a.level===n).length} ${plural(compAtoms(c.id).filter(a=>a.level===n).length,['навык','навыка','навыков'])}</div></div></div>`).join('');
+ if(!lines.length) return `<div class="lvmx" style="--cols:${lvs.length}">${head}${lvs.map(n=>`<div class="lvcell">${compAtoms(c.id).filter(a=>a.level===n).map(item).join('')}</div>`).join('')}</div>`;
+ const rows=lines.map(L=>{
+  const all=compAtoms(c.id).filter(a=>a.line===L.name).map(a=>a.level), first=Math.min(...all);
+  return `<div class="lnlab" title="${esc(L.checks||'')}">${L.name}</div>`+lvs.map(n=>{
+   const own=at(L.name,n);
+   if(own.length) return `<div class="lvcell" data-lv="${n}">${own.map(item).join('')}</div>`;
+   if(n>first){const prev=Math.max(...all.filter(x=>x<n));
+    return `<div class="lvcell carry" data-lv="${n}" data-note="как на уровне ${prev}" title="как на уровне ${prev} — нового нет"></div>`;}
+   return `<div class="lvcell none" data-lv="${n}" data-note="на этом уровне отдельно не проверяется"></div>`;
+  }).join('');
+ }).join('');
+ return `<div class="lvmx" style="--cols:${lvs.length}">${head}${rows}</div>`;}
 
 /* печатный комплект: первая страница — матрица, дальше по странице на компетенцию с разбором на навыки */
 PAGES.print=()=>{const md=MX.scale==='company'?null:mxModel();
@@ -719,7 +742,12 @@ PAGES.print=()=>{const md=MX.scale==='company'?null:mxModel();
  const head=md?`<h1>Матрица компетенций${MX.scale==='design'?' · дизайн':''}</h1><h2>${title}</h2><ol class="mins">${mxInsights(md).map(([k,t])=>`<li>${t}</li>`).join('')}</ol>${mxMatrix(md)}`:`<h1>Матрица компетенций · вся компания</h1>${mxCompany()}`;
  return `<div class="pdfset">${head}<p class="muted small pdfnote">Красной отметкой выделены навыки, обязательные для всех.</p>
  ${codes.map(code=>{const c=C2[code];if(!c)return '';
-  return `<section class="pgs"><h1>${c.name}</h1><p class="lead">${c.tagline}</p><h2>Как это выглядит</h2><p>${c.how_it_looks.charAt(0).toUpperCase()+c.how_it_looks.slice(1)}</p><h2>Уровни</h2>${levelsHTML(c,{noBadges:true})}</section>`;}).join('')}</div>`;};
+  const lines=(c.lines||[]).map(l=>`<li><b>${l.name}</b>${l.checks?' — '+l.checks:''}</li>`).join('');
+  return `<section class="pgs"><h1>${c.name}</h1><p class="lead">${c.tagline}</p>`+
+   `<h2>Как это выглядит</h2><p>${c.how_it_looks.charAt(0).toUpperCase()+c.how_it_looks.slice(1)}</p>`+
+   (lines?`<h2>Что оценивают</h2><ul class="lnl">${lines}</ul>`:'')+
+   (c.who_needs?`<h2>Кому нужна</h2><p>${c.who_needs}</p>`:'')+
+   `</section><section class="pgs lvpage"><h1>${c.name} · уровни</h1><p class="muted small">Строки — что оценивают, столбцы — уровни. Пунктир: на этом уровне по строке нового нет, работает то же, что слева.</p>${levelsHTML(c,{noBadges:true})}</section>`;}).join('')}</div>`;};
 PAGES.comp=id=>{const c=COMP[+id];if(!c)return PAGES.notfound();
   const who=M.roles.map((r,ri)=>{const q=reqs(ri,'middle').find(q=>q.comp===c.id);return q&&{ri,r,thr:q.thr};}).filter(Boolean).sort((a,b)=>b.thr-a.thr);
   const tryIds=compAtoms(c.id).filter(a=>TASKS[a.id]).sort((a,b)=>Math.abs(a.level-2)-Math.abs(b.level-2)||b.task_type-a.task_type).map(a=>a.id),tryId=tryIds[0];
