@@ -484,10 +484,16 @@ a.card,.chip,.seg button,.opts button,.dtile,.mcell,.mname,.mcol{transition:back
 .fbr{display:flex;gap:10px;align-items:center}
 .fbhint{margin:10px 0 0}
 .lvitem{position:relative}
-.fbdot{position:absolute;right:6px;bottom:6px;width:22px;height:22px;border-radius:50%;border:1px solid var(--stroke);background:#fff;color:var(--mu);
- font:inherit;font-size:13px;line-height:1;cursor:pointer;opacity:0;transition:opacity 80ms linear,border-color 80ms linear}
-.lvitem:hover .fbdot,.fbdot:focus-visible,.fbdot.on{opacity:1}
-.fbdot.on{border-color:var(--green);color:var(--green)}
+.lvitem.fbable{cursor:pointer;padding-bottom:26px;transition:box-shadow var(--sp-fast-in,80ms) var(--ease-out,ease),background-color var(--sp-fast-in,80ms) var(--ease-out,ease)}
+.lvitem.fbable:hover{background:#fff;box-shadow:inset 0 0 0 1.5px var(--title)}
+.lvitem.fbable:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--title)}
+.lvitem.anc.fbable:hover{background:#fff6f6}
+.fbcta{position:absolute;left:12px;bottom:7px;font-size:11.5px;color:var(--mu);opacity:0;transition:opacity var(--sp-fast-in,80ms) linear}
+.lvitem.fbable:hover .fbcta,.lvitem.fbable:focus-visible .fbcta{opacity:1}
+.fbok{position:absolute;right:10px;bottom:6px;font-size:12px;line-height:1;color:var(--green);font-weight:700}
+.lvitem.fbdone{box-shadow:inset 2px 0 0 var(--green)}
+.lvitem.fbdone .fbcta{content:none}
+.lvitem.fbdone:hover .fbcta::after{content:" — изменить"}
 .fbcard{margin-top:18px}
 .fbcard h3{margin:0 0 10px;font-size:18px}
 .fbl{display:block;font-size:14px;font-weight:600;margin:10px 0 0}
@@ -498,7 +504,18 @@ a.card,.chip,.seg button,.opts button,.dtile,.mcell,.mname,.mcol{transition:back
 .fbrow>span{display:block;font-size:13px;color:var(--mu);margin-bottom:6px}
 .fbseg{flex-wrap:wrap}
 .fbseg button{font-size:13px;padding:6px 10px}
-@media print{.fbbar,.fbdot,.fbcard,.fbhint{display:none!important}}
+@media print{.fbbar,.fbcta,.fbok,.fbcard,.fbhint{display:none!important}}
+
+/* сводка фидбека */
+.fbt{width:100%;border-collapse:collapse;margin:8px 0 6px;font-size:14px}
+.fbt th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.03em;color:var(--mu);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--stroke)}
+.fbt td{padding:8px;border-bottom:1px solid #f1f0ee;vertical-align:top}
+.fbt td.num,.fbt th.num{text-align:right;white-space:nowrap}
+.fbbarline{display:block;height:8px;border-radius:5px;background:var(--bg);overflow:hidden;min-width:80px}
+.fbbarline i{display:block;height:100%;background:var(--green);border-radius:5px}
+.fbcomments{display:grid;gap:10px;margin-top:8px}
+.fbc{background:#fff;border:1px solid var(--stroke);border-radius:var(--r-sm);padding:12px 14px}
+.fbc p{margin:4px 0 6px;font-size:14px;line-height:1.45}
 </style>
 </head>
 <body>
@@ -561,7 +578,12 @@ const FB=(()=>{
     el.querySelector('[data-fbcount]').textContent=`${count()} ${plural(count(),['ответ','ответа','ответов'])} · ${sent}`;
   }
   addEventListener('online',flush);
-  return {slug,who,active:!!who,save,get,all,count,csv,download,flush,paint};
+  /* сводка: тянем все строки из таблицы; без endpoint показываем то, что есть в этом браузере */
+  function remote(){
+    if(!cfg.endpoint) return Promise.resolve(null);
+    return fetch(cfg.endpoint+(cfg.endpoint.includes('?')?'&':'?')+'all=1').then(r=>r.json()).then(d=>d.rows||null).catch(()=>null);
+  }
+  return {slug,who,active:!!who,leads,save,get,all,count,csv,download,flush,paint,remote,hasEndpoint:!!cfg.endpoint};
 })();
 const $=(s,r=document)=>r.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -797,8 +819,11 @@ PAGES.role.after=(i,g,emp)=>{const box=$('#reqs');if(!box)return;const ri=+box.d
 function levelsHTML(c,o={}){
  const lines=c.lines||[], lvs=[1,2,3,4].filter(n=>c.levels[n]);
  const at=(name,n)=>compAtoms(c.id).filter(a=>a.line===name&&a.level===n);
- const fb=a=>FB.active&&!o.noBadges?`<button class="fbdot${FB.get('atom:'+a.id)?' on':''}" data-fb="${a.id}" aria-label="Оставить фидбек">${FB.get('atom:'+a.id)?'✓':'+'}</button>`:'';
- const item=a=>`<div class="lvitem${a.anchor?' anc':''}">${a.text}${o.noBadges?'':`${a.anchor?' <span class="tag">для всех</span>':''}${a.task_type===5?' <span class="tag">результат</span>':''}`}${fb(a)}</div>`;
+ const fbOn=FB.active&&!o.noBadges;   /* карточка навыка целиком — кнопка фидбека */
+ const item=a=>{const done=fbOn&&FB.get('atom:'+a.id);
+  return `<div class="lvitem${a.anchor?' anc':''}${fbOn?' fbable':''}${done?' fbdone':''}"${fbOn?` data-fb="${a.id}" role="button" tabindex="0" aria-label="Оставить фидбек: ${esc(a.text.slice(0,60))}"`:''}>`+
+   `${a.text}${o.noBadges?'':`${a.anchor?' <span class="tag">для всех</span>':''}${a.task_type===5?' <span class="tag">результат</span>':''}`}`+
+   `${done?'<span class="fbok" title="ваш ответ сохранён">✓</span>':''}${fbOn?'<span class="fbcta">оставить фидбек</span>':''}</div>`;};
  const head=`<div class="lnlab hd"></div>`+lvs.map(n=>`<div class="lvhead"><span class="lv">${n}</span><div><b>${M.levels[n]}</b><div class="muted small">${compAtoms(c.id).filter(a=>a.level===n).length} ${plural(compAtoms(c.id).filter(a=>a.level===n).length,['навык','навыка','навыков'])}</div></div></div>`).join('');
  if(!lines.length) return `<div class="lvmx" style="--cols:${lvs.length}">${head}${lvs.map(n=>`<div class="lvcell">${compAtoms(c.id).filter(a=>a.level===n).map(item).join('')}</div>`).join('')}</div>`;
  const rows=lines.map(L=>{
@@ -835,31 +860,43 @@ function fbWire(){
     const dot=e.target.closest('[data-fb]');
     if(dot){$('#fbpanel').innerHTML=fbPanel(dot.dataset.fb);return;}
   });
+  app.addEventListener('keydown',e=>{
+    if(e.key!=='Enter'&&e.key!==' ')return;
+    const dot=e.target.closest('[data-fb]');if(!dot)return;
+    e.preventDefault();$('#fbpanel').innerHTML=fbPanel(dot.dataset.fb);
+  });
   app.addEventListener('focusout',e=>{
     const t=e.target.closest('[data-fbcomp]');
     if(t) FB.save({key:'comp:'+t.dataset.fbcomp+':'+t.dataset.k,kind:'компетенция',comp:t.dataset.fbcomp,field:t.dataset.k,value:'',comment:t.value.trim()});
   },true);
   const panel=$('#fbpanel');if(!panel)return;
   panel.addEventListener('click',e=>{
-    if(e.target.closest('[data-close]')){panel.innerHTML='';render(location.hash);return;}
+    if(e.target.closest('[data-close]')){panel.innerHTML='';return;}
     const b=e.target.closest('[data-fbset]');if(!b)return;
     const id=b.dataset.fbset, prev=FB.get('atom:'+id)||{value:{},comment:''};
     const value={...(prev.value||{})}; value[b.dataset.k]=b.dataset.v;
     const a=M.atoms.find(x=>x.id===id);
     FB.save({key:'atom:'+id,kind:'навык',comp:COMP[a.comp].code,atom:id,field:'',value,comment:prev.comment||''});
-    panel.innerHTML=fbPanel(id);
+    fbMark(id);panel.innerHTML=fbPanel(id);
   });
   panel.addEventListener('focusout',e=>{
     const t=e.target.closest('[data-fbtext]');if(!t)return;
     const id=t.dataset.fbtext, prev=FB.get('atom:'+id)||{value:{}};
     const a=M.atoms.find(x=>x.id===id);
     FB.save({key:'atom:'+id,kind:'навык',comp:COMP[a.comp].code,atom:id,field:'',value:prev.value||{},comment:t.value.trim()});
+    fbMark(id);
   },true);
+}
+/* отметить карточку навыка как отвеченную, не перерисовывая страницу */
+function fbMark(id){
+  const card=document.querySelector(`.lvitem[data-fb="${id}"]`);if(!card)return;
+  card.classList.add('fbdone');
+  if(!card.querySelector('.fbok')){const s=document.createElement('span');s.className='fbok';s.title='ваш ответ сохранён';s.textContent='✓';card.appendChild(s);}
 }
 /* ---------- интерфейс фидбека: полоса автора, форма по навыку, форма по компетенции ---------- */
 function fbHead(){
   if(!FB.active) return `<p class="muted small fbhint">Фидбек по модели собираем по личной ссылке тимлида — если нужна, напишите нам.</p>`;
-  return `<div class="fbbar" id="fbbar"><div><b>${FB.who.name}</b><div class="muted small">Отвечаете за: ${FB.who.roles.join(', ')}. Ответы сохраняются сразу — кнопку «отправить» жать не нужно.</div></div>
+  return `<div class="fbbar" id="fbbar"><div><b>${FB.who.name}</b><div class="muted small">Отвечаете за: ${FB.who.roles.join(', ')}. Нажмите на любой навык в сетке уровней, чтобы оставить фидбек. Ответы сохраняются сразу — кнопку «отправить» жать не нужно.</div></div>
   <div class="fbr"><span class="muted small" data-fbcount>${FB.count()} ${plural(FB.count(),['ответ','ответа','ответов'])}</span><button class="btn sec" data-fbdl="1">Скачать ответы</button></div></div>`;}
 function fbComp(c){
   if(!FB.active) return '';
@@ -881,6 +918,68 @@ function fbPanel(atomId){
    ${pick('clear',{title:'Формулировка',items:[['yes','понятна'],['part','спорно'],['no','непонятна']]})}
    <label class="fbl">Комментарий<textarea data-fbtext="${atomId}" rows="3" placeholder="что поправить">${esc(cur.comment||'')}</textarea></label>
    <p class="muted small">Ответ сохраняется в момент выбора.</p></aside>`;}
+/* ---------- сводка фидбека: #/fb, в меню не выводится ---------- */
+const FBSUM={rows:null,lead:'',src:'локально'};
+function fbRows(){
+  if(FBSUM.rows) return FBSUM.rows;
+  return FB.all().map(r=>({at:r.at,lead:FB.who?FB.who.name:FB.slug,kind:r.kind,comp:r.comp||'',atom:r.atom||'',field:r.field||'',value:r.value,comment:r.comment||''}));
+}
+const FBLV={low:'занижен',ok:'верно',high:'завышен'};
+const FBCL={yes:'понятна',part:'спорно',no:'непонятна'};
+const FBFIELD={missing:'чего не хватает',extra:'что лишнее'};
+function fbVal(v,k){ if(v==null) return null; if(typeof v==='object') return v[k]==null?null:String(v[k]);
+  try{const o=JSON.parse(v);return o&&typeof o==='object'?(o[k]==null?null:String(o[k])):null;}catch(e){return null;} }
+PAGES.fb=()=>{
+  const rows=fbRows(), leads=FB.leads||[];
+  const byLead={}; rows.forEach(r=>{(byLead[r.lead]=byLead[r.lead]||[]).push(r);});
+  const design=M.competencies.filter(c=>DESIGN_COMPS.has(c.id));
+  const atomsOf=c=>compAtoms(c.id).length;
+  const answered=(code,lead)=>new Set(rows.filter(r=>r.comp===code&&r.atom&&(!lead||r.lead===lead)).map(r=>r.atom)).size;
+  const compRow=c=>{const n=atomsOf(c),a=answered(c.code);const pc=n?Math.round(a/n*100):0;
+    return `<tr><td>${c.name}</td><td class="num">${a} из ${n}</td><td><span class="fbbarline"><i style="width:${pc}%"></i></span></td>
+      <td class="num">${rows.filter(r=>r.comp===c.code&&r.kind==='компетенция'&&r.comment).length}</td></tr>`;};
+  const lvStat=c=>{const vals=rows.filter(r=>r.comp===c.code&&r.atom).map(r=>fbVal(r.value,'level')).filter(Boolean);
+    const cnt=k=>vals.filter(v=>v===k).length;
+    return vals.length?`<tr><td>${c.name}</td><td class="num">${cnt('low')}</td><td class="num">${cnt('ok')}</td><td class="num">${cnt('high')}</td>
+      <td class="num">${rows.filter(r=>r.comp===c.code&&r.atom).map(r=>fbVal(r.value,'clear')).filter(v=>v==='no'||v==='part').length}</td></tr>`:'';};
+  /* наша частота берётся по должности, за которую отвечает этот тимлид */
+  const leadRole=name=>{const l=leads.find(x=>x.name===name||x.slug===name);return l&&l.roles?l.roles[0]:null;};
+  const ourFreq=(lead,code)=>{const r=leadRole(lead);const f=r&&FQ.roles&&FQ.roles[r];return f&&f.comps?f.comps[code]:null;};
+  const freqDiff=()=>{const out=[];
+    rows.filter(r=>r.atom).forEach(r=>{const f=fbVal(r.value,'freq');if(!f)return;
+      const a=ATOM[r.atom];if(!a)return;const c=COMP[a.comp];const our=ourFreq(r.lead,c.code);
+      if(our&&+f!==+our) out.push(`<tr><td>${a.text.slice(0,70)}…</td><td>${c.name}</td><td class="small muted">${r.lead}</td><td class="num">${FQ.scale[our]}</td><td class="num">${FQ.scale[+f]}</td></tr>`);});
+    return out.join('');};
+  const comments=rows.filter(r=>r.comment).sort((a,b)=>String(b.at).localeCompare(String(a.at)));
+  const filt=FBSUM.lead;
+  const shown=filt?comments.filter(r=>r.lead===filt):comments;
+  return `${crumbs(['Сводка фидбека'])}<h1>Сводка фидбека</h1>
+  <p class="lead muted">Что сказали тимлиды про модель: покрытие, расхождения по уровням и частоте, комментарии. Источник — ${FBSUM.rows?'общая таблица':'этот браузер'}.</p>
+  <div class="tbar"><button class="btn sec" data-fbload="1">${FB.hasEndpoint?'Обновить из таблицы':'Таблица не подключена'}</button>
+   <button class="btn sec" data-fbdl="1">Скачать CSV</button></div>
+  <h2>Кто ответил</h2>
+  <table class="fbt"><thead><tr><th>Тимлид</th><th>Отвечает за</th><th class="num">Ответов</th><th class="num">Навыков</th><th>Последний ответ</th></tr></thead><tbody>
+  ${leads.map(l=>{const r=byLead[l.name]||byLead[l.slug]||[];
+    const need=new Set(); M.roles.forEach(ro=>{if(!l.roles.includes(ro.name))return;Object.entries(ro.requirements).forEach(([k,v])=>{const lv=typeof v==='object'?Math.max(0,...Object.values(v).map(x=>x||0)):(v||0);if(lv)compAtoms(+k).forEach(a=>need.add(a.id));});});
+    const got=new Set(r.filter(x=>x.atom).map(x=>x.atom));
+    const last=r.length?String(r.map(x=>x.at).sort().pop()).slice(0,10):'—';
+    return `<tr><td>${l.name}</td><td class="small muted">${l.roles.join(', ')}</td><td class="num">${r.length}</td><td class="num">${got.size} из ${need.size}</td><td class="small muted">${last}</td></tr>`;}).join('')}
+  </tbody></table>
+  <h2>Покрытие по компетенциям</h2>
+  <table class="fbt"><thead><tr><th>Компетенция</th><th class="num">Навыков с ответом</th><th>Доля</th><th class="num">Реплик о компетенции</th></tr></thead><tbody>${design.map(compRow).join('')}</tbody></table>
+  <h2>Что говорят про уровни</h2>
+  <table class="fbt"><thead><tr><th>Компетенция</th><th class="num">Занижен</th><th class="num">Верно</th><th class="num">Завышен</th><th class="num">Формулировка спорна</th></tr></thead><tbody>${design.map(lvStat).join('')||'<tr><td colspan="5" class="muted">Пока нет ответов</td></tr>'}</tbody></table>
+  <h2>Частота: наша оценка и оценка тимлида</h2>
+  <table class="fbt"><thead><tr><th>Навык</th><th>Компетенция</th><th>Тимлид</th><th>У нас</th><th>У тимлида</th></tr></thead><tbody>${freqDiff()||'<tr><td colspan="5" class="muted">Расхождений нет</td></tr>'}</tbody></table>
+  <h2>Комментарии · ${shown.length}</h2>
+  <div class="chips">${['',...leads.map(l=>l.name)].map(n=>`<button class="chip${filt===n?' on':''}" data-fblead="${esc(n)}">${n||'все'}</button>`).join('')}</div>
+  <div class="fbcomments">${shown.map(r=>`<div class="fbc"><div class="small muted">${r.lead} · ${r.comp||''}${r.atom?' · '+r.atom:''} · ${String(r.at).slice(0,10)}${r.field?' · '+(FBFIELD[r.field]||r.field):''}</div><p>${esc(r.comment)}</p>${r.atom&&ATOM[r.atom]?`<div class="small muted">${ATOM[r.atom].text}</div>`:''}</div>`).join('')||'<p class="muted">Пока пусто.</p>'}</div>`;};
+PAGES.fb.after=()=>{const app=$('#app');if(!app)return;
+  app.onclick=e=>{
+    if(e.target.closest('[data-fbdl]')){FB.download();return;}
+    if(e.target.closest('[data-fbload]')){FB.remote().then(rows=>{if(rows){FBSUM.rows=rows;render('#/fb');}else alert('Таблица не подключена или недоступна — показываем ответы этого браузера.');});return;}
+    const l=e.target.closest('[data-fblead]');if(l){FBSUM.lead=l.dataset.fblead;render('#/fb');}
+  };};
 PAGES.comp=id=>{const c=COMP[+id];if(!c)return PAGES.notfound();
   const who=M.roles.map((r,ri)=>{const q=reqs(ri,'middle').find(q=>q.comp===c.id);return q&&{ri,r,thr:q.thr};}).filter(Boolean).sort((a,b)=>b.thr-a.thr);
   const tryIds=compAtoms(c.id).filter(a=>TASKS[a.id]).sort((a,b)=>Math.abs(a.level-2)-Math.abs(b.level-2)||b.task_type-a.task_type).map(a=>a.id),tryId=tryIds[0];
