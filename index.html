@@ -735,7 +735,11 @@ const hasKit=(ri,g)=>{const k=kitOf(ri,g);return M.roles[ri].group==='Дизай
 function kitSteps(ri,g){const out=[];
   kitOf(ri,g).forEach(q=>{const at=compAtoms(q.comp).filter(a=>a.level<=q.thr&&TASKS[a.id]);
     const rule=at.find(a=>a.anchor);
-    const opts=at.filter(a=>!a.anchor&&['c','j'].includes(TASKS[a.id].type))
+    /* кейс компетенции может быть привязан к навыку (у R это R06) — тогда разбор ситуации берём по другому навыку,
+       иначе два шага подряд спрашивают одно и то же, а остальные навыки не спрашиваются вовсе */
+    const pool=at.filter(a=>!a.anchor&&['c','j'].includes(TASKS[a.id].type)),taken=q.cs&&q.cs.key,
+          free=pool.filter(a=>a.id!==taken);
+    const opts=(free.length?free:pool)
                  .sort((a,b)=>(TASKS[b.id].type==='c')-(TASKS[a.id].type==='c')||b.level-a.level)[0];
     if(rule)out.push({comp:q.comp,code:q.code,thr:q.thr,step:'rule',id:rule.id});
     if(opts)out.push({comp:q.comp,code:q.code,thr:q.thr,step:'opts',id:opts.id});
@@ -892,7 +896,7 @@ const plural=(n,f)=>f[n%10===1&&n%100!==11?0:n%10>=2&&n%10<=4&&(n%100<10||n%100>
 
 PAGES.divisions=()=>`${crumbs(['Оргструктура','#/org'],['Подразделения'])}<h1>Подразделения</h1><p class="lead muted">Семь подразделений, для каждой должности — свои требования к работе с ИИ.</p>${M.divisions.map((d,i)=>`<h2><a href="#/division/${i}">${d.name}</a></h2><p class="muted small">${S.divisions[d.name]||''}</p><div class="chips">${d.roles.map(n=>`<a class="chip" href="#/role/${roleIdx(n)}">${n}</a>`).join('')}</div>`).join('')}`;
 PAGES.division=i=>{const d=M.divisions[+i];if(!d)return PAGES.notfound();
-  return `${crumbs(['Оргструктура','#/org'],[d.name])}<h1>${d.name}</h1><p class="lead">${S.divisions[d.name]||''}</p><div class="grid">${d.roles.map(n=>{const ri=roleIdx(n),r=M.roles[ri];return `<a class="card" href="#/role/${ri}"><h3>${n}</h3><div class="muted small">${r.step?'ступень '+r.step+' · '+STEPS[r.step]:'Junior · Middle · Senior'}</div><p class="small">${r.oneliner||''}</p></a>`;}).join('')}</div>`;};
+  return `${crumbs(['Оргструктура','#/org'],[d.name])}<h1>${d.name}</h1><p class="lead">${S.divisions[d.name]||''}</p><div class="grid">${d.roles.map(n=>{const ri=roleIdx(n),r=M.roles[ri];return `<a class="card" href="#/role/${ri}"><h3>${n}</h3><div class="muted small">${r.step?'ступень '+r.step+' · '+STEPS[r.step]:isIT(r)?'Junior · Middle · Senior':''}</div><p class="small">${r.oneliner||''}</p></a>`;}).join('')}</div>`;};
 
 /* слой дизайнеров: компетенции, которые требуются хотя бы одной дизайнерской должности */
 const DESIGN_COMPS=(()=>{const s=new Set();M.roles.forEach(r=>{if(r.group!=='Дизайн')return;
