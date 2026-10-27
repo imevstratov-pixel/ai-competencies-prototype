@@ -101,7 +101,7 @@ body{margin:0;background:#E9EBF0;font-family:Raleway,-apple-system,Segoe UI,sans
 .back2{display:flex;align-items:center;gap:7px;color:var(--accent);font-weight:600;font-size:14px;padding:0 0 10px 26px}
 .back2 .i{color:var(--accent)}
 .feed{flex:1;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:22px;padding:6px 0 10px}
-.feed > *{width:640px;max-width:640px}
+.feed > *{width:min(640px,100%);max-width:640px}
 .tblock h3{color:var(--accent);text-align:center;font-size:19px;line-height:24px;margin:0 0 14px}
 .tblock p{font-size:14.5px;line-height:21px;margin:0 0 12px}
 .aimsg{position:relative;padding-left:0}
@@ -109,7 +109,7 @@ body{margin:0;background:#E9EBF0;font-family:Raleway,-apple-system,Segoe UI,sans
 .aispark{position:absolute;left:-28px;bottom:6px;color:var(--accent)}
 .umsg{align-self:flex-end;background:var(--bg);border-radius:14px 14px 4px 14px;padding:11px 16px;font-size:14.5px;max-width:460px;width:auto}
 .feed .umsg{width:auto}
-.composer{width:660px;flex:none;margin:10px auto 18px;background:var(--wh);border:1px solid var(--border);border-radius:14px;padding:7px 8px 7px 12px;box-shadow:var(--shadow)}
+.composer{width:min(660px,94%);flex:none;margin:10px auto 18px;background:var(--wh);border:1px solid var(--border);border-radius:14px;padding:7px 8px 7px 12px;box-shadow:var(--shadow)}
 .crow{display:flex;align-items:center;gap:8px}
 .composer .ph{flex:1;color:var(--input-text);font-size:14.5px;padding:10px 2px}
 .ci{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:var(--icons);flex:none}
@@ -261,8 +261,8 @@ body{margin:0;background:#E9EBF0;font-family:Raleway,-apple-system,Segoe UI,sans
 .sub2 em:first-child{padding-left:0;border-left:0}
 
 /* ---------- широкие экраны: матрица и профиль ---------- */
-.wide{width:1180px;max-width:1180px;padding:0 0 20px}
-.feed > .wide{width:1180px;max-width:1180px}
+.wide{width:100%;max-width:1180px;padding:0 0 20px}
+.feed > .wide{width:100%;max-width:1180px}
 .crumbs{display:flex;align-items:center;gap:10px;margin-bottom:16px}
 .back{width:32px;height:32px;border-radius:50%;background:var(--wh);border:1px solid var(--border);display:grid;place-items:center;color:var(--usual)}
 .chips{display:flex;gap:8px;margin-left:auto}
@@ -331,6 +331,42 @@ body{margin:0;background:#E9EBF0;font-family:Raleway,-apple-system,Segoe UI,sans
 .leafdot.track{border-color:var(--accent);border-style:dashed}
 .leafdot.skip{background:#F1F2F6;border-color:#D7DAE1}
 .leafdot.node{background:var(--titles);border-color:var(--titles)}
+
+/* ---------- кликабельный прототип: интерактив ---------- */
+body.proto{background:var(--wh);margin:0}
+body.proto #app{height:100vh}
+body.proto .ui{height:100vh}
+.content{height:100%;overflow:auto;padding:26px 0 40px;display:flex;justify-content:center}
+.colwrap{width:100%;max-width:1180px;padding:0 24px}
+.act{cursor:pointer}
+.act:hover{filter:brightness(.96)}
+.btn.off{opacity:.45;pointer-events:none}
+.sendbtn.off{opacity:.5}
+.opt[data-opt],.shotcard[data-opt]{cursor:pointer}
+.opt[data-opt]:hover,.shotcard[data-opt]:hover{border-color:#9AA1AE}
+.opt.sel{border-color:var(--titles);background:#FAFAFB}
+.opt.sel .bx{background:var(--titles);border-color:var(--titles);color:#fff;display:grid;place-items:center;font-size:10px}
+.shotcard.sel{border-color:var(--titles);box-shadow:inset 0 0 0 1px var(--titles)}
+.shotcard.sel .bx{background:var(--titles);border-color:var(--titles);color:#fff;text-align:center;line-height:14px;font-size:10px}
+.shotcard.right{border-color:var(--green)}
+.ta[data-why]{cursor:pointer}
+.ta[data-why]:hover{border-color:#9AA1AE}
+.mrow.act{cursor:pointer}
+.mrow.act:hover{background:var(--hover)}
+.frow{display:flex;gap:10px;padding:6px 0;font-size:13.5px;line-height:18px}
+.frow b{min-width:170px}
+.frow span{color:var(--usual)}
+.rec .wave i{height:60%}
+.rec .wave i:nth-child(3n){height:95%}.rec .wave i:nth-child(4n){height:40%}
+.rec .wave.still i{background:#C9CED8}
+.hist{color:var(--usual);font-size:13px;margin:0 0 8px}
+.feed{overflow-y:auto}
+.modul{height:100%}
+.back2{cursor:pointer}
+.btnrow .btn{cursor:pointer}
+
+body.proto .mxn{font-size:12.5px}
+body.proto .mxwrap{overflow-x:auto}
 
 .frame-wrap{transform-origin:top left}
 </style></head><body><div class="page">
