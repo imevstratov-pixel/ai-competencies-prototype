@@ -1,0 +1,748 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>Оценка и уроки в интерфейсе Synergy AI Chat — экраны</title>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap" rel="stylesheet">
+<style>/* Рамка Synergy AI Chat: токены и компоненты из Фигмы (файл xmouu5yWRMYQVveOsZ37LA, секции kit / Learning / Chat).
+   Цвета, шрифт и размеры — переменные Фигмы, геометрия — из метаданных фреймов:
+   сайдбар 300, шапка 64, колонка чата 800, контент курсов 1200, высота кнопки 44. */
+:root{
+  --accent:#ED131C; --bg:#F1F2F6; --wh:#fff; --titles:#161A1C; --usual:#757575; --border:#E6E9EE;
+  --hover:#EEF0F2; --icons:#A7A8AE; --input:#E3E3E3; --input-text:#9B9B9B;
+  --blue:#4561C8; --purple:#8052FF; --green:#1C8D00; --orange:#FE5B19; --pink:#D865FF;
+  --shadow:0 7px 16px #C7C7C708, 0 29px 29px #C7C7C708, 0 66px 39px #C7C7C705;
+  --r:16px; --r-sm:10px; --r-pill:999px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#E9EBF0;font-family:Raleway,-apple-system,Segoe UI,sans-serif;color:var(--titles)}
+
+/* ---------- страница с экранами ---------- */
+.page{max-width:1320px;margin:0 auto;padding:40px 24px 120px}
+.page h1{font-size:30px;line-height:36px;margin:0 0 6px}
+.page .lead{color:var(--usual);font-size:16px;line-height:24px;margin:0 0 28px;max-width:900px}
+.toc{background:var(--wh);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;margin-bottom:36px}
+.toc b{display:block;margin-bottom:8px;font-size:14px}
+.toc a{display:inline-block;margin:0 14px 6px 0;color:var(--blue);text-decoration:none;font-size:14px}
+.toc a:hover{text-decoration:underline}
+.shot{margin:0 0 56px}
+.shot header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+.shot .num{background:var(--titles);color:#fff;border-radius:var(--r-pill);font-size:12px;font-weight:700;padding:3px 10px}
+.shot h2{font-size:20px;line-height:24px;margin:0}
+.shot .kind{font-size:12px;font-weight:700;color:var(--usual);text-transform:uppercase;letter-spacing:.04em}
+.shot .note{color:var(--usual);font-size:14px;line-height:20px;margin:6px 0 14px;max-width:980px}
+.shot .note b{color:var(--titles)}
+.shot .new{background:#FFF4E8;border-left:3px solid var(--orange);padding:8px 12px;border-radius:0 8px 8px 0;margin:10px 0 14px;font-size:14px;line-height:20px;max-width:980px}
+.shot .new b{color:var(--orange)}
+.pair{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap}
+
+/* рамка экрана: рисуем в натуральную величину и ужимаем под ширину страницы */
+.frame{background:var(--bg);border:1px solid #D9DCE3;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);transform-origin:top left}
+.frame.web{width:1920px;height:1080px}
+.frame.mob{width:390px;height:800px;border-radius:26px}
+.scaler{overflow:hidden}
+
+/* ---------- рамка интерфейса: веб ---------- */
+.ui{display:flex;height:100%;font-size:14px;line-height:18px}
+.side{width:300px;flex:none;background:var(--wh);border-right:1px solid var(--border);padding:18px 16px;display:flex;flex-direction:column;gap:14px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:13px;line-height:15px;letter-spacing:.02em}
+.logo i{width:34px;height:34px;border-radius:9px;background:var(--accent);display:grid;place-items:center;color:#fff;font-size:16px;font-style:normal}
+.search{height:44px;border-radius:var(--r-pill);background:var(--wh);border:1px solid var(--border);display:flex;align-items:center;gap:10px;padding:0 16px;color:var(--input-text)}
+.btn-add{height:44px;border-radius:var(--r-pill);background:var(--accent);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px}
+.sgroup{color:var(--usual);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:6px 0 2px}
+.sitem{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--r-sm);color:var(--titles)}
+.sitem i{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:11px;font-style:normal;color:#fff;flex:none}
+.sitem.on{background:#FFEFEF;color:var(--accent);font-weight:700}
+.sitem.mut{color:var(--usual)}
+.me{margin-top:auto;display:flex;align-items:center;gap:10px;padding-top:12px;border-top:1px solid var(--border)}
+.me .ava{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8ea2c9,#b9c6dd);flex:none}
+.me b{display:block;font-size:14px}
+.me span{color:var(--usual);font-size:12px}
+
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{height:64px;flex:none;background:var(--wh);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 24px}
+.topbar .tt{display:flex;align-items:center;gap:12px}
+.topbar .tt i{width:34px;height:34px;border-radius:9px;background:var(--orange);display:grid;place-items:center;color:#fff;font-style:normal;font-size:15px}
+.topbar .tt b{display:block;font-size:17px;line-height:20px}
+.topbar .tt span{color:var(--usual);font-size:12px}
+.topbar .right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.pillbtn{height:44px;border-radius:var(--r-pill);border:1px solid var(--border);background:var(--wh);display:flex;align-items:center;gap:8px;padding:0 16px;font-weight:600;color:var(--titles)}
+.pillbtn.blue{background:#EEF1FB;border-color:#DCE2F7;color:var(--blue);font-weight:700}
+.body{flex:1;overflow:hidden;position:relative}
+
+/* ---------- чат ---------- */
+.chat{height:100%;display:flex;flex-direction:column;align-items:center;padding:24px 0 0}
+.stream{width:800px;flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:18px;overflow:hidden;padding-bottom:4px}
+.msg{display:flex;gap:12px;align-items:flex-start}
+.msg.me{justify-content:flex-end}
+.msg.me .bub{background:var(--wh);border:1px solid var(--border);border-radius:14px 14px 4px 14px;padding:12px 16px;max-width:620px}
+.msg .ava{width:30px;height:30px;border-radius:50%;flex:none;background:linear-gradient(135deg,#8ea2c9,#b9c6dd)}
+.msg .bot{width:30px;height:30px;border-radius:50%;flex:none;background:var(--titles);display:grid;place-items:center;color:#fff;font-size:13px}
+.msg .time{color:var(--icons);font-size:11px;align-self:flex-end;padding-bottom:4px}
+.ans{max-width:700px}
+.ans .who{display:flex;align-items:center;gap:8px;color:var(--usual);font-size:12px;margin-bottom:6px}
+.ans .who b{color:var(--titles);font-size:13px}
+.ans .who .chip{background:var(--bg);border-radius:var(--r-pill);padding:2px 8px;font-size:11px}
+.ans p{margin:0 0 10px;font-size:15px;line-height:22px}
+.ans p:last-child{margin-bottom:0}
+.acts{display:flex;gap:16px;color:var(--usual);font-size:12px;margin-top:10px;align-items:center}
+.acts .t{margin-left:auto}
+
+/* блоки шага оценки внутри ответа */
+.card{background:var(--wh);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px}
+.card + .card{margin-top:10px}
+.lbl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--usual);margin:0 0 8px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{border:1.5px solid var(--border);border-radius:var(--r-sm);padding:11px 14px;font-size:14px;line-height:19px;background:var(--wh);display:flex;gap:10px;align-items:flex-start}
+.opt .bx{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--icons);flex:none;margin-top:1px}
+.opt.sel{border-color:var(--titles);background:#FAFAFA}
+.opt.sel .bx{background:var(--titles);border-color:var(--titles);color:#fff;display:grid;place-items:center;font-size:11px}
+.opt.right{border-color:var(--green);background:#F1FAEF}
+.opt.right .bx{background:var(--green);border-color:var(--green);color:#fff;display:grid;place-items:center;font-size:11px}
+.opt.wrong{border-color:var(--accent);background:#FFF2F2}
+.hint{color:var(--usual);font-size:12px;margin-top:8px}
+.ta{border:1.5px solid var(--border);border-radius:var(--r-sm);padding:11px 14px;color:var(--input-text);font-size:14px;min-height:56px;background:var(--wh)}
+.ta.filled{color:var(--titles)}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.btn{height:44px;border-radius:var(--r-pill);background:var(--accent);color:#fff;font-weight:700;display:inline-flex;align-items:center;gap:8px;padding:0 22px;font-size:14px}
+.btn.sec{background:var(--wh);color:var(--titles);border:1px solid var(--border);font-weight:600}
+.btn.gr{background:var(--green)}
+.btn.or{background:var(--orange)}
+.btn.sm{height:36px;padding:0 16px;font-size:13px}
+.timer{display:flex;align-items:center;gap:8px;color:var(--usual);font-size:13px}
+.timer b{color:var(--titles);font-variant-numeric:tabular-nums}
+.timer.out b{color:var(--accent)}
+
+/* выбор изображения */
+.shots{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.shotcard{border:1.5px solid var(--border);border-radius:var(--r-sm);overflow:hidden;background:var(--wh)}
+.shotcard.sel{border-color:var(--titles);box-shadow:inset 0 0 0 1px var(--titles)}
+.shotcard.right{border-color:var(--green)}
+.shotcard svg{display:block;width:100%;height:120px}
+.shotcap{padding:9px 12px 11px;font-size:13px;line-height:17px;color:var(--usual);border-top:1px solid var(--border)}
+.shotcap b{display:block;color:var(--titles);margin-bottom:2px}
+.shotcap .bx{display:inline-block;width:16px;height:16px;border-radius:4px;border:1.5px solid var(--icons);vertical-align:-3px;margin-right:6px}
+.shotcard.sel .shotcap .bx{background:var(--titles);border-color:var(--titles)}
+
+/* голос и запись экрана */
+.rec{background:var(--bg);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:12px;font-size:13px;color:var(--usual)}
+.rec .dot{width:11px;height:11px;border-radius:50%;background:var(--accent);flex:none}
+.rec .wave{display:flex;align-items:center;gap:3px;height:22px;flex:1}
+.rec .wave i{width:3px;background:var(--icons);border-radius:2px}
+.rec .film{display:flex;gap:4px;flex:1}
+.rec .film i{width:16px;height:12px;border-radius:2px;background:var(--icons);opacity:.6}
+.rec b{color:var(--titles);font-variant-numeric:tabular-nums}
+
+/* вердикт */
+.verd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.lvl{background:var(--green);color:#fff;border-radius:var(--r-pill);padding:5px 14px;font-weight:700;font-size:13px}
+.lvl.no{background:var(--usual)}
+.lvl.part{background:var(--orange)}
+.okli,.noli{margin:0;padding:0 0 0 20px;font-size:14px;line-height:20px}
+.okli li{list-style:none;position:relative}
+.okli li:before{content:"✓";color:var(--green);position:absolute;left:-18px}
+.noli li{list-style:none;position:relative;color:var(--usual)}
+.noli li:before{content:"—";position:absolute;left:-18px}
+.sysline{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--usual);background:var(--bg);border-radius:8px;padding:8px 12px;margin-top:10px}
+
+/* поле ввода чата */
+.composer{width:800px;flex:none;margin:14px 0 20px;background:var(--wh);border:1px solid var(--border);border-radius:18px;padding:12px 14px;box-shadow:var(--shadow)}
+.tabs{display:flex;gap:8px;margin-bottom:10px}
+.tab{height:30px;border-radius:var(--r-pill);border:1px solid var(--border);display:flex;align-items:center;gap:6px;padding:0 12px;font-size:12px;font-weight:600;color:var(--usual)}
+.tab.on{background:#FFEFEF;border-color:#F8D4D5;color:var(--accent)}
+.composer .ph{color:var(--input-text);font-size:15px;padding:6px 2px 12px}
+.ctools{display:flex;align-items:center;gap:14px;color:var(--icons);font-size:13px}
+.ctools .send{margin-left:auto;width:36px;height:36px;border-radius:50%;background:var(--titles);color:#fff;display:grid;place-items:center}
+.ctools .sw{width:34px;height:20px;border-radius:var(--r-pill);background:var(--input);position:relative}
+.ctools .sw:after{content:"";position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff}
+
+/* ---------- курсы ---------- */
+.content{padding:40px 0;display:flex;justify-content:center;height:100%;overflow:hidden}
+.col{width:1200px}
+.crumbs{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.back{width:34px;height:34px;border-radius:50%;background:var(--wh);border:1px solid var(--border);display:grid;place-items:center;color:var(--usual)}
+.chips{display:flex;gap:10px;margin-left:auto}
+.chip{height:34px;border-radius:var(--r-pill);background:var(--wh);border:1px solid var(--border);display:flex;align-items:center;gap:6px;padding:0 14px;font-size:13px;font-weight:600}
+.chip.red{background:#FFECEC;border-color:#FAD4D6;color:var(--accent)}
+.h2{font-size:26px;line-height:30px;margin:0 0 10px;display:flex;align-items:center;gap:12px}
+.h2 i{width:34px;height:34px;border-radius:9px;background:var(--accent);display:grid;place-items:center;color:#fff;font-size:15px;font-style:normal}
+.sub{color:var(--usual);font-size:15px;line-height:22px;max-width:760px;margin:0 0 22px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.mcard{background:var(--wh);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px 16px;display:flex;flex-direction:column;gap:10px;min-height:150px}
+.mcard h3{font-size:16px;line-height:20px;margin:0}
+.mcard p{color:var(--usual);font-size:13px;line-height:18px;margin:0;flex:1}
+.mcard .foot{display:flex;align-items:center;gap:12px}
+.prog{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--accent);font-weight:600}
+.ring{width:22px;height:22px;border-radius:50%;border:2px solid #F3C9CB;flex:none}
+.ring.half{border-color:var(--accent);border-right-color:#F3C9CB;border-bottom-color:#F3C9CB}
+.ring.full{border-color:var(--accent)}
+.mcard .btn{margin-left:auto}
+.mcard.assess{border-color:#F8D4D5;background:linear-gradient(180deg,#FFF7F7,#fff 60%)}
+.tagline{display:inline-flex;align-items:center;gap:6px;background:#FFECEC;color:var(--accent);border-radius:var(--r-pill);padding:3px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+
+/* шаги урока */
+.usteps{display:flex;gap:8px;margin:0 0 18px;flex-wrap:wrap}
+.ustep{height:34px;border-radius:var(--r-pill);border:1px solid var(--border);background:var(--wh);display:flex;align-items:center;gap:8px;padding:0 14px;font-size:13px;font-weight:600;color:var(--usual)}
+.ustep.on{background:var(--titles);border-color:var(--titles);color:#fff}
+.ustep.done{color:var(--green);border-color:#CBE8C3;background:#F1FAEF}
+.ubody{background:var(--wh);border:1px solid var(--border);border-radius:var(--r);padding:26px 30px}
+.ubody h3{margin:0 0 12px;font-size:20px;line-height:24px}
+.ubody p{font-size:15px;line-height:23px;margin:0 0 14px}
+.algo{display:flex;flex-direction:column;gap:10px;counter-reset:a}
+.algo div{position:relative;padding-left:34px;font-size:15px;line-height:22px}
+.algo div:before{counter-increment:a;content:counter(a);position:absolute;left:0;top:0;width:24px;height:24px;border-radius:50%;background:var(--bg);color:var(--titles);font-size:12px;font-weight:700;display:grid;place-items:center}
+
+/* ---------- мобильная рамка ---------- */
+.mui{height:100%;display:flex;flex-direction:column;background:var(--bg);font-size:14px}
+.mstatus{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:14px;font-weight:700;flex:none}
+.mhead{height:60px;flex:none;background:var(--wh);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;padding:0 16px}
+.mhead .burger{width:38px;height:38px;border-radius:10px;background:var(--bg);display:grid;place-items:center}
+.mhead i{width:30px;height:30px;border-radius:8px;background:var(--orange);display:grid;place-items:center;color:#fff;font-style:normal;font-size:13px}
+.mhead b{display:block;font-size:15px;line-height:18px}
+.mhead span{color:var(--usual);font-size:11px}
+.mbody{flex:1;overflow:hidden;padding:14px 14px 0}
+.mtabs{height:64px;flex:none;background:var(--wh);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;color:var(--usual);font-size:11px}
+.mtabs div{display:flex;flex-direction:column;align-items:center;gap:4px}
+.mtabs .on{color:var(--accent)}
+.mui .stream{width:auto}
+.mui .composer{width:auto;margin:10px 0 0}
+.mui .shots{grid-template-columns:1fr}
+.mui .msg.me .bub{max-width:280px}
+
+.frame-wrap{transform-origin:top left}
+</style></head><body><div class="page">
+<h1>Оценка и уроки в интерфейсе Synergy AI Chat</h1>
+<p class="lead">Как наша диагностика и микролёрнинги ложатся в существующий интерфейс. Рамка, компоненты и токены —
+из Фигмы (kit, Learning, Chat); содержание — настоящее, из модели компетенций: вопросы из банка, уроки из банка уроков,
+рассказ о своём случае из кейсов. Оранжевой плашкой отмечено то, чего в интерфейсе сегодня нет и что нужно добавить.</p>
+<p class="lead"><b>Решение по структуре:</b> вход в замер и прогресс живут в «Библиотеке курсов» рядом с курсами,
+сами шаги идут сообщениями в чате. Уроки — обычные модули курса, у них появляется экран прохождения, которого
+в Фигме пока нет.</p>
+<div class="toc"><b>Экраны</b><a href="#s1">1. Вход: замер стоит рядом с курсами</a> <a href="#s2">2. Что внутри замера</a> <a href="#s3">3. Шаг «правило работы»: закрытый вопрос с ключом</a> <a href="#s4">4. Разбор закрытого шага</a> <a href="#s5">5. Шаг «выбор изображения»</a> <a href="#s6">6. Шаг «разбор ситуации»</a> <a href="#s7">7. Шаг «практика»: текст запроса к ИИ</a> <a href="#s8">8. Шаг «запись экрана»</a> <a href="#s9">9. Открытый ответ: свой случай голосом</a> <a href="#s10">10. Разбор открытого ответа</a> <a href="#s11">11. Итог замера: сводка по компетенциям</a> <a href="#s12">12. Трек после замера</a> <a href="#s13">13. Урок: экран модуля</a> <a href="#s14">14. Проверка в конце урока</a></div>
+<section class="shot" id="s1">
+      <header><span class="num">1</span><h2>Вход: замер стоит рядом с курсами</h2><span class="kind">Библиотека курсов</span></header>
+      <p class="note">Замер появляется в «Библиотеке курсов» карточкой того же вида, что модуль курса: прогресс, время, кнопка. Отличается только пометкой «Оценка» и фоном — чтобы человек видел, что это замер, а не обучение.</p><div class="new">Новое для фронта: <b>карточка-замер</b> — тот же компонент модуля плюс плашка-пометка. Прогресс считается по шагам, а не по процентам правильных ответов.</div>
+      <div class="pair"><div class="scaler" data-w="1920" data-h="1080"><div class="frame-wrap"><div class="frame web"><div class="ui"><div class="side">
+  <div class="logo"><i>◀</i><span>SYNERGY<br>AI CHAT</span></div>
+  <div class="search">🔍 Поиск по чатам</div>
+  <div class="btn-add">Добавить чат ⊕</div>
+  <div class="sgroup">Персональные чаты</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>ССП Международный блок</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Штаб ИИ</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Приёмная кампания</div>
+  <div class="sgroup">Инструменты</div>
+  <div class="sitem mut"><i style="background:var(--accent)">✦</i>ИИ чат</div>
+<div class="sitem mut"><i style="background:var(--blue)">📝</i>Умные заметки</div>
+<div class="sitem mut"><i style="background:var(--purple)">👔</i>Помощник руководителя</div>
+<div class="sitem mut"><i style="background:var(--green)">🏛</i>Оргструктура</div>
+<div class="sitem on"><i style="background:var(--orange)">🎓</i>Библиотека курсов</div>
+<div class="sitem mut"><i style="background:var(--pink)">🌐</i>Дайджест ИИ</div>
+  <div class="me"><div class="ava"></div><div><b>Пример имени</b><span>example@synergy.ru</span></div></div>
+</div><div class="main">
+    <div class="topbar"><div class="tt"><i style="background:var(--orange)">🎓</i><div><b>Библиотека курсов</b><span>1 курс и 1 замер · обновлено сегодня</span></div></div>
+      <div class="right"><div class="pillbtn">Внешние сервисы ⌄</div><div class="pillbtn">⚙</div><div class="pillbtn blue">⠿ Все инструменты</div></div></div>
+    <div class="body"><div class="content"><div class="col">
+  <div class="crumbs"><div class="back">←</div><span style="color:var(--usual)">Все курсы</span>
+    <div class="chips"><div class="chip red">⏱ 30 минут</div><div class="chip">Назначено: 1</div></div></div>
+  <h2 class="h2"><i style="background:var(--orange)">🎓</i>Библиотека курсов</h2>
+  <p class="sub">Курсы и замеры, назначенные вам. Замер показывает уровень по компетенциям должности
+   и сам собирает трек из коротких уроков по тому, что не подтвердилось.</p>
+  <div class="grid3"><div class="mcard assess">
+  <span class="tagline">Оценка · назначено вам</span>
+  <h3>ИИ-компетенции: замер уровня</h3>
+  <p>Четыре компетенции вашей должности. Шесть шагов, около 30 минут. Можно проходить в разные дни.</p>
+  <div class="foot"><div class="prog"><span class="ring"></span>0 %</div><div class="btn">Начать ▶</div></div></div>
+   <div class="mcard "><h3>Промпт-инжиниринг</h3><p>Как заставить нейросети работать на вас: от точных запросов до сложных сценариев.</p>
+    <div class="foot"><div class="prog"><span class="ring half"></span>42 %</div><div class="btn or">Продолжить ⏸</div></div></div>
+   <div class="mcard "><h3>Работа с данными</h3><p>Что можно и чего нельзя отдавать во внешние сервисы.</p>
+    <div class="foot"><div class="prog"><span class="ring full"></span>100 %</div><div class="btn gr">Заново ↻</div></div></div></div>
+</div></div></div></div></div></div></div></div></div></section><section class="shot" id="s2">
+      <header><span class="num">2</span><h2>Что внутри замера</h2><span class="kind">Библиотека курсов → замер</span></header>
+      <p class="note">Экран до старта: какие компетенции спросят, сколько шагов, сколько времени. Здесь же сказано, что замер идёт в чате и что его можно прервать.</p><div class="new">Новое: <b>экран состава замера</b>. Берёт вёрстку карточки курса, но вместо модулей — список компетенций с требуемым уровнем.</div>
+      <div class="pair"><div class="scaler" data-w="1920" data-h="1080"><div class="frame-wrap"><div class="frame web"><div class="ui"><div class="side">
+  <div class="logo"><i>◀</i><span>SYNERGY<br>AI CHAT</span></div>
+  <div class="search">🔍 Поиск по чатам</div>
+  <div class="btn-add">Добавить чат ⊕</div>
+  <div class="sgroup">Персональные чаты</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>ССП Международный блок</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Штаб ИИ</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Приёмная кампания</div>
+  <div class="sgroup">Инструменты</div>
+  <div class="sitem mut"><i style="background:var(--accent)">✦</i>ИИ чат</div>
+<div class="sitem mut"><i style="background:var(--blue)">📝</i>Умные заметки</div>
+<div class="sitem mut"><i style="background:var(--purple)">👔</i>Помощник руководителя</div>
+<div class="sitem mut"><i style="background:var(--green)">🏛</i>Оргструктура</div>
+<div class="sitem on"><i style="background:var(--orange)">🎓</i>Библиотека курсов</div>
+<div class="sitem mut"><i style="background:var(--pink)">🌐</i>Дайджест ИИ</div>
+  <div class="me"><div class="ava"></div><div><b>Пример имени</b><span>example@synergy.ru</span></div></div>
+</div><div class="main">
+    <div class="topbar"><div class="tt"><i style="background:var(--orange)">🎓</i><div><b>ИИ-компетенции: замер уровня</b><span>Графический дизайнер</span></div></div>
+      <div class="right"><div class="pillbtn">Внешние сервисы ⌄</div><div class="pillbtn">⚙</div><div class="pillbtn blue">⠿ Все инструменты</div></div></div>
+    <div class="body"><div class="content"><div class="col" style="max-width:860px">
+  <div class="crumbs"><div class="back">←</div><span style="color:var(--usual)">Библиотека курсов</span>
+   <div class="chips"><div class="chip red">⏱ около 30 минут</div></div></div>
+  <h2 class="h2"><i>✦</i>ИИ-компетенции: замер уровня</h2>
+  <p class="sub">Графический дизайнер. Замер идёт диалогом в чате: вопрос — ответ — короткий разбор.
+   Любой шаг можно пропустить, тогда он останется непроверенным. Прерваться можно в любой момент — вернётесь с того же места.</p>
+  <div class="ubody" style="padding:8px 24px 18px"><div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)">
+  <div style="flex:1"><b style="font-size:15px">Промптинг и проверка ответов</b><div style="color:var(--usual);font-size:13px">нужен уровень 2</div></div>
+  <div style="color:var(--usual);font-size:13px">3 шага</div></div><div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)">
+  <div style="flex:1"><b style="font-size:15px">Генерация изображений по брифу</b><div style="color:var(--usual);font-size:13px">нужен уровень 3</div></div>
+  <div style="color:var(--usual);font-size:13px">4 шага</div></div><div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)">
+  <div style="flex:1"><b style="font-size:15px">Пакеты макетов и презентаций</b><div style="color:var(--usual);font-size:13px">нужен уровень 2</div></div>
+  <div style="color:var(--usual);font-size:13px">3 шага</div></div><div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)">
+  <div style="flex:1"><b style="font-size:15px">Правка и печать изображений</b><div style="color:var(--usual);font-size:13px">нужен уровень 3</div></div>
+  <div style="color:var(--usual);font-size:13px">3 шага</div></div>
+   <div class="row" style="margin-top:20px"><div class="btn">Начать замер ▶</div>
+    <span style="color:var(--usual);font-size:13px">Результат виден вам и вашему руководителю</span></div></div>
+</div></div></div></div></div></div></div></div></div></section><section class="shot" id="s3">
+      <header><span class="num">3</span><h2>Шаг «правило работы»: закрытый вопрос с ключом</h2><span class="kind">Чат</span></header>
+      <p class="note">Первый формат. Вопрос приходит сообщением модели, варианты — карточкой под ним. Отметок несколько, поле обоснования не нужно.</p><div class="new">Новое: <b>варианты ответа внутри сообщения</b> и <b>мягкий таймер</b> — показывает время, но не обрывает ответ. Сейчас шаг умеет только открытый текст.</div>
+      <div class="pair"><div class="scaler" data-w="1920" data-h="1080"><div class="frame-wrap"><div class="frame web"><div class="ui"><div class="side">
+  <div class="logo"><i>◀</i><span>SYNERGY<br>AI CHAT</span></div>
+  <div class="search">🔍 Поиск по чатам</div>
+  <div class="btn-add">Добавить чат ⊕</div>
+  <div class="sgroup">Персональные чаты</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>ССП Международный блок</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Штаб ИИ</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Приёмная кампания</div>
+  <div class="sgroup">Инструменты</div>
+  <div class="sitem on"><i style="background:var(--accent)">✦</i>ИИ чат</div>
+<div class="sitem mut"><i style="background:var(--blue)">📝</i>Умные заметки</div>
+<div class="sitem mut"><i style="background:var(--purple)">👔</i>Помощник руководителя</div>
+<div class="sitem mut"><i style="background:var(--green)">🏛</i>Оргструктура</div>
+<div class="sitem mut"><i style="background:var(--orange)">🎓</i>Библиотека курсов</div>
+<div class="sitem mut"><i style="background:var(--pink)">🌐</i>Дайджест ИИ</div>
+  <div class="me"><div class="ava"></div><div><b>Пример имени</b><span>example@synergy.ru</span></div></div>
+</div><div class="main">
+    <div class="topbar"><div class="tt"><i style="background:var(--accent)">✦</i><div><b>Замер: ИИ-компетенции</b><span>Шаг 1 из 6 · Промптинг и проверка ответов</span></div></div>
+      <div class="right"><div class="pillbtn">Внешние сервисы ⌄</div><div class="pillbtn">⚙</div><div class="pillbtn blue">⠿ Все инструменты</div></div></div>
+    <div class="body"><div class="chat"><div class="stream"><div class="msg me"><span class="time">11:52</span><div class="bub">Начать замер</div><div class="ava"></div></div>
+<div class="msg"><div class="bot">✦</div><div class="ans"><div class="who"><b>Synergy AI</b>
+      <span class="chip">Оценка компетенций</span></div><p><b>Шаг 1 из 6 · Правило работы</b></p>
+ <p>Вы готовите визуалы к приёмной кампании и собираетесь работать во внешнем генераторе изображений. Что из перечисленного можно туда загрузить или вставить в запрос? Отметьте всё подходящее.</p>
+ <div class="card"><div class="opts"><div class="opt"><span class="bx"></span>PDF брендбука университета: логотипы, сетка, правила вёрстки</div><div class="opt"><span class="bx"></span>Описание стиля словами: «белый фон, красный акцент, крупная геометрия»</div><div class="opt"><span class="bx"></span>Макет кампании «Приём-2027», которая стартует только через месяц</div><div class="opt"><span class="bx"></span>Иллюстрацию чужого автора с Behance с просьбой «сделай так же»</div><div class="opt"><span class="bx"></span>Свой набросок композиции от руки — без логотипа и без текстов</div><div class="opt"><span class="bx"></span>Фото студентов со съёмки Дня открытых дверей — чтобы заменить фон</div></div>
+  <div class="hint">Можно выбрать несколько вариантов. Засчитывается полностью верный набор.</div>
+  <div class="row" style="margin-top:14px"><div class="btn">Ответить</div><div class="btn sec">Пропустить шаг</div>
+   <div class="timer" style="margin-left:auto">⏱ На ответ — 2 мин <b>1:48</b></div></div></div><div class="acts"><span>⧉ Скопировать</span><span>↻ Повторить вопрос</span><span>⤼ Пропустить шаг</span><span class="t">12:05</span></div></div></div></div>
+    <div class="composer"><div class="tabs"><div class="tab on">Tт Текст</div><div class="tab">🖼 Изображение</div><div class="tab">🔍 Веб поиск</div><div class="tab">🎙 Расшифровка</div><div class="tab">✎ Статья</div></div><div class="ph">Выберите варианты выше или напишите ответ…</div>
+      <div class="ctools"><span>⊕</span><span>⚙</span><span>✨</span><span>🗑</span><span class="sw"></span>Поиск по базе знаний
+        <span style="margin-left:auto">Модель ⌄</span><span>🎙</span><span class="send">↑</span></div></div></div></div></div></div></div></div></div></div></section><section class="shot" id="s4">
+      <header><span class="num">4</span><h2>Разбор закрытого шага</h2><span class="kind">Чат</span></header>
+      <p class="note">Разбор приходит сразу после ответа: что было верно, что нет, что это значит для результата и какой урок назначен. Служебная строка внизу — то, что уходит в профиль.</p><div class="new">Новое: <b>подсветка верных вариантов в отправленном сообщении</b> и <b>строка результата шага</b> (код навыка, статус, назначенный урок) — её читает профиль.</div>
+      <div class="pair"><div class="scaler" data-w="1920" data-h="1080"><div class="frame-wrap"><div class="frame web"><div class="ui"><div class="side">
+  <div class="logo"><i>◀</i><span>SYNERGY<br>AI CHAT</span></div>
+  <div class="search">🔍 Поиск по чатам</div>
+  <div class="btn-add">Добавить чат ⊕</div>
+  <div class="sgroup">Персональные чаты</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>ССП Международный блок</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Штаб ИИ</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Приёмная кампания</div>
+  <div class="sgroup">Инструменты</div>
+  <div class="sitem on"><i style="background:var(--accent)">✦</i>ИИ чат</div>
+<div class="sitem mut"><i style="background:var(--blue)">📝</i>Умные заметки</div>
+<div class="sitem mut"><i style="background:var(--purple)">👔</i>Помощник руководителя</div>
+<div class="sitem mut"><i style="background:var(--green)">🏛</i>Оргструктура</div>
+<div class="sitem mut"><i style="background:var(--orange)">🎓</i>Библиотека курсов</div>
+<div class="sitem mut"><i style="background:var(--pink)">🌐</i>Дайджест ИИ</div>
+  <div class="me"><div class="ava"></div><div><b>Пример имени</b><span>example@synergy.ru</span></div></div>
+</div><div class="main">
+    <div class="topbar"><div class="tt"><i style="background:var(--accent)">✦</i><div><b>Замер: ИИ-компетенции</b><span>Шаг 1 из 6 · разбор</span></div></div>
+      <div class="right"><div class="pillbtn">Внешние сервисы ⌄</div><div class="pillbtn">⚙</div><div class="pillbtn blue">⠿ Все инструменты</div></div></div>
+    <div class="body"><div class="chat"><div class="stream"><div class="msg me"><span class="time">11:52</span><div class="bub">Отмечены: 2, 4, 5</div><div class="ava"></div></div>
+<div class="msg"><div class="bot">✦</div><div class="ans"><div class="who"><b>Synergy AI</b>
+      <span class="chip">Оценка компетенций</span></div><div class="verd"><span class="lvl no">Не засчитано</span><span style="color:var(--usual);font-size:13px">правило работы · G01</span></div>
+ <div class="card"><div class="opts"><div class="opt "><span class="bx"></span>PDF брендбука университета: логотипы, сетка, правила вёрстки</div><div class="opt right"><span class="bx">✓</span>Описание стиля словами: «белый фон, красный акцент, крупная геометрия»</div><div class="opt "><span class="bx"></span>Макет кампании «Приём-2027», которая стартует только через месяц</div><div class="opt wrong"><span class="bx"></span>Иллюстрацию чужого автора с Behance с просьбой «сделай так же»</div><div class="opt right"><span class="bx">✓</span>Свой набросок композиции от руки — без логотипа и без текстов</div><div class="opt "><span class="bx"></span>Фото студентов со съёмки Дня открытых дверей — чтобы заменить фон</div></div></div>
+ <div class="card"><div class="lbl">Что это значит</div>
+  <p style="font-size:14px;line-height:20px">Во внешний генератор можно отдать то, что и так не закрыто и принадлежит вам: описание стиля словами и свой набросок без логотипа. Брендбук и незапущенные креативы — внутренние материалы, чужая иллюстрация — чужие права, а фото студентов — изображения людей, к…</p>
+  <p style="font-size:14px;line-height:20px;color:var(--usual)">Навык уходит в трек: после замера вы получите один урок
+   на 6 минут. Уровень компетенции без этого правила не засчитывается.</p></div>
+ <div class="sysline">G01 · не засчитано · в трек: «Что не загружаем в генераторы», 6 мин</div>
+ <div class="row" style="margin-top:14px"><div class="btn">Дальше, шаг 2 →</div></div><div class="acts"><span>⧉ Скопировать</span><span>↻ Повторить вопрос</span><span>⤼ Пропустить шаг</span><span class="t">12:05</span></div></div></div></div>
+    <div class="composer"><div class="tabs"><div class="tab on">Tт Текст</div><div class="tab">🖼 Изображение</div><div class="tab">🔍 Веб поиск</div><div class="tab">🎙 Расшифровка</div><div class="tab">✎ Статья</div></div><div class="ph">Напишите, если нужно уточнить…</div>
+      <div class="ctools"><span>⊕</span><span>⚙</span><span>✨</span><span>🗑</span><span class="sw"></span>Поиск по базе знаний
+        <span style="margin-left:auto">Модель ⌄</span><span>🎙</span><span class="send">↑</span></div></div></div></div></div></div></div></div></div></div></section><section class="shot" id="s5">
+      <header><span class="num">5</span><h2>Шаг «выбор изображения»</h2><span class="kind">Чат · новый формат</span></header>
+      <p class="note">Четыре изображения в сообщении, отметки и поле «почему» под ними. Ключ сверяет площадка, обоснование читает модель.</p><div class="new">Новое целиком: <b>галерея вариантов с отметками</b>. Нужны: показ 3–6 изображений в шаге, множественный выбор, поле обоснования рядом, альтернативный текст у каждого кадра (он уже написан в банке).</div>
+      <div class="pair"><div class="scaler" data-w="1920" data-h="1080"><div class="frame-wrap"><div class="frame web"><div class="ui"><div class="side">
+  <div class="logo"><i>◀</i><span>SYNERGY<br>AI CHAT</span></div>
+  <div class="search">🔍 Поиск по чатам</div>
+  <div class="btn-add">Добавить чат ⊕</div>
+  <div class="sgroup">Персональные чаты</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>ССП Международный блок</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Штаб ИИ</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Приёмная кампания</div>
+  <div class="sgroup">Инструменты</div>
+  <div class="sitem on"><i style="background:var(--accent)">✦</i>ИИ чат</div>
+<div class="sitem mut"><i style="background:var(--blue)">📝</i>Умные заметки</div>
+<div class="sitem mut"><i style="background:var(--purple)">👔</i>Помощник руководителя</div>
+<div class="sitem mut"><i style="background:var(--green)">🏛</i>Оргструктура</div>
+<div class="sitem mut"><i style="background:var(--orange)">🎓</i>Библиотека курсов</div>
+<div class="sitem mut"><i style="background:var(--pink)">🌐</i>Дайджест ИИ</div>
+  <div class="me"><div class="ava"></div><div><b>Пример имени</b><span>example@synergy.ru</span></div></div>
+</div><div class="main">
+    <div class="topbar"><div class="tt"><i style="background:var(--accent)">✦</i><div><b>Замер: ИИ-компетенции</b><span>Шаг 3 из 6 · Генерация изображений по брифу</span></div></div>
+      <div class="right"><div class="pillbtn">Внешние сервисы ⌄</div><div class="pillbtn">⚙</div><div class="pillbtn blue">⠿ Все инструменты</div></div></div>
+    <div class="body"><div class="chat"><div class="stream"><div class="msg"><div class="bot">✦</div><div class="ans"><div class="who"><b>Synergy AI</b>
+      <span class="chip">Оценка компетенций</span></div><p><b>Шаг 3 из 6 · Выбор изображения</b></p><p>Бриф студенческого офиса: афиша хакатона «Код города» 14–15 ноября. Белый фон, красный акцент, крупная геометрия, без фотографий; носители — А3 и пост в соцсети; заголовок верстается сверху, поэтому надписей на картинке быть не должно. Генератор выдал четыре варианта. Отметьте те, которые понесёте арт-директору.</p>
+ <div class="card"><div class="shots"><div class="shotcard"><svg viewBox="0 0 200 150" preserveAspectRatio="none"><rect width="200" height="150" fill="#ffffff"/><rect y="46" width="200" height="104" fill="#f2f2f2" opacity=".7"/><path d="M12 132 A104 104 0 0 1 116 28" fill="none" stroke="#ED131C" stroke-width="20"/><path d="M74 132 A58 58 0 0 1 132 74" fill="none" stroke="#ED131C" stroke-width="14" opacity=".75"/><circle cx="162" cy="34" r="13" fill="#ED131C"/></svg>
+  <div class="shotcap"><span class="bx"></span><b>Вариант А</b>Крупные красные дуги на белом, верхняя треть кадра пустая, композиция держится и в вертикали</div></div><div class="shotcard"><svg viewBox="0 0 200 150" preserveAspectRatio="none"><rect width="200" height="150" fill="#f1e5d3"/><rect y="46" width="200" height="104" fill="#e3d2b6" opacity=".7"/><circle cx="52" cy="62" r="15" fill="#c9833a" opacity="0.9"/><path d="M30 150 q22 -40 44 0" fill="#c9833a" opacity="0.6"/><circle cx="100" cy="70" r="15" fill="#c9833a" opacity="0.75"/><path d="M78 150 q22 -40 44 0" fill="#c9833a" opacity="0.48"/><circle cx="148" cy="62" r="15" fill="#c9833a" opacity="0.6000000000000001"/><path d="M126 150 q22 -40 44 0" fill="#c9833a" opacity="0.36"/></svg>
+  <div class="shotcap"><span class="bx"></span><b>Вариант Б</b>Фотореалистичная сцена: студенты за ноутбуками в тёплом свете, лица в кадре</div></div><div class="shotcard"><svg viewBox="0 0 200 150" preserveAspectRatio="none"><rect width="200" height="150" fill="#ffffff"/><rect y="46" width="200" height="104" fill="#f2f2f2" opacity=".7"/><rect x="16" y="18" width="168" height="114" rx="6" fill="none" stroke="rgba(0,0,0,.28)" stroke-width="1.4"/><path d="M26 124 A80 80 0 0 1 106 44" fill="none" stroke="#ED131C" stroke-width="16" opacity=".8"/><text x="100" y="94" text-anchor="middle" font-size="42" font-weight="700" fill="#1c1c1c">Аа</text></svg>
+  <div class="shotcap"><span class="bx"></span><b>Вариант В</b>Крупная геометрия в фирменном красном, но в центре вписана надпись «Хакатон» чужим шрифтом</div></div><div class="shotcard"><svg viewBox="0 0 200 150" preserveAspectRatio="none"><rect width="200" height="150" fill="#ffffff"/><rect y="46" width="200" height="104" fill="#f2f2f2" opacity=".7"/><rect x="16" y="18" width="168" height="114" rx="6" fill="none" stroke="rgba(0,0,0,.28)" stroke-width="1.4"/><rect x="30" y="32" width="100" height="12" rx="3" fill="#ED131C"/><rect x="30" y="52" width="140" height="7" rx="3" fill="rgba(0,0,0,.1)"/><rect x="30" y="66" width="118" height="7" rx="3" fill="rgba(0,0,0,.1)"/><path d="M30 92 h60 a18 18 0 0 1 0 36 h-60 z" fill="#ED131C" opacity=".6"/></svg>
+  <div class="shotcap"><span class="bx"></span><b>Вариант Г</b>Белая плоскость, красная диагональная сетка, свободная полоса сверху, по краям запас под обрез А3</div></div></div>
+  <div class="hint">Отметьте подходящие кадры — можно несколько.</div></div>
+ <div class="card"><div class="lbl">По каким пунктам брифа вы отбирали и когда эти пункты назвали? Одной-двумя фразами.</div><div class="ta">Потому что…</div>
+  <div class="row" style="margin-top:14px"><div class="btn">Ответить</div><div class="btn sec">Пропустить шаг</div>
+   <div class="timer" style="margin-left:auto">⏱ На ответ — 3 мин <b>2:31</b></div></div></div><div class="acts"><span>⧉ Скопировать</span><span>↻ Повторить вопрос</span><span>⤼ Пропустить шаг</span><span class="t">12:05</span></div></div></div></div>
+    <div class="composer"><div class="tabs"><div class="tab on">Tт Текст</div><div class="tab">🖼 Изображение</div><div class="tab">🔍 Веб поиск</div><div class="tab">🎙 Расшифровка</div><div class="tab">✎ Статья</div></div><div class="ph">Или опишите ответ словами…</div>
+      <div class="ctools"><span>⊕</span><span>⚙</span><span>✨</span><span>🗑</span><span class="sw"></span>Поиск по базе знаний
+        <span style="margin-left:auto">Модель ⌄</span><span>🎙</span><span class="send">↑</span></div></div></div></div></div></div></div></div></div><div class="scaler" data-w="390" data-h="800"><div class="frame-wrap"><div class="frame mob"><div class="mui">
+    <div class="mstatus"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+    <div class="mhead"><div class="burger">☰</div><i style="background:var(--accent)">✦</i><div><b>Замер</b><span>Шаг 3 из 6</span></div></div>
+    <div class="mbody"><div class="chat"><div class="stream"><div class="msg"><div class="bot">✦</div><div class="ans"><div class="who"><b>Synergy AI</b>
+      <span class="chip">Оценка</span></div><p><b>Шаг 3 из 6</b></p><p>Бриф студенческого офиса: афиша хакатона «Код города» 14–15 ноября. Белый фон, красный акцент, крупная геометрия, без фо…</p>
+       <div class="card"><div class="shots"><div class="shotcard"><svg viewBox="0 0 200 150" preserveAspectRatio="none"><rect width="200" height="150" fill="#ffffff"/><rect y="46" width="200" height="104" fill="#f2f2f2" opacity=".7"/><path d="M12 132 A104 104 0 0 1 116 28" fill="none" stroke="#ED131C" stroke-width="20"/><path d="M74 132 A58 58 0 0 1 132 74" fill="none" stroke="#ED131C" stroke-width="14" opacity=".75"/><circle cx="162" cy="34" r="13" fill="#ED131C"/></svg>
+  <div class="shotcap"><span class="bx"></span><b>Вариант А</b>Крупные красные дуги на белом, верхняя треть кадра пустая, композиция держится и в вертикали</div></div><div class="shotcard"><svg viewBox="0 0 200 150" preserveAspectRatio="none"><rect width="200" height="150" fill="#f1e5d3"/><rect y="46" width="200" height="104" fill="#e3d2b6" opacity=".7"/><circle cx="52" cy="62" r="15" fill="#c9833a" opacity="0.9"/><path d="M30 150 q22 -40 44 0" fill="#c9833a" opacity="0.6"/><circle cx="100" cy="70" r="15" fill="#c9833a" opacity="0.75"/><path d="M78 150 q22 -40 44 0" fill="#c9833a" opacity="0.48"/><circle cx="148" cy="62" r="15" fill="#c9833a" opacity="0.6000000000000001"/><path d="M126 150 q22 -40 44 0" fill="#c9833a" opacity="0.36"/></svg>
+  <div class="shotcap"><span class="bx"></span><b>Вариант Б</b>Фотореалистичная сцена: студенты за ноутбуками в тёплом свете, лица в кадре</div></div><div class="shotcard"><svg viewBox="0 0 200 150" preserveAspectRatio="none"><rect width="200" height="150" fill="#ffffff"/><rect y="46" width="200" height="104" fill="#f2f2f2" opacity=".7"/><rect x="16" y="18" width="168" height="114" rx="6" fill="none" stroke="rgba(0,0,0,.28)" stroke-width="1.4"/><path d="M26 124 A80 80 0 0 1 106 44" fill="none" stroke="#ED131C" stroke-width="16" opacity=".8"/><text x="100" y="94" text-anchor="middle" font-size="42" font-weight="700" fill="#1c1c1c">Аа</text></svg>
+  <div class="shotcap"><span class="bx"></span><b>Вариант В</b>Крупная геометрия в фирменном красном, но в центре вписана надпись «Хакатон» чужим шрифтом</div></div><div class="shotcard"><svg viewBox="0 0 200 150" preserveAspectRatio="none"><rect width="200" height="150" fill="#ffffff"/><rect y="46" width="200" height="104" fill="#f2f2f2" opacity=".7"/><rect x="16" y="18" width="168" height="114" rx="6" fill="none" stroke="rgba(0,0,0,.28)" stroke-width="1.4"/><rect x="30" y="32" width="100" height="12" rx="3" fill="#ED131C"/><rect x="30" y="52" width="140" height="7" rx="3" fill="rgba(0,0,0,.1)"/><rect x="30" y="66" width="118" height="7" rx="3" fill="rgba(0,0,0,.1)"/><path d="M30 92 h60 a18 18 0 0 1 0 36 h-60 z" fill="#ED131C" opacity=".6"/></svg>
+  <div class="shotcap"><span class="bx"></span><b>Вариант Г</b>Белая плоскость, красная диагональная сетка, свободная полоса сверху, по краям запас под обрез А3</div></div></div></div></div></div></div>
+    <div class="composer"><div class="tabs"></div><div class="ph">Ответ…</div>
+      <div class="ctools"><span>⊕</span><span>⚙</span><span>✨</span><span>🗑</span><span class="sw"></span>Поиск по базе знаний
+        <span style="margin-left:auto">Модель ⌄</span><span>🎙</span><span class="send">↑</span></div></div></div></div><div class="mtabs"><div class="on"><span>💬</span>Чаты</div><div class=""><span>⠿</span>Инструменты</div><div class=""><span>👤</span>Профиль</div></div></div></div></div></div></div></section><section class="shot" id="s6">
+      <header><span class="num">6</span><h2>Шаг «разбор ситуации»</h2><span class="kind">Чат</span></header>
+      <p class="note">Четыре варианта действия и обязательное объяснение. Засчитывается верный выбор вместе с названной причиной.</p><div class="new">Новое: <b>одиночный выбор плюс текстовое поле в одном шаге</b>. Сегодня шаг умеет либо текст, либо ничего.</div>
+      <div class="pair"><div class="scaler" data-w="1920" data-h="1080"><div class="frame-wrap"><div class="frame web"><div class="ui"><div class="side">
+  <div class="logo"><i>◀</i><span>SYNERGY<br>AI CHAT</span></div>
+  <div class="search">🔍 Поиск по чатам</div>
+  <div class="btn-add">Добавить чат ⊕</div>
+  <div class="sgroup">Персональные чаты</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>ССП Международный блок</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Штаб ИИ</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Приёмная кампания</div>
+  <div class="sgroup">Инструменты</div>
+  <div class="sitem on"><i style="background:var(--accent)">✦</i>ИИ чат</div>
+<div class="sitem mut"><i style="background:var(--blue)">📝</i>Умные заметки</div>
+<div class="sitem mut"><i style="background:var(--purple)">👔</i>Помощник руководителя</div>
+<div class="sitem mut"><i style="background:var(--green)">🏛</i>Оргструктура</div>
+<div class="sitem mut"><i style="background:var(--orange)">🎓</i>Библиотека курсов</div>
+<div class="sitem mut"><i style="background:var(--pink)">🌐</i>Дайджест ИИ</div>
+  <div class="me"><div class="ava"></div><div><b>Пример имени</b><span>example@synergy.ru</span></div></div>
+</div><div class="main">
+    <div class="topbar"><div class="tt"><i style="background:var(--accent)">✦</i><div><b>Замер: ИИ-компетенции</b><span>Шаг 4 из 6 · Генерация изображений по брифу</span></div></div>
+      <div class="right"><div class="pillbtn">Внешние сервисы ⌄</div><div class="pillbtn">⚙</div><div class="pillbtn blue">⠿ Все инструменты</div></div></div>
+    <div class="body"><div class="chat"><div class="stream"><div class="msg"><div class="bot">✦</div><div class="ans"><div class="who"><b>Synergy AI</b>
+      <span class="chip">Оценка компетенций</span></div><p><b>Шаг 4 из 6 · Разбор ситуации</b></p><p>Для анонса Дня открытых дверей вы сгенерировали реалистичную картинку: абитуриенты с родителями в холле главного корпуса, выглядит как репортажное фото. Менеджер по соцсетям просит опубликовать её сегодня в VK и на видеоплощадке — «как есть, без лишних плашек». Что делаете?</p>
+ <div class="card"><div class="opts"><div class="opt"><span class="bx"></span>Публикую как есть: пометка для авторов дело добровольное, а картинка — всего лишь иллюстрация к анонсу, претензий к ней не будет</div><div class="opt"><span class="bx"></span>Сверяюсь с правилом компании и требованиями площадок, ставлю пометку штатным инструментом, в подписи не выдаю картинку за фото с события</div><div class="opt"><span class="bx"></span>Дописываю в самом конце подписи мелкий хэштег про ИИ, а штатную пометку площадки не включаю — формально раскрытие в посте уже есть</div><div class="opt"><span class="bx"></span>Вычищаю из файла метаданные о генерации, чтобы площадка не поставила пометку сама и пост смотрелся живым, как настоящий репортаж</div></div><div class="hint">Выберите одно действие.</div></div>
+ <div class="card"><div class="lbl">Почему? Одной фразой — важно объяснение, а не угадывание</div>
+  <div class="ta">Потому что…</div>
+  <div class="row" style="margin-top:14px"><div class="btn">Ответить</div><div class="btn sec">Пропустить шаг</div>
+   <div class="timer" style="margin-left:auto">⏱ На ответ — 3 мин <b>2:58</b></div></div></div><div class="acts"><span>⧉ Скопировать</span><span>↻ Повторить вопрос</span><span>⤼ Пропустить шаг</span><span class="t">12:05</span></div></div></div></div>
+    <div class="composer"><div class="tabs"><div class="tab on">Tт Текст</div><div class="tab">🖼 Изображение</div><div class="tab">🔍 Веб поиск</div><div class="tab">🎙 Расшифровка</div><div class="tab">✎ Статья</div></div><div class="ph">Или напишите свой вариант…</div>
+      <div class="ctools"><span>⊕</span><span>⚙</span><span>✨</span><span>🗑</span><span class="sw"></span>Поиск по базе знаний
+        <span style="margin-left:auto">Модель ⌄</span><span>🎙</span><span class="send">↑</span></div></div></div></div></div></div></div></div></div></div></section><section class="shot" id="s7">
+      <header><span class="num">7</span><h2>Шаг «практика»: текст запроса к ИИ</h2><span class="kind">Чат</span></header>
+      <p class="note">Открытое поле — сотрудник пишет запрос, который отправил бы в работе. Это единственный формат, который площадка умеет сегодня без доработок.</p><div class="new">Доработка минимальная: <b>в шаг нужно передать критерии проверки</b> вместе с ответом — сейчас проверяющий промпт не видит, что было в задании.</div>
+      <div class="pair"><div class="scaler" data-w="1920" data-h="1080"><div class="frame-wrap"><div class="frame web"><div class="ui"><div class="side">
+  <div class="logo"><i>◀</i><span>SYNERGY<br>AI CHAT</span></div>
+  <div class="search">🔍 Поиск по чатам</div>
+  <div class="btn-add">Добавить чат ⊕</div>
+  <div class="sgroup">Персональные чаты</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>ССП Международный блок</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Штаб ИИ</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Приёмная кампания</div>
+  <div class="sgroup">Инструменты</div>
+  <div class="sitem on"><i style="background:var(--accent)">✦</i>ИИ чат</div>
+<div class="sitem mut"><i style="background:var(--blue)">📝</i>Умные заметки</div>
+<div class="sitem mut"><i style="background:var(--purple)">👔</i>Помощник руководителя</div>
+<div class="sitem mut"><i style="background:var(--green)">🏛</i>Оргструктура</div>
+<div class="sitem mut"><i style="background:var(--orange)">🎓</i>Библиотека курсов</div>
+<div class="sitem mut"><i style="background:var(--pink)">🌐</i>Дайджест ИИ</div>
+  <div class="me"><div class="ava"></div><div><b>Пример имени</b><span>example@synergy.ru</span></div></div>
+</div><div class="main">
+    <div class="topbar"><div class="tt"><i style="background:var(--accent)">✦</i><div><b>Замер: ИИ-компетенции</b><span>Шаг 5 из 6 · Генерация изображений по брифу</span></div></div>
+      <div class="right"><div class="pillbtn">Внешние сервисы ⌄</div><div class="pillbtn">⚙</div><div class="pillbtn blue">⠿ Все инструменты</div></div></div>
+    <div class="body"><div class="chat"><div class="stream"><div class="msg"><div class="bot">✦</div><div class="ans"><div class="who"><b>Synergy AI</b>
+      <span class="chip">Оценка компетенций</span></div><p><b>Шаг 5 из 6 · Практика</b></p><p>Нужна обложка для анонса программы «Продуктовый дизайн» (старт 1 октября) — для сайта и VK, 1200×630. Фирменный стиль: красный #ED131C, белый фон, крупная геометрия, без фотографий; сам брендбук во внешний генератор загружать нельзя. Напишите запрос в генератор изображений из таблицы моделей отдела — на концепт обложки.</p>
+ <div class="card"><div class="lbl">Ваш запрос к ИИ — такой, какой отправили бы в работе</div>
+  <div class="ta filled">Обложка анонса программы «Продуктовый дизайн», 1200×630, для сайта и соцсети.
+   Белый фон, крупные красные дуги, плоская графика, без фотографий и надписей. Левая треть свободна под заголовок.
+   Дай три варианта композиции.</div>
+  <div class="row" style="margin-top:14px"><div class="btn">Отправить</div><div class="btn sec">Пропустить шаг</div>
+   <div class="timer" style="margin-left:auto">⏱ На ответ — 8 мин <b>6:12</b></div></div></div><div class="acts"><span>⧉ Скопировать</span><span>↻ Повторить вопрос</span><span>⤼ Пропустить шаг</span><span class="t">12:05</span></div></div></div></div>
+    <div class="composer"><div class="tabs"><div class="tab on">Tт Текст</div><div class="tab">🖼 Изображение</div><div class="tab">🔍 Веб поиск</div><div class="tab">🎙 Расшифровка</div><div class="tab">✎ Статья</div></div><div class="ph">Напишите запрос…</div>
+      <div class="ctools"><span>⊕</span><span>⚙</span><span>✨</span><span>🗑</span><span class="sw"></span>Поиск по базе знаний
+        <span style="margin-left:auto">Модель ⌄</span><span>🎙</span><span class="send">↑</span></div></div></div></div></div></div></div></div></div></div></section><section class="shot" id="s8">
+      <header><span class="num">8</span><h2>Шаг «запись экрана»</h2><span class="kind">Чат · новый формат</span></header>
+      <p class="note">Сотрудник записывает свой экран с голосом и отправляет запись в шаг. Модель разбирает её двумя списками: что видно в кадре и что проговорено.</p><div class="new">Новое целиком: <b>запись экрана в шаге</b> — кнопка записи, таймер, предупреждение о закрытых данных, расшифровка и разбор видеоряда. В журнал нужна длительность записи.</div>
+      <div class="pair"><div class="scaler" data-w="1920" data-h="1080"><div class="frame-wrap"><div class="frame web"><div class="ui"><div class="side">
+  <div class="logo"><i>◀</i><span>SYNERGY<br>AI CHAT</span></div>
+  <div class="search">🔍 Поиск по чатам</div>
+  <div class="btn-add">Добавить чат ⊕</div>
+  <div class="sgroup">Персональные чаты</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>ССП Международный блок</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Штаб ИИ</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Приёмная кампания</div>
+  <div class="sgroup">Инструменты</div>
+  <div class="sitem on"><i style="background:var(--accent)">✦</i>ИИ чат</div>
+<div class="sitem mut"><i style="background:var(--blue)">📝</i>Умные заметки</div>
+<div class="sitem mut"><i style="background:var(--purple)">👔</i>Помощник руководителя</div>
+<div class="sitem mut"><i style="background:var(--green)">🏛</i>Оргструктура</div>
+<div class="sitem mut"><i style="background:var(--orange)">🎓</i>Библиотека курсов</div>
+<div class="sitem mut"><i style="background:var(--pink)">🌐</i>Дайджест ИИ</div>
+  <div class="me"><div class="ava"></div><div><b>Пример имени</b><span>example@synergy.ru</span></div></div>
+</div><div class="main">
+    <div class="topbar"><div class="tt"><i style="background:var(--accent)">✦</i><div><b>Замер: ИИ-компетенции</b><span>Шаг 6 из 6 · Генерация изображений по брифу</span></div></div>
+      <div class="right"><div class="pillbtn">Внешние сервисы ⌄</div><div class="pillbtn">⚙</div><div class="pillbtn blue">⠿ Все инструменты</div></div></div>
+    <div class="body"><div class="chat"><div class="stream"><div class="msg"><div class="bot">✦</div><div class="ans"><div class="who"><b>Synergy AI</b>
+      <span class="chip">Оценка компетенций</span></div><p><b>Шаг 6 из 6 · Запись экрана</b></p><p>К пятнице отделу маркетинга нужно 40 карточек программ под три площадки, а в понедельник ту же работу продолжит коллега — вас не будет. Цепочка у вас уже собрана.</p>
+ <div class="card"><p style="font-size:15px;line-height:22px;margin:0 0 12px"><b>Запишите скринкаст на 4–6 минут: пройдите свою цепочку на одной карточке — от референса до выгрузки трёх форматов — и голосом проговорите, что коллега повторяет шаг за шагом.</b></p>
+  <div class="rec"><span class="dot"></span><span class="film"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><b>2:14</b>
+   <span>идёт запись экрана · говорите вслух</span><div class="btn sm">Остановить</div></div>
+  <div class="hint">В кадр не должны попасть персональные данные и закрытые документы — закройте лишние окна до записи.</div>
+  <div class="row" style="margin-top:14px"><div class="btn sec">Пропустить шаг</div>
+   <div class="timer" style="margin-left:auto">Запись — 4–6 минут</div></div></div><div class="acts"><span>⧉ Скопировать</span><span>↻ Повторить вопрос</span><span>⤼ Пропустить шаг</span><span class="t">12:05</span></div></div></div></div>
+    <div class="composer"><div class="tabs"><div class="tab on">Tт Текст</div><div class="tab">🖼 Изображение</div><div class="tab">🔍 Веб поиск</div><div class="tab">🎙 Расшифровка</div><div class="tab">✎ Статья</div></div><div class="ph">Или опишите словами, если записать нельзя…</div>
+      <div class="ctools"><span>⊕</span><span>⚙</span><span>✨</span><span>🗑</span><span class="sw"></span>Поиск по базе знаний
+        <span style="margin-left:auto">Модель ⌄</span><span>🎙</span><span class="send">↑</span></div></div></div></div></div></div></div></div></div></div></section><section class="shot" id="s9">
+      <header><span class="num">9</span><h2>Открытый ответ: свой случай голосом</h2><span class="kind">Чат · новый формат</span></header>
+      <p class="note">Рассказ о своей работе по рамке из четырёх пунктов. Голосом — потому что наговорить чужую историю с деталями тяжелее, чем вставить текст. Кнопка «такого случая не было» открывает сценарную ситуацию вместо рассказа.</p><div class="new">Новое: <b>голосовой ответ внутри шага</b> с расшифровкой в текст, который уходит в проверку. В правило оценки — запрет снижать уровень за устную речь и огрехи распознавания; в журнал — длительность записи.</div>
+      <div class="pair"><div class="scaler" data-w="1920" data-h="1080"><div class="frame-wrap"><div class="frame web"><div class="ui"><div class="side">
+  <div class="logo"><i>◀</i><span>SYNERGY<br>AI CHAT</span></div>
+  <div class="search">🔍 Поиск по чатам</div>
+  <div class="btn-add">Добавить чат ⊕</div>
+  <div class="sgroup">Персональные чаты</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>ССП Международный блок</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Штаб ИИ</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Приёмная кампания</div>
+  <div class="sgroup">Инструменты</div>
+  <div class="sitem on"><i style="background:var(--accent)">✦</i>ИИ чат</div>
+<div class="sitem mut"><i style="background:var(--blue)">📝</i>Умные заметки</div>
+<div class="sitem mut"><i style="background:var(--purple)">👔</i>Помощник руководителя</div>
+<div class="sitem mut"><i style="background:var(--green)">🏛</i>Оргструктура</div>
+<div class="sitem mut"><i style="background:var(--orange)">🎓</i>Библиотека курсов</div>
+<div class="sitem mut"><i style="background:var(--pink)">🌐</i>Дайджест ИИ</div>
+  <div class="me"><div class="ava"></div><div><b>Пример имени</b><span>example@synergy.ru</span></div></div>
+</div><div class="main">
+    <div class="topbar"><div class="tt"><i style="background:var(--accent)">✦</i><div><b>Замер: ИИ-компетенции</b><span>Открытый ответ · Генерация изображений по брифу</span></div></div>
+      <div class="right"><div class="pillbtn">Внешние сервисы ⌄</div><div class="pillbtn">⚙</div><div class="pillbtn blue">⠿ Все инструменты</div></div></div>
+    <div class="body"><div class="chat"><div class="stream"><div class="msg"><div class="bot">✦</div><div class="ans"><div class="who"><b>Synergy AI</b>
+      <span class="chip">Оценка компетенций</span></div><p><b>Открытый ответ · ваш случай</b></p>
+ <p>Вспомните случай из своей работы, где вы делали визуал по брифу генерацией — от запроса до выпуска. Нужен настоящий случай с деталями: сроки, числа,
+  названия того, что вы сдавали.</p>
+ <div class="card"><div class="lbl">Расскажите по четырём пунктам</div><div style="display:flex;gap:10px;padding:7px 0"><b style="min-width:180px">Что было</b><span style="color:var(--usual)">проект или задача, срок, кто ждал результат</span></div><div style="display:flex;gap:10px;padding:7px 0"><b style="min-width:180px">Что нужно было сделать</b><span style="color:var(--usual)">ваша часть работы в этой истории</span></div><div style="display:flex;gap:10px;padding:7px 0"><b style="min-width:180px">Что делали вы</b><span style="color:var(--usual)">по шагам: чем пользовались, что решали сами, с чем шли к коллегам</span></div><div style="display:flex;gap:10px;padding:7px 0"><b style="min-width:180px">Чем закончилось</b><span style="color:var(--usual)">что получилось, как проверяли, что сделали бы иначе</span></div></div>
+ <div class="card"><div class="rec"><span class="dot"></span>
+   <span class="wave"><i style="height:40%"></i><i style="height:70%"></i><i style="height:100%"></i><i style="height:60%"></i><i style="height:85%"></i><i style="height:45%"></i><i style="height:95%"></i><i style="height:55%"></i><i style="height:75%"></i><i style="height:40%"></i><i style="height:65%"></i><i style="height:90%"></i><i style="height:50%"></i><i style="height:80%"></i><i style="height:60%"></i><i style="height:100%"></i><i style="height:45%"></i><i style="height:70%"></i></span>
+   <b>1:42</b><span>идёт запись голоса</span><div class="btn sm">Остановить</div></div>
+  <div class="hint">Рассказать удобнее голосом — так быстрее, чем печатать. Оценивается содержание, а не гладкость речи.</div>
+  <div class="row" style="margin-top:14px"><div class="btn sec">Такого случая не было</div>
+   <div class="timer" style="margin-left:auto">⏱ На рассказ — 10 мин <b>8:18</b></div></div></div><div class="acts"><span>⧉ Скопировать</span><span>↻ Повторить вопрос</span><span>⤼ Пропустить шаг</span><span class="t">12:05</span></div></div></div></div>
+    <div class="composer"><div class="tabs"><div class="tab on">Tт Текст</div><div class="tab">🖼 Изображение</div><div class="tab">🔍 Веб поиск</div><div class="tab">🎙 Расшифровка</div><div class="tab">✎ Статья</div></div><div class="ph">Или напишите текстом…</div>
+      <div class="ctools"><span>⊕</span><span>⚙</span><span>✨</span><span>🗑</span><span class="sw"></span>Поиск по базе знаний
+        <span style="margin-left:auto">Модель ⌄</span><span>🎙</span><span class="send">↑</span></div></div></div></div></div></div></div></div></div><div class="scaler" data-w="390" data-h="800"><div class="frame-wrap"><div class="frame mob"><div class="mui">
+    <div class="mstatus"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+    <div class="mhead"><div class="burger">☰</div><i style="background:var(--accent)">✦</i><div><b>Замер</b><span>Открытый ответ</span></div></div>
+    <div class="mbody"><div class="chat"><div class="stream"><div class="msg"><div class="bot">✦</div><div class="ans"><div class="who"><b>Synergy AI</b>
+      <span class="chip">Оценка</span></div><p><b>Ваш случай</b></p><p>Вспомните случай, где вы делали визуал по брифу генерацией — от запроса до выпуска.</p>
+       <div class="card"><div class="lbl">Четыре пункта</div><div style="display:flex;gap:10px;padding:7px 0"><b style="min-width:180px">Что было</b><span style="color:var(--usual)">проект или задача, срок, кто ждал результат</span></div><div style="display:flex;gap:10px;padding:7px 0"><b style="min-width:180px">Что нужно было сделать</b><span style="color:var(--usual)">ваша часть работы в этой истории</span></div><div style="display:flex;gap:10px;padding:7px 0"><b style="min-width:180px">Что делали вы</b><span style="color:var(--usual)">по шагам: чем пользовались, что решали сами, с чем шли к коллегам</span></div><div style="display:flex;gap:10px;padding:7px 0"><b style="min-width:180px">Чем закончилось</b><span style="color:var(--usual)">что получилось, как проверяли, что сделали бы иначе</span></div></div>
+       <div class="card"><div class="rec"><span class="dot"></span>
+        <span class="wave"><i style="height:40%"></i><i style="height:70%"></i><i style="height:100%"></i><i style="height:60%"></i><i style="height:85%"></i><i style="height:45%"></i><i style="height:95%"></i><i style="height:55%"></i><i style="height:75%"></i><i style="height:40%"></i></span><b>1:42</b></div></div></div></div></div>
+    <div class="composer"><div class="tabs"></div><div class="ph">Или напишите текстом…</div>
+      <div class="ctools"><span>⊕</span><span>⚙</span><span>✨</span><span>🗑</span><span class="sw"></span>Поиск по базе знаний
+        <span style="margin-left:auto">Модель ⌄</span><span>🎙</span><span class="send">↑</span></div></div></div></div><div class="mtabs"><div class="on"><span>💬</span>Чаты</div><div class=""><span>⠿</span>Инструменты</div><div class=""><span>👤</span>Профиль</div></div></div></div></div></div></div></section><section class="shot" id="s10">
+      <header><span class="num">10</span><h2>Разбор открытого ответа</h2><span class="kind">Чат</span></header>
+      <p class="note">Вывод проверяющего промпта: уровень, что подтвердилось, чего не хватило до следующего уровня и служебная строка для профиля.</p><div class="new">Новое: <b>структурированный результат шага</b> вместо абзаца текста — уровень, списки признаков и строка «код · уровень · признаки». По ней собирается профиль.</div>
+      <div class="pair"><div class="scaler" data-w="1920" data-h="1080"><div class="frame-wrap"><div class="frame web"><div class="ui"><div class="side">
+  <div class="logo"><i>◀</i><span>SYNERGY<br>AI CHAT</span></div>
+  <div class="search">🔍 Поиск по чатам</div>
+  <div class="btn-add">Добавить чат ⊕</div>
+  <div class="sgroup">Персональные чаты</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>ССП Международный блок</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Штаб ИИ</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Приёмная кампания</div>
+  <div class="sgroup">Инструменты</div>
+  <div class="sitem on"><i style="background:var(--accent)">✦</i>ИИ чат</div>
+<div class="sitem mut"><i style="background:var(--blue)">📝</i>Умные заметки</div>
+<div class="sitem mut"><i style="background:var(--purple)">👔</i>Помощник руководителя</div>
+<div class="sitem mut"><i style="background:var(--green)">🏛</i>Оргструктура</div>
+<div class="sitem mut"><i style="background:var(--orange)">🎓</i>Библиотека курсов</div>
+<div class="sitem mut"><i style="background:var(--pink)">🌐</i>Дайджест ИИ</div>
+  <div class="me"><div class="ava"></div><div><b>Пример имени</b><span>example@synergy.ru</span></div></div>
+</div><div class="main">
+    <div class="topbar"><div class="tt"><i style="background:var(--accent)">✦</i><div><b>Замер: ИИ-компетенции</b><span>Разбор ответа · Генерация изображений по брифу</span></div></div>
+      <div class="right"><div class="pillbtn">Внешние сервисы ⌄</div><div class="pillbtn">⚙</div><div class="pillbtn blue">⠿ Все инструменты</div></div></div>
+    <div class="body"><div class="chat"><div class="stream"><div class="msg me"><span class="time">11:52</span><div class="bub">🎙 голосовое сообщение · 2:38 · расшифровка ниже</div><div class="ava"></div></div>
+<div class="msg"><div class="bot">✦</div><div class="ans"><div class="who"><b>Synergy AI</b>
+      <span class="chip">Оценка компетенций</span></div><div class="verd"><span class="lvl">Уровень 2 из 3</span>
+  <span style="color:var(--usual);font-size:13px">должности нужен уровень 3 · поставлен по вашему случаю</span></div>
+ <div class="card"><div class="lbl">Что подтвердилось</div><ul class="okli"><li>случай рассказан как рабочий: задача, срок, кто ждал результат</li><li>названо, по какому образцу или правилу работали</li><li>готового решения не было — задачу поставили себе сами</li><li>названы собственные действия по шагам</li></ul></div>
+ <div class="card"><div class="lbl">Чего не хватило для уровня 3</div><ul class="noli"><li>названы пути, между которыми выбирали</li><li>признак выбора назван до результата</li><li>решение обосновано сроком или ценой ошибки</li></ul></div>
+ <div class="sysline">G · уровень 2 · признаки: 1, 2 · свой случай</div>
+ <p style="color:var(--usual);font-size:13px;margin-top:10px">Оценивается содержание рассказа. Устная речь, паузы
+  и огрехи расшифровки на уровень не влияют.</p><div class="acts"><span>⧉ Скопировать</span><span class="t">12:05</span></div></div></div></div>
+    <div class="composer"><div class="tabs"><div class="tab on">Tт Текст</div><div class="tab">🖼 Изображение</div><div class="tab">🔍 Веб поиск</div><div class="tab">🎙 Расшифровка</div><div class="tab">✎ Статья</div></div><div class="ph">Уточнить что-то по разбору…</div>
+      <div class="ctools"><span>⊕</span><span>⚙</span><span>✨</span><span>🗑</span><span class="sw"></span>Поиск по базе знаний
+        <span style="margin-left:auto">Модель ⌄</span><span>🎙</span><span class="send">↑</span></div></div></div></div></div></div></div></div></div></div></section><section class="shot" id="s11">
+      <header><span class="num">11</span><h2>Итог замера: сводка по компетенциям</h2><span class="kind">Чат · показывается первой</span></header>
+      <p class="note">Третий промпт из требований: собирает ответы всех шагов в один результат. Человек видит сводку, а не ленту из шести вердиктов. Отсюда же собирается трек.</p><div class="new">Новое: <b>промпт-сводка в конце модуля</b>, её вывод показывается выше оценок отдельных шагов. Балл и процент наружу не выходят — только уровень рядом с требованием должности.</div>
+      <div class="pair"><div class="scaler" data-w="1920" data-h="1080"><div class="frame-wrap"><div class="frame web"><div class="ui"><div class="side">
+  <div class="logo"><i>◀</i><span>SYNERGY<br>AI CHAT</span></div>
+  <div class="search">🔍 Поиск по чатам</div>
+  <div class="btn-add">Добавить чат ⊕</div>
+  <div class="sgroup">Персональные чаты</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>ССП Международный блок</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Штаб ИИ</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Приёмная кампания</div>
+  <div class="sgroup">Инструменты</div>
+  <div class="sitem on"><i style="background:var(--accent)">✦</i>ИИ чат</div>
+<div class="sitem mut"><i style="background:var(--blue)">📝</i>Умные заметки</div>
+<div class="sitem mut"><i style="background:var(--purple)">👔</i>Помощник руководителя</div>
+<div class="sitem mut"><i style="background:var(--green)">🏛</i>Оргструктура</div>
+<div class="sitem mut"><i style="background:var(--orange)">🎓</i>Библиотека курсов</div>
+<div class="sitem mut"><i style="background:var(--pink)">🌐</i>Дайджест ИИ</div>
+  <div class="me"><div class="ava"></div><div><b>Пример имени</b><span>example@synergy.ru</span></div></div>
+</div><div class="main">
+    <div class="topbar"><div class="tt"><i style="background:var(--accent)">✦</i><div><b>Замер: ИИ-компетенции</b><span>Итог · 4 компетенции</span></div></div>
+      <div class="right"><div class="pillbtn">Внешние сервисы ⌄</div><div class="pillbtn">⚙</div><div class="pillbtn blue">⠿ Все инструменты</div></div></div>
+    <div class="body"><div class="chat"><div class="stream"><div class="msg"><div class="bot">✦</div><div class="ans"><div class="who"><b>Synergy AI</b>
+      <span class="chip">Итог замера</span></div><p><b>Замер завершён.</b> Вот результат по всем компетенциям вашей должности — он же ушёл в ваш профиль.</p>
+ <div class="card"><div style="display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--border)"><div style="flex:1"><b style="font-size:15px">Промптинг и проверка ответов</b><div style="color:var(--usual);font-size:13px">требование закрыто</div></div><div style="color:var(--usual);font-size:13px">нужен 2</div><span class="lvl">уровень 2</span></div><div style="display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--border)"><div style="flex:1"><b style="font-size:15px">Генерация изображений по брифу</b><div style="color:var(--usual);font-size:13px">нужен 3 — один урок в треке</div></div><div style="color:var(--usual);font-size:13px">нужен 3</div><span class="lvl part">уровень 2</span></div><div style="display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--border)"><div style="flex:1"><b style="font-size:15px">Пакеты макетов и презентаций</b><div style="color:var(--usual);font-size:13px">требование закрыто</div></div><div style="color:var(--usual);font-size:13px">нужен 2</div><span class="lvl">уровень 2</span></div><div style="display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--border)"><div style="flex:1"><b style="font-size:15px">Правка и печать изображений</b><div style="color:var(--usual);font-size:13px">правило работы не подтверждено</div></div><div style="color:var(--usual);font-size:13px">нужен 3</div><span class="lvl no">не засчитан</span></div>
+  <div class="row" style="margin-top:18px"><div class="btn">Собрать трек ▶</div>
+   <div class="btn sec">Смотреть профиль</div>
+   <span style="color:var(--usual);font-size:13px;margin-left:auto">3 урока · 24 минуты</span></div></div>
+ <div class="card"><div class="lbl">Что это значит</div>
+  <p style="font-size:14px;line-height:20px">Две компетенции закрыты полностью. По «Генерация изображений по брифу» не хватает одного
+   уровня, по «Правке и печати» не подтверждено правило работы — без него уровень не засчитывается, даже если
+   остальное сделано. Ничего не «провалено»: непройденное превращается в три коротких урока.</p></div>
+ <div class="sysline">итог · уровней из 4: 2, 2, 2, 0 · в трек 3 урока · не проверялось 2 навыка</div><div class="acts"><span>⧉ Скопировать</span><span class="t">12:05</span></div></div></div></div>
+    <div class="composer"><div class="tabs"><div class="tab on">Tт Текст</div><div class="tab">🖼 Изображение</div><div class="tab">🔍 Веб поиск</div><div class="tab">🎙 Расшифровка</div><div class="tab">✎ Статья</div></div><div class="ph">Спросить про результат…</div>
+      <div class="ctools"><span>⊕</span><span>⚙</span><span>✨</span><span>🗑</span><span class="sw"></span>Поиск по базе знаний
+        <span style="margin-left:auto">Модель ⌄</span><span>🎙</span><span class="send">↑</span></div></div></div></div></div></div></div></div></div><div class="scaler" data-w="390" data-h="800"><div class="frame-wrap"><div class="frame mob"><div class="mui">
+    <div class="mstatus"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+    <div class="mhead"><div class="burger">☰</div><i style="background:var(--accent)">✦</i><div><b>Замер</b><span>Итог</span></div></div>
+    <div class="mbody"><div class="chat"><div class="stream"><div class="msg"><div class="bot">✦</div><div class="ans"><div class="who"><b>Synergy AI</b>
+      <span class="chip">Итог</span></div><p><b>Замер завершён</b></p><div class="card"><div style="display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--border)"><div style="flex:1"><b style="font-size:15px">Промптинг и проверка ответов</b><div style="color:var(--usual);font-size:13px">требование закрыто</div></div><div style="color:var(--usual);font-size:13px">нужен 2</div><span class="lvl">уровень 2</span></div><div style="display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--border)"><div style="flex:1"><b style="font-size:15px">Генерация изображений по брифу</b><div style="color:var(--usual);font-size:13px">нужен 3 — один урок в треке</div></div><div style="color:var(--usual);font-size:13px">нужен 3</div><span class="lvl part">уровень 2</span></div><div style="display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--border)"><div style="flex:1"><b style="font-size:15px">Пакеты макетов и презентаций</b><div style="color:var(--usual);font-size:13px">требование закрыто</div></div><div style="color:var(--usual);font-size:13px">нужен 2</div><span class="lvl">уровень 2</span></div><div style="display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--border)"><div style="flex:1"><b style="font-size:15px">Правка и печать изображений</b><div style="color:var(--usual);font-size:13px">правило работы не подтверждено</div></div><div style="color:var(--usual);font-size:13px">нужен 3</div><span class="lvl no">не засчитан</span></div></div></div></div></div>
+    <div class="composer"><div class="tabs"></div><div class="ph">Спросить про результат…</div>
+      <div class="ctools"><span>⊕</span><span>⚙</span><span>✨</span><span>🗑</span><span class="sw"></span>Поиск по базе знаний
+        <span style="margin-left:auto">Модель ⌄</span><span>🎙</span><span class="send">↑</span></div></div></div></div><div class="mtabs"><div class="on"><span>💬</span>Чаты</div><div class=""><span>⠿</span>Инструменты</div><div class=""><span>👤</span>Профиль</div></div></div></div></div></div></div></section><section class="shot" id="s12">
+      <header><span class="num">12</span><h2>Трек после замера</h2><span class="kind">Библиотека курсов</span></header>
+      <p class="note">Результат замера превращается в обычные карточки модулей — та же вёрстка, что у курсов. Разница только в источнике: трек собран автоматически по пробелам.</p><div class="new">Новое: <b>назначение уроков по результату замера</b>. Один навык — один урок, пропущенные шаги уроков не дают.</div>
+      <div class="pair"><div class="scaler" data-w="1920" data-h="1080"><div class="frame-wrap"><div class="frame web"><div class="ui"><div class="side">
+  <div class="logo"><i>◀</i><span>SYNERGY<br>AI CHAT</span></div>
+  <div class="search">🔍 Поиск по чатам</div>
+  <div class="btn-add">Добавить чат ⊕</div>
+  <div class="sgroup">Персональные чаты</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>ССП Международный блок</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Штаб ИИ</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Приёмная кампания</div>
+  <div class="sgroup">Инструменты</div>
+  <div class="sitem mut"><i style="background:var(--accent)">✦</i>ИИ чат</div>
+<div class="sitem mut"><i style="background:var(--blue)">📝</i>Умные заметки</div>
+<div class="sitem mut"><i style="background:var(--purple)">👔</i>Помощник руководителя</div>
+<div class="sitem mut"><i style="background:var(--green)">🏛</i>Оргструктура</div>
+<div class="sitem on"><i style="background:var(--orange)">🎓</i>Библиотека курсов</div>
+<div class="sitem mut"><i style="background:var(--pink)">🌐</i>Дайджест ИИ</div>
+  <div class="me"><div class="ava"></div><div><b>Пример имени</b><span>example@synergy.ru</span></div></div>
+</div><div class="main">
+    <div class="topbar"><div class="tt"><i style="background:var(--orange)">🎓</i><div><b>Библиотека курсов</b><span>Ваш трек · 3 урока</span></div></div>
+      <div class="right"><div class="pillbtn">Внешние сервисы ⌄</div><div class="pillbtn">⚙</div><div class="pillbtn blue">⠿ Все инструменты</div></div></div>
+    <div class="body"><div class="content"><div class="col">
+  <div class="crumbs"><div class="back">←</div><span style="color:var(--usual)">Библиотека курсов</span>
+   <div class="chips"><div class="chip red">⏱ 24 минуты</div><div class="chip">после замера 27 октября</div></div></div>
+  <h2 class="h2"><i>📘</i>Ваш трек: три урока</h2>
+  <p class="sub">Трек собран по результату замера: по одному короткому уроку на каждый навык, который не подтвердился.
+   Прошли урок с проверкой — пробел закрывается, уровень в профиле обновляется.</p>
+  <div class="grid3"><div class="mcard "><h3>Помечать ли «создано с ИИ»</h3><p>Закрывает пробел: перед публикацией сверяется с правилом компании и требованиями площадки и ставит пометку «со…</p>
+    <div class="foot"><div class="prog"><span class="ring"></span>0 %</div><div class="btn">Начать ▶</div></div></div><div class="mcard "><h3>Что нельзя загружать в сервис правки</h3><p>Закрывает пробел: знает, какие исходники нельзя загружать в сервисы правки и апскейла: неанонсированные матери…</p>
+    <div class="foot"><div class="prog"><span class="ring"></span>0 %</div><div class="btn">Начать ▶</div></div></div><div class="mcard "><h3>Бракуем нейросетевой шаблон</h3><p>Закрывает пробел: бракует варианты с приметами шаблонной генерации — глянцевая кожа, неон, места, которых нет …</p>
+    <div class="foot"><div class="prog"><span class="ring"></span>0 %</div><div class="btn">Начать ▶</div></div></div></div>
+  <p class="sub" style="margin-top:26px">Непроверенные навыки уроков не получают: если шаг был пропущен,
+   в профиле он помечен «не проверялось», и урок по нему не назначается.</p>
+</div></div></div></div></div></div></div></div></div></section><section class="shot" id="s13">
+      <header><span class="num">13</span><h2>Урок: экран модуля</h2><span class="kind">Библиотека курсов → урок</span></header>
+      <p class="note">Пять шагов урока: рабочая задача, зачем, алгоритм, практика в чате, проверка. В Фигме экрана прохождения модуля нет вообще — это он и есть.</p><div class="new">Новое: <b>экран прохождения модуля</b> — шаги переключаются сверху, тело шага в карточке, внизу переход. Шаг «Практика» открывает чат с готовым заданием, шаг «Проверка» — вопрос с ключом.</div>
+      <div class="pair"><div class="scaler" data-w="1920" data-h="1080"><div class="frame-wrap"><div class="frame web"><div class="ui"><div class="side">
+  <div class="logo"><i>◀</i><span>SYNERGY<br>AI CHAT</span></div>
+  <div class="search">🔍 Поиск по чатам</div>
+  <div class="btn-add">Добавить чат ⊕</div>
+  <div class="sgroup">Персональные чаты</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>ССП Международный блок</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Штаб ИИ</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Приёмная кампания</div>
+  <div class="sgroup">Инструменты</div>
+  <div class="sitem mut"><i style="background:var(--accent)">✦</i>ИИ чат</div>
+<div class="sitem mut"><i style="background:var(--blue)">📝</i>Умные заметки</div>
+<div class="sitem mut"><i style="background:var(--purple)">👔</i>Помощник руководителя</div>
+<div class="sitem mut"><i style="background:var(--green)">🏛</i>Оргструктура</div>
+<div class="sitem on"><i style="background:var(--orange)">🎓</i>Библиотека курсов</div>
+<div class="sitem mut"><i style="background:var(--pink)">🌐</i>Дайджест ИИ</div>
+  <div class="me"><div class="ava"></div><div><b>Пример имени</b><span>example@synergy.ru</span></div></div>
+</div><div class="main">
+    <div class="topbar"><div class="tt"><i style="background:var(--orange)">🎓</i><div><b>Урок</b><span>Помечать ли «создано с ИИ»</span></div></div>
+      <div class="right"><div class="pillbtn">Внешние сервисы ⌄</div><div class="pillbtn">⚙</div><div class="pillbtn blue">⠿ Все инструменты</div></div></div>
+    <div class="body"><div class="content"><div class="col" style="max-width:900px">
+  <div class="crumbs"><div class="back">←</div><span style="color:var(--usual)">Ваш трек</span>
+   <div class="chips"><div class="chip red">⏱ 8 минут</div><div class="chip">Уровень 2 · Самостоятельно</div></div></div>
+  <h2 class="h2"><i>📘</i>Помечать ли «создано с ИИ»</h2>
+  <div class="usteps"><div class="ustep done">1 ✓ Задача</div><div class="ustep done">2 ✓ Зачем</div>
+   <div class="ustep on">3 Алгоритм</div><div class="ustep">4 Практика</div><div class="ustep">5 Проверка</div></div>
+  <div class="ubody"><h3>Алгоритм</h3><div class="algo"><div>Спросите себя, может ли человек принять эту картинку за снимок события.</div><div>Сверьтесь с правилом компании и требованиями площадки: пометку ставят штатным инструментом площадки.</div><div>Поправьте подпись: иллюстрацию к анонсу не называют кадрами с события.</div><div>Метаданные о генерации не вычищайте: площадки их читают, а снятая пометка — это уже сокрытие.</div></div>
+   <div class="row" style="margin-top:24px"><div class="btn">Дальше, к практике →</div>
+    <div class="btn sec">Вернуться к треку</div></div></div>
+</div></div></div></div></div></div></div></div><div class="scaler" data-w="390" data-h="800"><div class="frame-wrap"><div class="frame mob"><div class="mui">
+    <div class="mstatus"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+    <div class="mhead"><div class="burger">☰</div><i style="background:var(--blue)">📘</i><div><b>Урок</b><span>Помечать ли «создано с ИИ»</span></div></div>
+    <div class="mbody"><div class="crumbs"><div class="back">←</div><span style="color:var(--usual);font-size:13px">Трек</span></div>
+       <div class="usteps"><div class="ustep done">1 ✓</div><div class="ustep done">2 ✓</div><div class="ustep on">3 Алгоритм</div>
+        <div class="ustep">4</div><div class="ustep">5</div></div>
+       <div class="ubody" style="padding:16px 18px"><h3 style="font-size:17px">Алгоритм</h3>
+        <div class="algo" style="font-size:14px"><div>Спросите себя, может ли человек принять эту картинку за снимок события.…</div><div>Сверьтесь с правилом компании и требованиями площадки: пометку ставят штатным инструментом площадки.…</div><div>Поправьте подпись: иллюстрацию к анонсу не называют кадрами с события.…</div></div></div></div><div class="mtabs"><div class=""><span>💬</span>Чаты</div><div class="on"><span>⠿</span>Инструменты</div><div class=""><span>👤</span>Профиль</div></div></div></div></div></div></div></section><section class="shot" id="s14">
+      <header><span class="num">14</span><h2>Проверка в конце урока</h2><span class="kind">Библиотека курсов → урок</span></header>
+      <p class="note">Проверка — одиночный выбор из трёх вариантов: задание из банка оценки в уроке не повторяется. Верный ответ закрывает пробел и пересчитывает уровень.</p><div class="new">Новое: <b>результат урока меняет профиль</b> — после верного ответа навык переходит в подтверждённые, и трек укорачивается.</div>
+      <div class="pair"><div class="scaler" data-w="1920" data-h="1080"><div class="frame-wrap"><div class="frame web"><div class="ui"><div class="side">
+  <div class="logo"><i>◀</i><span>SYNERGY<br>AI CHAT</span></div>
+  <div class="search">🔍 Поиск по чатам</div>
+  <div class="btn-add">Добавить чат ⊕</div>
+  <div class="sgroup">Персональные чаты</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>ССП Международный блок</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Штаб ИИ</div>
+  <div class="sitem mut"><i style="background:#8ea2c9">💬</i>Приёмная кампания</div>
+  <div class="sgroup">Инструменты</div>
+  <div class="sitem mut"><i style="background:var(--accent)">✦</i>ИИ чат</div>
+<div class="sitem mut"><i style="background:var(--blue)">📝</i>Умные заметки</div>
+<div class="sitem mut"><i style="background:var(--purple)">👔</i>Помощник руководителя</div>
+<div class="sitem mut"><i style="background:var(--green)">🏛</i>Оргструктура</div>
+<div class="sitem on"><i style="background:var(--orange)">🎓</i>Библиотека курсов</div>
+<div class="sitem mut"><i style="background:var(--pink)">🌐</i>Дайджест ИИ</div>
+  <div class="me"><div class="ava"></div><div><b>Пример имени</b><span>example@synergy.ru</span></div></div>
+</div><div class="main">
+    <div class="topbar"><div class="tt"><i style="background:var(--orange)">🎓</i><div><b>Урок</b><span>Шаг 5 из 5 · проверка</span></div></div>
+      <div class="right"><div class="pillbtn">Внешние сервисы ⌄</div><div class="pillbtn">⚙</div><div class="pillbtn blue">⠿ Все инструменты</div></div></div>
+    <div class="body"><div class="content"><div class="col" style="max-width:900px">
+  <div class="crumbs"><div class="back">←</div><span style="color:var(--usual)">Ваш трек</span>
+   <div class="chips"><div class="chip">Шаг 5 из 5</div></div></div>
+  <h2 class="h2"><i>📘</i>Помечать ли «создано с ИИ»</h2>
+  <div class="usteps"><div class="ustep done">1 ✓ Задача</div><div class="ustep done">2 ✓ Зачем</div>
+   <div class="ustep done">3 ✓ Алгоритм</div><div class="ustep done">4 ✓ Практика</div><div class="ustep on">5 Проверка</div></div>
+  <div class="ubody"><h3>Проверка</h3><p>Реалистичная генерация уходит в анонс, площадка требует пометку, в подписи написано «кадры со дня открытых дверей».</p>
+   <div class="opts"><div class="opt right"><span class="bx">✓</span>Ставлю штатную пометку площадки и меняю подпись: это иллюстрация к анонсу, а не кадры с события</div><div class="opt"><span class="bx"></span>Ставлю пометку, подпись оставляю: пометка уже всё объясняет</div><div class="opt"><span class="bx"></span>Дописываю мелкий хэштег про ИИ в конце подписи, штатную пометку не включаю</div></div>
+   <div class="card" style="margin-top:16px;background:#F1FAEF;border-color:#CBE8C3">
+    <div class="verd"><span class="lvl">Пробел закрыт</span></div>
+    <p style="font-size:14px;line-height:20px;margin:0">Верно: закрыты обе части — механика площадки и смысл подписи.</p>
+    <p style="font-size:13px;line-height:19px;color:var(--usual);margin:8px 0 0">Навык отмечен подтверждённым,
+     уровень компетенции в профиле пересчитан. В треке осталось два урока.</p></div>
+   <div class="row" style="margin-top:22px"><div class="btn">Следующий урок →</div>
+    <div class="btn sec">Смотреть профиль</div></div></div>
+</div></div></div></div></div></div></div></div></div></section>
+</div>
+<script>
+/* экраны нарисованы в натуральную величину и ужимаются под ширину страницы */
+function fit(){
+  document.querySelectorAll('.scaler').forEach(function(s){
+    var w=+s.dataset.w,h=+s.dataset.h,avail=Math.min(s.parentElement.clientWidth,1272);
+    var k=w>avail?avail/w:1;
+    s.firstElementChild.style.transform='scale('+k+')';
+    s.style.width=(w*k)+'px';s.style.height=(h*k)+'px';
+  });
+}
+function jump(){var h=location.hash;if(h){var el=document.querySelector(h);if(el)el.scrollIntoView();}}
+addEventListener('resize',fit);addEventListener('hashchange',jump);fit();jump();
+addEventListener('load',function(){fit();jump();});
+</script></body></html>
