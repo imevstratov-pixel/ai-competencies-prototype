@@ -321,7 +321,7 @@ body{margin:0;background:#E9EBF0;font-family:Raleway,-apple-system,Segoe UI,sans
 .tree .leaf.skip{fill:#F1F2F6;stroke:#D7DAE1}
 .tree .node{fill:var(--titles);stroke:#fff;stroke-width:3}
 .tree .nlv{fill:#fff;font:700 13px Raleway;text-anchor:middle}
-.tree .nname{fill:var(--titles);font:700 12px Raleway;text-anchor:middle}
+.tree .nname{fill:var(--titles);font:700 11.5px Raleway;stroke:#fff;stroke-width:3.5;paint-order:stroke}
 .tree .root{fill:var(--accent);stroke:#fff;stroke-width:4}
 .tree .rtext{fill:#fff;font:700 14px Raleway;text-anchor:middle}
 .tleg{display:flex;gap:20px;font-size:12.5px;color:var(--usual);flex-wrap:wrap;padding-top:4px}
@@ -433,6 +433,11 @@ body.proto .mxwrap{overflow-x:auto}
 .tree .leaf:hover{r:11}
 .tree .nname,.tree .nlv,.tree .rtext{pointer-events:none}
 @media (prefers-reduced-motion:reduce){.tree .br,.tree .tw,.tree .leaf,.tree .node{animation:none;opacity:1;stroke-dashoffset:0}}
+
+/* цифра уровня в красном круге: белая и плотная, иначе на акценте не читается */
+.lvcard .lvnum{color:#fff;font-weight:800;font-size:15px;width:32px;height:32px;line-height:1}
+/* выравнивание подписи узла задаётся атрибутом в разметке — в CSS его не фиксируем */
+.tree .nname{fill:var(--titles);font:700 11.5px Raleway;stroke:#fff;stroke-width:3.5;paint-order:stroke}
 
 .frame-wrap{transform-origin:top left}
 </style></head><body><div class="page">
