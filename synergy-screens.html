@@ -368,6 +368,72 @@ body.proto .ui{height:100vh}
 body.proto .mxn{font-size:12.5px}
 body.proto .mxwrap{overflow-x:auto}
 
+/* состояния ответа в разборе шага */
+.opt.ans-hit,.shotcard.ans-hit{border-color:var(--green);background:#F3FAF1}
+.opt.ans-extra,.shotcard.ans-extra{border-color:var(--accent);background:#FFF4F4}
+.opt.ans-miss,.shotcard.ans-miss{border-color:var(--orange);background:#FFF8F0;border-style:dashed}
+.opt.ans-plain{opacity:.6}
+.shotcard.ans-plain{opacity:.55}
+.opt .bx{display:grid;place-items:center;font-size:10px;font-weight:700;color:transparent}
+.opt.ans-hit .bx,.shotcard.ans-hit .bx{background:var(--green);border-color:var(--green);color:#fff}
+.opt.ans-extra .bx,.shotcard.ans-extra .bx{background:var(--accent);border-color:var(--accent);color:#fff}
+.opt.ans-miss .bx,.shotcard.ans-miss .bx{background:var(--orange);border-color:var(--orange);color:#fff}
+.optfb{display:block;color:var(--usual);font-size:12.5px;line-height:16px;margin-top:3px;font-style:normal}
+.anssum{margin:0;padding:0;list-style:none;font-size:13.5px;line-height:20px}
+.anssum li{position:relative;padding-left:18px}
+.anssum li:before{position:absolute;left:0;font-weight:700}
+.s-hit:before{content:"✓";color:var(--green)}
+.s-extra:before{content:"✕";color:var(--accent)}
+.s-miss:before{content:"!";color:var(--orange)}
+.legans{display:flex;gap:16px;margin-top:10px;font-size:12px;color:var(--usual);flex-wrap:wrap}
+.legans span{display:flex;align-items:center;gap:6px}
+.legans .bx{width:16px;height:16px;border-radius:4px;display:grid;place-items:center;font-size:9px;font-weight:700;color:#fff;border:0}
+.legans .bx.hit{background:var(--green)}.legans .bx.extra{background:var(--accent)}.legans .bx.miss{background:var(--orange)}
+
+/* ---------- библиотека компетенций ---------- */
+.h3{font-size:18px;line-height:22px;margin:26px 0 12px}
+.lvgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.lvcard{background:var(--wh);border:1px solid var(--border);border-radius:14px;padding:16px 18px}
+.lvhead{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.lvnum{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px;flex:none}
+.lvhead b{display:block;font-size:15px}
+.lvhead span{color:var(--usual);font-size:12px}
+.lvtext{font-size:13px;line-height:18px;color:var(--usual);margin:0 0 12px}
+.atoms{display:flex;flex-direction:column;gap:7px}
+.atom{background:var(--bg);border-radius:9px;padding:9px 11px;font-size:13px;line-height:17px}
+.atom.anchor{background:#FFF1F1}
+.atom em{display:inline-block;margin-left:6px;font-style:normal;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--accent)}
+.atom em.art{color:var(--blue)}
+.rrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);font-size:14px}
+.rrow:last-child{border-bottom:0}
+.rrow em.core{font-style:normal;font-size:10.5px;font-weight:700;text-transform:uppercase;color:var(--accent);margin-left:6px}
+.rlv{display:flex;align-items:center;gap:8px;color:var(--usual);font-size:12.5px}
+.mxn.act,.mxh.act,.mxc.act{cursor:pointer}
+.mxn.act:hover{color:var(--accent)}
+.mxh.act:hover{color:var(--accent)}
+.mcard.act{cursor:pointer;transition:border-color .15s,transform .15s}
+.mcard.act:hover{border-color:#C9CED8;transform:translateY(-1px)}
+@media (max-width:900px){.lvgrid{grid-template-columns:1fr}}
+.mui .lvgrid,.mui .grid3,.mui .grid2cols{grid-template-columns:1fr}
+
+/* ---------- скилл-древо: прорастание и наведение ---------- */
+.tree .br{stroke-dasharray:420;stroke-dashoffset:420;animation:grow .7s var(--d,0s) ease forwards}
+@keyframes grow{to{stroke-dashoffset:0}}
+.tree .tw{opacity:0;animation:fadein .35s var(--d,0s) ease forwards}
+.tree .leaf{opacity:0;transform-box:fill-box;transform-origin:center;animation:pop .4s var(--d,0s) cubic-bezier(.2,1.4,.5,1) forwards}
+.tree .node{opacity:0;animation:pop .4s var(--d,0s) ease forwards}
+@keyframes fadein{to{opacity:1}}
+@keyframes pop{0%{opacity:0;transform:scale(.3)}100%{opacity:1;transform:scale(1)}}
+.tree .brg{cursor:pointer}
+.tree .brg:hover .br{stroke:#C7CCD6}
+.tree .brg:hover .node{fill:var(--accent)}
+.tree .brg:hover .leaf.ok{fill:#C20F17;stroke:#C20F17}
+.tree .brg:hover .nname{fill:var(--accent)}
+.tree .leaf{transition:r .15s}
+.tree .leaf:hover{r:11}
+.tree .nname,.tree .nlv,.tree .rtext{pointer-events:none}
+@media (prefers-reduced-motion:reduce){.tree .br,.tree .tw,.tree .leaf,.tree .node{animation:none;opacity:1;stroke-dashoffset:0}}
+
 .frame-wrap{transform-origin:top left}
 </style></head><body><div class="page">
 <h1>Оценка и уроки в интерфейсе Synergy AI Chat</h1>
