@@ -439,6 +439,48 @@ body.proto .mxwrap{overflow-x:auto}
 /* выравнивание подписи узла задаётся атрибутом в разметке — в CSS его не фиксируем */
 .tree .nname{fill:var(--titles);font:700 11.5px Raleway;stroke:#fff;stroke-width:3.5;paint-order:stroke}
 
+/* ---------- ветка компетенций (скилл-древо) ---------- */
+.branchwrap{position:relative;width:100%;aspect-ratio:1120/400;min-height:380px}
+.branch{position:absolute;inset:0;width:100%;height:100%}
+.bstem{fill:none;stroke:#D7DBE3;stroke-width:7;stroke-linecap:round}
+.bline{fill:none;stroke:#C9CFDA;stroke-width:2.4;stroke-dasharray:5 7;stroke-linecap:round;
+  animation:dash 22s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-240}}
+.broot{position:absolute;transform:translate(-50%,-50%);text-align:center}
+.broot b{position:absolute;left:50%;top:-44px;transform:translateX(-50%);font-size:13px;color:var(--usual)}
+.bnode{position:absolute;transform:translate(-50%,-50%);width:0;height:0}
+.bring{position:absolute;left:-26px;top:-26px;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;
+  background:conic-gradient(var(--accent) calc(var(--p,0)*1%),#E6E9EE 0);transition:--p .6s ease}
+.bring.root{position:static;width:58px;height:58px;display:inline-grid;--p:100}
+.bico{width:40px;height:40px;border-radius:50%;background:var(--wh);display:grid;place-items:center;color:var(--usual)}
+.bring.root .bico{width:46px;height:46px;color:var(--accent)}
+.bnode.ok .bico{color:var(--accent)}
+.bnode.cur .bring{box-shadow:0 0 0 4px rgba(237,19,28,.12)}
+.bnode.wait .bico{color:#B9BFCB}
+.bnum{position:absolute;left:-30px;top:14px;width:19px;height:19px;border-radius:50%;background:var(--wh);
+  border:1px solid var(--border);display:grid;place-items:center;font-size:10.5px;font-weight:700;color:var(--usual)}
+.block{position:absolute;left:14px;top:14px;width:21px;height:21px;border-radius:50%;background:var(--wh);
+  border:1px solid var(--border);display:grid;place-items:center;color:var(--icons)}
+.block.done{background:var(--green);border-color:var(--green);color:#fff}
+.bnow{position:absolute;left:-30px;top:-52px;background:var(--accent);color:#fff;border-radius:var(--r-pill);
+  padding:3px 10px;font-size:10.5px;font-weight:700;white-space:nowrap}
+.blabel{position:absolute;left:34px;top:-30px;width:165px;font-size:12.5px;line-height:16px}
+.bnode.left .blabel{left:auto;right:34px;text-align:right}
+.bnode.left .blabel em{justify-content:flex-end}
+.bnode.left .bnow{left:auto;right:-30px}
+.blabel b{display:block;color:var(--titles)}
+.blabel em{display:flex;font-style:normal;color:var(--usual);font-size:11.5px;margin-top:2px}
+.blabel em i{font-style:normal;padding:0 7px;border-left:1px solid var(--border)}
+.blabel em i:first-child{padding-left:0;border-left:0}
+.bnode.act{cursor:pointer}
+.bnode.act:hover .bico{color:var(--accent)}
+.bnode.act:hover .blabel b{color:var(--accent)}
+@media (max-width:900px){.branchwrap{min-height:520px}.blabel{width:120px;font-size:11.5px}}
+
+.legring{width:18px;height:18px;border-radius:50%;display:inline-grid;place-items:center;background:conic-gradient(var(--accent) 100%,#E6E9EE 0)}
+.legring.half{background:conic-gradient(var(--accent) 55%,#E6E9EE 0)}
+.legring.lock{background:var(--wh);border:1px solid var(--border);color:var(--icons)}
+
 .frame-wrap{transform-origin:top left}
 </style></head><body><div class="page">
 <h1>Оценка и уроки в интерфейсе Synergy AI Chat</h1>
