@@ -300,16 +300,15 @@ table.stack td,table.stack th{vertical-align:top;text-align:left;font-size:14px}
 .hb.none{width:5px;height:5px;border:0;background:#dedede;outline:none;box-shadow:none}
 .mins{margin:6px 0 18px;padding-left:22px;max-width:900px}.mins li{margin:4px 0;cursor:default}.mins li::marker{color:var(--red);font-weight:700}
 .mx{border:1.5px solid var(--stroke);border-radius:var(--r);padding:8px 0;background:#fff;overflow-x:auto}
-.mrow{display:grid;grid-template-columns:var(--cols);align-items:center;min-height:42px;padding:0 12px;transition:opacity .2s}
+.mrow{display:grid;grid-template-columns:var(--cols);align-items:center;min-width:var(--matrix-width,0);min-height:42px;padding:0 12px;transition:opacity .2s}
 .mrow:not(.mhead):hover{background:#fafafa}
 .mhead{position:sticky;top:0;background:#fff;z-index:1;min-height:48px;border-bottom:1px solid var(--soft)}
 .mcol{all:unset;cursor:pointer;text-align:center;font-weight:700;font-size:14px;padding:6px 2px;border-radius:6px;line-height:1.2}.mcol:hover{background:var(--bg)}.mcol:focus-visible{box-shadow:var(--focus)}
-.mcol.vert{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:600;font-size:12px;max-height:150px;justify-self:center;padding:6px 0}
 .mname{all:unset;cursor:pointer;font-size:14px;line-height:1.3;padding:4px 8px 4px 0}.mname:hover{text-decoration:underline}.mname:focus-visible{box-shadow:var(--focus)}
 .mcell{all:unset;cursor:pointer;display:grid;place-items:center;height:40px;border-radius:8px}.mcell:hover{background:#eef2fd}.mcell:focus-visible{box-shadow:var(--focus)}
 .mcell.chg{animation:mchg .6s}@keyframes mchg{0%{box-shadow:inset 0 0 0 2px #5B7BEA}100%{box-shadow:inset 0 0 0 2px transparent}}
 .mcov{display:flex;align-items:center;gap:8px;padding-left:10px}.mbar{flex:1;height:6px;background:var(--soft);border-radius:3px;overflow:hidden;min-width:30px}.mbar i{display:block;height:100%;background:#b8bfcc;transition:width .3s}
-.mgroup{padding:4px 0 6px}.mgroup+.mgroup{border-top:1px solid var(--soft)}
+.mgroup{padding:4px 0 6px;min-width:var(--matrix-width,0)}.mgroup+.mgroup{border-top:1px solid var(--soft)}
 .mgroup.all{background:rgba(91,123,234,.08)}.mgroup.all .mbar i{background:#5B7BEA}
 .mglabel{font-size:12px;font-weight:700;color:var(--mu);letter-spacing:.02em;padding:8px 12px 2px}
 .mx[data-hl="all"] .mrow:not(.mhead):not(.hl-all),.mx[data-hl="wide"] .mrow:not(.mhead):not(.hl-wide){opacity:.3}
@@ -339,18 +338,19 @@ table.stack td,table.stack th{vertical-align:top;text-align:left;font-size:14px}
  .mx .mcov .mbar{display:none}
 }
 @media (prefers-reduced-motion:reduce){.hb,.mbar i{transition:none}.mcell.chg{animation:none}}
-.mhead .mcol:not(.vert){font-size:13px;white-space:normal;overflow-wrap:anywhere;padding:6px 4px}
+.mhead .mcol{font-size:13px;white-space:normal;overflow-wrap:normal;padding:10px 6px;line-height:1.35}
 .jms .ln{width:16px}.jmshead span{width:38px;font-size:10.5px}.jmshead{gap:0}
 .dtile{width:100%;box-sizing:border-box}
 .mhead .mcol{overflow-wrap:normal}
 .fdot{display:grid;grid-template-columns:1fr 150px;align-items:center;gap:10px;padding:6px 0;border-top:1px solid var(--soft);font-size:14px}.fdot.fhead{border:0;padding:0}
 .ftrack{display:flex;align-items:center;gap:4px}.ftrack i{width:14px;height:6px;border-radius:3px;background:var(--soft)}.ftrack i.on{background:#b8bfcc}.ftrack .hb{margin-left:8px}
 .fhead .ftrack{justify-content:space-between;font-size:11px;color:var(--mu);width:120px}.fhead em{font-style:normal;white-space:nowrap}
-/* матрица на телефоне: без горизонтальной прокрутки — подписи ролей вертикально, колонка охвата уходит в вид «Что учить вместе» */
+/* На телефоне прокручивается матрица; подписи остаются горизонтальными. */
 @media screen and (max-width:600px){
- .mx .mrow{grid-template-columns:minmax(96px,1fr) repeat(var(--n),minmax(30px,38px))!important;padding:0 6px}
- .mx .mcov,.mx .mhead>div:last-child{display:none}
- .mx .mcol{writing-mode:vertical-rl;transform:rotate(180deg);font-size:12px;max-height:120px;justify-self:center;padding:4px 0}
+ .mx .mrow{padding:0 6px}
+ .mx .mcol{font-size:12px}
+ .mx .mname,.mx .mhead>div:first-child{position:sticky;left:0;z-index:2;background:#fff;padding-right:8px}
+ .mx .mgroup.all .mname{background:#f3f4ff}
  .mx .hb{width:18px;height:18px}.mx .hb.none{width:4px;height:4px}.mcell{height:36px}
 }
 
@@ -377,7 +377,9 @@ table.stack td,table.stack th{vertical-align:top;text-align:left;font-size:14px}
  h1{font-size:20px;margin:0 0 4px}h2{font-size:15px;margin:8px 0 4px}
  .mins{margin:4px 0 8px;font-size:11px}
  .mx{border:1px solid #d4d1d1;overflow:visible;page-break-inside:auto}
- .mgroup{page-break-inside:avoid}.mrow{min-height:26px}
+ .mgroup{page-break-inside:avoid;min-width:0}.mrow{min-height:26px;min-width:0}
+ .mx .mrow{grid-template-columns:minmax(145px,1.8fr) repeat(var(--n),minmax(0,1fr)) minmax(70px,1fr)!important}
+ .mx .mcol{overflow-wrap:anywhere}
  .mhead{position:static}
  .hb{width:16px;height:16px}.hb.none{width:4px;height:4px}
  .mcell{height:24px}.mname,.mcol{font-size:11px}
@@ -1874,12 +1876,12 @@ function mxInsights(md){const R=md.roles,n=R.length,codes=md.groups.flatMap(g=>g
   if(R.some(ri=>coreCode(ri)))out.push(['core',`У каждой роли одна главная компетенция — красное кольцо. ${top===4?`Выше всех планка у роли «${md.short(who[0][0])}»: ${LVW[4]} в компетенции «${C2[who[0][1]].name}».`:`Самый высокий уровень на этом грейде — «${LVW[top]}».`}`]);
   else{const by={};who.forEach(([ri,c])=>{(by[ri]=by[ri]||[]).push(`«${C2[c].name}»`);});out.push(['core',`Самый высокий уровень — «${LVW[top]}»: ${Object.entries(by).slice(0,2).map(([ri,cs])=>`${md.short(+ri)} — ${cs.join(', ')}`).join('; ')}.`]);}
   return out;}
-function mxMatrix(md){const R=md.roles,n=R.length,wide=MX.scale==='design',cols=`minmax(140px,230px) repeat(${n},${wide?'minmax(56px,104px)':'minmax(40px,64px)'}) minmax(70px,130px)`;
+function mxMatrix(md){const R=md.roles,n=R.length,wide=MX.scale==='design',roleWidth=wide?96:128,minWidth=170+n*roleWidth+90+24,cols=`minmax(170px,230px) repeat(${n},minmax(${roleWidth}px,1fr)) minmax(90px,130px)`;
   const cov=c=>R.filter(ri=>lvl(ri,c,gradeOf(ri))).length;
-  const head=`<div class="mrow mhead" style="--cols:${cols};--n:${n}"><div></div>${R.map(ri=>`<button class="mcol${wide?'':' vert'}" data-role="${ri}" title="${esc(M.roles[ri].name)}">${esc(md.short(ri))}</button>`).join('')}<div class="small muted">Нужна ролям</div></div>`;
+  const head=`<div class="mrow mhead" style="--cols:${cols};--n:${n}"><div></div>${R.map(ri=>`<button class="mcol" data-role="${ri}" title="${esc(M.roles[ri].name)}">${esc(md.short(ri))}</button>`).join('')}<div class="small muted">Нужна ролям</div></div>`;
   const rows=md.groups.map(([t,codes],gi)=>`<div class="mgroup${gi===0&&t==='Для всех'?' all':''}"><div class="mglabel">${t}</div>${codes.map(c=>`<div class="mrow hl-${cov(c)===n?'all':cov(c)>=Math.max(2,Math.ceil(n*.6))?'wide':'none'}" style="--cols:${cols};--n:${n}"><button class="mname" data-comp="${c}">${C2[c].name}</button>${R.map(ri=>{const g=gradeOf(ri),l=lvl(ri,c,g);return `<button class="mcell" data-role="${ri}" data-code="${c}" aria-label="${esc(M.roles[ri].name+' · '+C2[c].name+': '+(l?LVW[l]:'не нужна'))}">${hb(l,{core:coreCode(ri)===c,title:`${M.roles[ri].name} · ${C2[c].name} — ${l?LVW[l]:'не нужна'}${hasGrades(ri)?' ('+GRADES[g]+')':''}`})}</button>`;}).join('')}<div class="mcov" data-code="${c}"><span class="mbar"><i style="width:${cov(c)/n*100}%"></i></span><span class="small">${cov(c)} из ${n}</span></div></div>`).join('')}</div>`).join('');
   const leg=`<div class="mleg">${[1,2,3,4].map(l=>`<span>${hb(l)} ${LVW[l]}</span>`).join('')}<span>${hb(0)} не нужна</span>${R.some(ri=>coreCode(ri))?`<span>${hb(2,{core:true})} главная компетенция роли</span>`:''}</div>`;
-  return `<div class="mx" id="mx">${head}${rows}</div>${leg}<p class="muted small">Нажмите на роль или компетенцию, чтобы увидеть подробности.</p>`;}
+  return `<div class="mx" id="mx" style="--matrix-width:${minWidth}px">${head}${rows}</div>${leg}<p class="muted small">Нажмите на роль или компетенцию, чтобы увидеть подробности.</p>`;}
 function jms(ri,c){const l=g=>lvl(ri,c,g),core=coreCode(ri)===c;return hasGrades(ri)?`<span class="jms">${['junior','middle','senior'].map(g=>hb(l(g),{core,title:`${GRADES[g]}: ${l(g)?LVW[l(g)]:'не нужна'}`})).join('<i class="ln"></i>')}</span>`:hb(l('middle'),{core});}
 function mxRoles(md){const R=md.roles,shared=(md.groups.find(g=>g[0]==='Для всех')||['',[]])[1].filter(c=>R.every(ri=>lvl(ri,c,'middle')||lvl(ri,c,'senior')));
   return `${shared.length?`<div class="mshared"><b>Для всех ${R.length}:</b> ${shared.map(c=>C2[c].name).join(' · ')}</div>`:''}<div class="rcards">${R.map(ri=>{const cc=coreCode(ri),codes=md.groups.flatMap(g=>g[1]).filter(c=>!shared.includes(c)&&(lvl(ri,c,'junior')||lvl(ri,c,'middle')||lvl(ri,c,'senior')));
@@ -1891,11 +1893,11 @@ function mxTogether(md){const R=md.roles,n=R.length,cov=c=>R.filter(ri=>lvl(ri,c
   <div class="dgrid">${md.groups.map(([t,codes])=>`<div class="card dom${t==='Для всех'?' all':''}"><div class="mglabel">${t}</div>${codes.map(c=>{const w=cov(c);return `<button class="dtile" data-comp="${c}"><span class="dtop"><b>${C2[c].name}</b><span class="small muted">${w.length} из ${n}</span></span><span class="chips">${w.map(ri=>chip(ri,c)).join('')}</span></button>`;}).join('')}</div>`).join('')}</div>
   <p class="muted small">Красная плашка — для этой роли компетенция главная.</p>`;}
 function mxCompany(){const n=M.divisions.length,divs=M.divisions,N=M.roles.length,share=(d,c)=>{const rs=d.roles.map(roleIdx);return rs.filter(ri=>lvl(ri,c.code,'middle')).length/rs.length;},cov=c=>M.roles.filter((_,ri)=>lvl(ri,c.code,'middle')).length;
-  const L={1:'Для всех',2:'Общие сценарии',3:'Профильные'},cols=`minmax(150px,240px) repeat(${divs.length},minmax(44px,1fr)) minmax(80px,120px)`;
+  const L={1:'Для всех',2:'Общие сценарии',3:'Профильные'},cols=`minmax(170px,240px) repeat(${divs.length},minmax(96px,1fr)) minmax(90px,120px)`;
   const head=`<div class="mrow mhead" style="--cols:${cols};--n:${n}"><div></div>${divs.map(d=>`<button class="mcol" data-div="${esc(d.name)}" title="${esc(d.name)} — открыть матрицу подразделения">${DIV_SHORT[d.name]||d.name}</button>`).join('')}<div class="small muted">Нужна ролям</div></div>`;
   const rows=[1,2,3].map(l=>{const cs=M.competencies.filter(c=>c.layer===l).sort((a,b)=>cov(b)-cov(a));return `<div class="mgroup${l===1?' all':''}"><div class="mglabel">${L[l]}</div>${cs.map(c=>`<div class="mrow" style="--cols:${cols};--n:${n}"><button class="mname" data-comp="${c.code}">${c.name}</button>${divs.map(d=>{const q=share(d,c);return `<button class="mcell" data-div="${esc(d.name)}">${hb(q?Math.max(1,Math.round(q*4)):0,{title:`${d.name} · ${c.name}: нужна ${Math.round(q*100)}% ролей`})}</button>`;}).join('')}<div class="mcov"><span class="mbar"><i style="width:${cov(c)/N*100}%"></i></span><span class="small">${cov(c)} из ${N}</span></div></div>`).join('')}</div>`;}).join('');
   const many=M.competencies.filter(c=>cov(c)>N/2);
-  return `<h2>${nw('nom',many.length)} ${plural(many.length,['компетенция нужна','компетенции нужны','компетенций нужны'])} больше чем половине ролей компании — их учим всей компанией</h2><p class="muted">Кружок — какая доля ролей подразделения нуждается в компетенции: четверть, половина, три четверти, все. Нажмите на подразделение, чтобы открыть его матрицу.</p><div class="mx">${head}${rows}</div><div class="mleg">${[1,2,3,4].map(l=>`<span>${hb(l)} ${['','до четверти','до половины','до трёх четвертей','все роли'][l]}</span>`).join('')}<span>${hb(0)} не нужна</span></div>`;}
+  return `<h2>${nw('nom',many.length)} ${plural(many.length,['компетенция нужна','компетенции нужны','компетенций нужны'])} больше чем половине ролей компании — их учим всей компанией</h2><p class="muted">Кружок — какая доля ролей подразделения нуждается в компетенции: четверть, половина, три четверти, все. Нажмите на подразделение, чтобы открыть его матрицу.</p><div class="mx" style="--matrix-width:${170+n*96+90+24}px">${head}${rows}</div><div class="mleg">${[1,2,3,4].map(l=>`<span>${hb(l)} ${['','до четверти','до половины','до трёх четвертей','все роли'][l]}</span>`).join('')}<span>${hb(0)} не нужна</span></div>`;}
 function mxPanel(){const p=MX.panel;if(!p)return '';let body='';
   if(p.role!=null){const ri=p.role,r=M.roles[ri],cc=coreCode(ri),md=mxModel(),codes=md.groups.flatMap(g=>g[1]).filter(c=>lvl(ri,c,'junior')||lvl(ri,c,'middle')||lvl(ri,c,'senior'));
     const F=FQ.roles&&FQ.roles[r.name];let quad='';
