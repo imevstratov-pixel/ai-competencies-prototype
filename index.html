@@ -638,21 +638,6 @@ a.card,.chip,.seg button,.opts button,.dtile,.mcell,.mname,.mcol{transition:back
 .calc{width:100%;min-height:0;height:58px;margin-top:8px;font:inherit;border:1.5px solid var(--stroke);border-radius:var(--r-sm);padding:8px 10px;background:#fff}
 .calnote textarea{min-height:0;height:58px}
 @media (max-width:700px){.calbar{position:static}}
-/* Подробные рабочие действия IT и референта. Карточка открывается без перехода со страницы. */
-.workdetail{margin:10px 0 14px;border-top:1px solid var(--soft);padding-top:8px;font-size:13px;line-height:1.55}
-.workdetail>summary{cursor:pointer;color:var(--red,#ED131C);font-weight:600}
-.workdetail h4{margin:14px 0 6px;font-size:13px}
-.workdetail ul{padding-left:20px;margin:6px 0 12px}
-.workdetail li{margin:5px 0;overflow-wrap:anywhere}
-.workdetail p{margin:10px 0;overflow-wrap:anywhere}
-.work-dialog{width:min(760px,calc(100vw - 32px));max-width:calc(100vw - 32px);max-height:calc(100dvh - 48px);padding:0;border:1px solid var(--soft);border-radius:16px;color:var(--ink,#202020);background:#fff;box-shadow:0 16px 64px #0003;overflow:auto}
-.work-dialog::backdrop{background:#0006}
-.work-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;padding:16px 24px;background:#fff;border-bottom:1px solid var(--soft);z-index:1}
-.work-dialog-head h2{font-size:20px;margin:0}
-.work-dialog-body{padding:8px 24px 24px;line-height:1.6}
-.work-dialog-body h4{margin:18px 0 6px}
-.work-dialog-body li{margin:6px 0}
-@media(max-width:600px){.work-dialog-head{padding:12px 16px}.work-dialog-head h2{font-size:17px}.work-dialog-body{padding:4px 16px 16px}}
 </style>
 </head>
 <body>
@@ -1058,21 +1043,6 @@ PAGES.comps=()=>{const ids=compView==='all'?READY_COMPS:new Set(M.roles.filter(r
   return `${crumbs(['Компетенции'])}<h1>Компетенции</h1><p class="lead muted">Умения работы с ИИ у дизайнеров, IT-специалистов и референта. Общее требование — постановка задачи и проверка ответа; остальные компетенции описывают профильную работу.</p><div class="seg" role="group" aria-label="Компетенции по ролям">${[['all','Все'],['Дизайн','Дизайн'],['IT-департамент','IT'],['Административная поддержка','Референт']].map(([v,t])=>`<button data-compview="${v}" class="${compView===v?'on':''}">${t}</button>`).join('')}</div>${[1,2,3].map(l=>{const g=list.filter(c=>c.layer===l);return g.length?`<h2>${S.layers[l]}</h2><div class="grid">${g.map(card).join('')}</div>`:'';}).join('')}${optional.length?`<h2>По отдельным задачам</h2><p class="muted small">Подключаются к порученной работе. Состав действий и нужный уровень определяются рабочим заданием.</p><div class="grid">${optional.map(card).join('')}</div>`:''}`;};
 PAGES.comps.after=()=>{$('#app').onclick=e=>{const b=e.target.closest('[data-compview]');if(b){compView=b.dataset.compview;render('#/comps');}};};
 
-function workDetailHTML(a,roleName,group){group=group||M.roles.find(r=>r.name===roleName)?.group;const d=WORK_DETAILS.group_overrides?.[group]?.[a.id]?.detail||WORK_DETAILS.skills[a.id];if(!d)return '';const example=WORK_DETAILS.role_examples?.[roleName]?.[a.id]||d.example;
- const list=items=>`<ul>${items.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`;
- return `<details class="workdetail" data-title="${esc(a.text)}"><summary>Знания, действия и проверка результата</summary><div class="small"><h4>Что нужно знать</h4>${list(d.knowledge)}<h4>Как выполняет</h4>${list(d.steps)}<p><b>Результат:</b> ${esc(d.result)}</p><h4>Как проверить</h4>${list(d.checks)}<p><b>Типичная ошибка:</b> ${esc(d.error)}</p><p class="muted">${esc(example)}</p></div></details>`;}
-/* В матрице уровней подробности читаются в широком окне, а не внутри узкой ячейки. */
-function wireWorkDetails(){
- const summaries=[...document.querySelectorAll('#app .lvmx .workdetail>summary')];if(!summaries.length)return;
- const dialog=document.createElement('dialog');dialog.className='work-dialog';dialog.setAttribute('aria-labelledby','work-dialog-title');$('#app').appendChild(dialog);
- summaries.forEach(summary=>{summary.setAttribute('aria-haspopup','dialog');summary.onclick=e=>{
-  e.preventDefault();const detail=summary.parentElement;
-  dialog.innerHTML=`<div class="work-dialog-head"><h2 id="work-dialog-title">Требование подробно</h2><button class="btn sec" type="button">Закрыть</button></div><div class="work-dialog-body"><p>${esc(detail.dataset.title)}</p>${detail.querySelector('div').outerHTML}</div>`;
-  $('button',dialog).onclick=()=>dialog.close();summary.focus();dialog.showModal();
- };});
- dialog.onclick=e=>{if(e.target!==dialog)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();};
-}
-
 const GORD=['junior','middle','senior'];
 function skillsHTML(r,g){const all=SKILLS[r.name];if(!all)return '';const now=all.filter(s=>GORD.indexOf(s.grade)<=GORD.indexOf(g||'middle')),later=all.filter(s=>!now.includes(s));
   const card=s=>`<details class="skill"><summary>${s.name}</summary><div class="small"><p><b>Когда:</b> ${s.when}</p><p><b>На входе:</b> ${s.input}</p><p><b>Что делает с ИИ:</b> ${s.does}</p><p><b>Результат:</b> ${s.artifact}</p><p><b>Как принимают:</b> ${s.quality}</p></div></details>`;
@@ -1094,7 +1064,7 @@ PAGES.org=()=>{const order=[...M.divisions].sort((a,b)=>(b.name==='Дизайн'
 function reqsHTML(ri,g){const r=M.roles[ri],all=Object.keys(r.requirements).map(Number).sort((a,b)=>COMP[a].layer-COMP[b].layer||a-b),rq=Object.fromEntries(reqs(ri,g).map(q=>[q.comp,q.thr]));
  return all.map(cid=>{const c=compForRole(COMP[cid],ri),thr=rq[cid],open=!!rqOpen[cid],at=compAtoms(cid,ri).filter(a=>thr&&a.level<=thr);
   const body=open&&thr?`<div class="rqbody">${[1,2,3,4].filter(l=>l<=thr).map(l=>{const list=at.filter(a=>a.level===l);if(!list.length)return '';
-    return `<div class="rqlv"><div class="small muted">Уровень ${l} · ${LVWORD[l]}</div><ul>${list.map(a=>`<li>${a.text}${a.anchor?' <span class="tag">для всех</span>':''}${a.task_type===5?' <span class="tag">результат</span>':''}${workDetailHTML(a,r.name)}</li>`).join('')}</ul></div>`;}).join('')}<p class="small"><a href="#/comp/${cid}${c.code==='B'&&r.group===IT_GROUP?'/it':''}">Открыть компетенцию</a></p></div>`:'';
+    return `<div class="rqlv"><div class="small muted">Уровень ${l} · ${LVWORD[l]}</div><ul>${list.map(a=>`<li>${a.text}${a.anchor?' <span class="tag">для всех</span>':''}${a.task_type===5?' <span class="tag">результат</span>':''}</li>`).join('')}</ul></div>`;}).join('')}<p class="small"><a href="#/comp/${cid}${c.code==='B'&&r.group===IT_GROUP?'/it':''}">Открыть компетенцию</a></p></div>`:'';
   return `<div class="rq${thr?'':' na'}"><div class="rqhead">${thr?`<button class="tlx ${open?'op':''}" data-rq="${cid}" aria-expanded="${open}"><span aria-hidden="true">▸</span><b>${c.name}</b></button>`:`<b style="padding-left:24px">${c.name}</b>`}
    <span class="rqlvl">${thr?`${hb(thr)} <span>уровень ${thr} · ${LVWORD[thr]}</span><span class="small muted rqtog">${open?'скрыть навыки':'показать навыки'}</span>`:'<span class="muted small">не требуется</span>'}</span></div>
    ${thr?`<div class="muted small rqdesc">${c.levels[thr]}${at.length?` · ${at.length} ${plural(at.length,['навык','навыка','навыков'])}`:''}</div>`:''}${body}</div>`;}).join('');}
@@ -1131,7 +1101,7 @@ function levelsHTML(c,o={}){
  const fbOn=FB.active&&!o.noBadges;   /* карточка навыка целиком — кнопка фидбека */
  const item=a=>{const done=fbOn&&FB.get('atom:'+a.id);
   return `<div class="lvitem${a.anchor?' anc':''}${fbOn?' fbable':''}${done?' fbdone':''}"${fbOn?` data-fb="${a.id}" role="button" tabindex="0" aria-label="Оставить фидбек: ${esc(a.text.slice(0,60))}"`:''}>`+
-   `${a.text}${!o.noBadges&&a.roles?`<span class="tag">${a.roles.map(n=>({'Frontend-разработчик (Vue / Nuxt)':'Frontend','PHP-разработчик':'PHP','Разработчик платформы Битрикс':'Битрикс','Верстальщик':'Вёрстка','Тестировщик ПО (QA)':'QA'}[n]||n)).join(', ')}</span>`:!o.noBadges&&a.groups?`<span class="tag">${a.groups.map(n=>n===IT_GROUP?'IT':n==='Административная поддержка'?'референт':n).join(' и ')}</span>`:''}${o.noBadges?'':`${a.anchor?' <span class="tag">по выданным правилам</span>':''}${a.task_type===5?' <span class="tag">результат</span>':''}`}${!o.noBadges&&!FB.active?workDetailHTML(a,null,o.group):''}`+
+   `${a.text}${!o.noBadges&&a.roles?`<span class="tag">${a.roles.map(n=>({'Frontend-разработчик (Vue / Nuxt)':'Frontend','PHP-разработчик':'PHP','Разработчик платформы Битрикс':'Битрикс','Верстальщик':'Вёрстка','Тестировщик ПО (QA)':'QA'}[n]||n)).join(', ')}</span>`:!o.noBadges&&a.groups?`<span class="tag">${a.groups.map(n=>n===IT_GROUP?'IT':n==='Административная поддержка'?'референт':n).join(' и ')}</span>`:''}${o.noBadges?'':`${a.anchor?' <span class="tag">по выданным правилам</span>':''}${a.task_type===5?' <span class="tag">результат</span>':''}`}`+
    `${done?'<span class="fbok" title="ваш ответ сохранён">✓</span>':''}${fbOn?'<span class="fbcta">оставить фидбек</span>':''}</div>`;};
  const head=`<div class="lnlab hd"></div>`+lvs.map(n=>`<div class="lvhead"><span class="lv">${n}</span><div><b>${M.levels[n]}</b><div class="muted small">${items.filter(a=>a.level===n).length} ${plural(items.filter(a=>a.level===n).length,['навык','навыка','навыков'])}</div></div></div>`).join('');
  if(!lines.length) return `<div class="lvmx" style="--cols:${lvs.length}">${head}${lvs.map(n=>`<div class="lvcell">${items.filter(a=>a.level===n).map(item).join('')}</div>`).join('')}</div>`;
@@ -1403,7 +1373,7 @@ PAGES.comp=(id,context)=>{const original=COMP[+id];if(!original)return PAGES.not
   ${stackHTML(c)}
   <h2>${c.optional?'Кому подключается по задаче':'Кому нужна'}</h2><p class="muted small">${c.who_needs||''}</p><div class="req card">${c.optional?M.roles.map((r,i)=>({r,i})).filter(w=>c.groups?.includes(w.r.group)).map(w=>`<a href="#/role/${w.i}">${w.r.name}</a><span class="small muted">По рабочему заданию</span>`).join(''):who.map(w=>`<a href="#/role/${w.ri}">${w.r.name}${isIT(w.r)?' <span class="muted small">Middle</span>':''}</a><span>${scale(w.thr)} <span class="small muted">${w.thr}</span></span>`).join('')}</div>
   <h2>Уроки</h2><div class="grid">${units.map(a=>`<a class="card" href="#/unit/${a.id}${group?'/it':''}"><h3>${unitTitle(a.id,ri)}</h3><div class="muted small">${unitMin(a.id)} мин · уровень ${a.level}</div><p class="small muted">Закрывает пробел: ${a.text.charAt(0).toLowerCase()+a.text.slice(1)}</p>${(o=>o?`<p class="small ustep">Шаг к результату: «${o.s.name}»</p>`:'')(outcomeOf(a.id))}</a>`).join('')}</div>${c.model_name&&c.model_name!==c.name?`<details class="small muted" style="margin-top:24px"><summary>Как называется в исходной модели</summary><p>«${c.model_name}»</p></details>`:''}`;};
-PAGES.comp.after=(id,context)=>{fbWire();wireWorkDetails();const ri=contextRole(context==='it'?IT_GROUP:null);
+PAGES.comp.after=(id,context)=>{fbWire();const ri=contextRole(context==='it'?IT_GROUP:null);
   const cb=$('#caseBtn');if(cb){const box=$('#caseBox'),c=COMP[+box.dataset.c];
     cb.onclick=()=>{box.style.display='block';cb.style.display='none';tryCase(box,ri==null?CASES[c.code]:caseForRole(ri,c.code),c);};return;}
   const b=$('#tryBtn');if(!b)return;const box=$('#tryBox'),ids=box.dataset.ids.split(',');let k=0;const open=()=>{const id=ids[k%ids.length];box.style.display='block';b.style.display='none';box.innerHTML=`<div class="small muted">Уровень ${ATOM[id].level} · ${TYPE_TAG[TASKS[id].type]}</div><div id="tryTask"></div>`;mountTask($('#tryTask'),id,{roleIndex:ri,skip:false,nextLabel:ids.length>1?'Другое задание':'Попробовать ещё раз',onDone:(p,next)=>{if(next){k++;open();}}});};b.onclick=open;};
