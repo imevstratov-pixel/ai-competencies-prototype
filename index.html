@@ -481,7 +481,8 @@ a.card,.chip,.seg button,.opts button,.dtile,.mcell,.mname,.mcol{transition:back
 .lnb .lvsub{margin:0}
 
 /* ---------- сбор фидбека тимлидов ---------- */
-.fb-role-btn{font-size:12px;padding:4px 8px;vertical-align:baseline;margin-top:6px}
+.review-level{display:flex;gap:8px;align-items:center;font-size:13px;line-height:1.5;margin-top:8px}
+.review-context{margin:12px 0 18px}
 .fbbar{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#fff;border:1.5px solid var(--stroke);border-radius:var(--r);padding:12px 16px;margin:14px 0 4px}
 .fbbar b{font-size:15px}
 .fbr{display:flex;gap:10px;align-items:center}
@@ -1047,8 +1048,23 @@ PAGES.comps.after=()=>{$('#app').onclick=e=>{const b=e.target.closest('[data-com
 PAGES.review=group=>{
  if(group!=='it')return PAGES.notfound();
  const leads=FB.leads.filter(l=>l.async_only&&l.roles.some(name=>M.roles.some(r=>r.name===name&&r.group===IT_GROUP)));
- return `${crumbs(['Обратная связь'])}<h1>Обратная связь по требованиям IT</h1><p class="lead">Выберите должность, требования которой хотите проверить.</p><p>На странице должности раскройте компетенцию и нажмите «Комментарий» рядом с навыком. Можно оценить частоту работы, требуемый уровень и понятность формулировки, а также предложить правку.</p><p class="muted small">Ответы сохраняются автоматически и собираются по должностям. Если хотите указать своё имя, добавьте его в комментарий.</p><div class="grid">${leads.map(l=>{const ri=roleIdx(l.roles[0]),r=M.roles[ri];return `<a class="card" href="?lead=${encodeURIComponent(l.slug)}#/role/${ri}/middle"><h3>${r.name}</h3><p class="small muted">${r.oneliner||''}</p><span class="small">Открыть требования и комментарии</span></a>`;}).join('')}</div>`;
+ return `${crumbs(['Обратная связь'])}<h1>Обратная связь по требованиям IT</h1><p class="lead">Выберите должность, требования которой хотите проверить.</p><p>Откройте нужную компетенцию. В сетке уровней нажмите на карточку навыка, чтобы оценить частоту работы, требуемый уровень и понятность формулировки или предложить правку.</p><p class="muted small">Ответы сохраняются автоматически и собираются по должностям. Если хотите указать своё имя, добавьте его в комментарий.</p><div class="grid">${leads.map(l=>{const ri=roleIdx(l.roles[0]),r=M.roles[ri];return `<a class="card" href="?lead=${encodeURIComponent(l.slug)}#/role/${ri}/middle"><h3>${r.name}</h3><p class="small muted">${r.oneliner||''}</p><span class="small">Открыть компетенции</span></a>`;}).join('')}</div>`;
 };
+
+const reviewCompURL=(cid,ri,g)=>`#/comp/${cid}/role/${ri}/${g||'middle'}`;
+function compViewContext(cid,context,role,g){
+ if(context!=='role'){const group=context==='it'?IT_GROUP:null;return {ri:contextRole(group),group,roleMode:false};}
+ const ri=Number(role),r=M.roles[ri],c=COMP[cid],grade=GRADES[g]?g:'middle';
+ if(!Number.isInteger(ri)||!r||!c)return null;
+ const thr=reqs(ri,grade).find(q=>q.comp===cid)?.thr;
+ if(!thr&&!(c.optional&&c.groups?.includes(r.group)))return null;
+ return {ri,group:r.group,roleMode:true,grade,thr};
+}
+function reviewRoleHTML(ri,g){
+ const r=M.roles[ri],card=(c,thr)=>`<a class="card" href="${reviewCompURL(c.id,ri,g)}"><h3>${c.name}</h3><div class="review-level">${thr?`${hb(thr)}<span>Уровень ${thr} · ${LVWORD[thr]}</span>`:'<span class="tag">По отдельным задачам</span>'}</div><p class="small muted">${thr?c.levels[thr]:c.activation}</p><span class="small">Открыть карточки навыков</span></a>`;
+ const optional=M.competencies.filter(c=>c.optional&&c.groups?.includes(r.group));
+ return `${crumbs(['Обратная связь IT','#/review/it'],[r.name])}<h1>${r.name}</h1><p class="muted">${r.group}</p><div class="seg" role="group" aria-label="Грейд">${Object.entries(GRADES).map(([k,v])=>`<button class="${k===g?'on':''}" data-go="#/role/${ri}/${k}">${v}</button>`).join('')}</div><p class="lead">${r.oneliner||''}</p>${fbHead({rolePage:true})}<h2>Компетенции должности</h2><div class="grid">${reqs(ri,g).map(q=>card(compForRole(COMP[q.comp],ri),q.thr)).join('')}</div>${optional.length?`<h2>По отдельным задачам</h2><div class="grid">${optional.map(c=>card(c,null)).join('')}</div>`:''}`;
+}
 
 const GORD=['junior','middle','senior'];
 function skillsHTML(r,g){const all=SKILLS[r.name];if(!all)return '';const now=all.filter(s=>GORD.indexOf(s.grade)<=GORD.indexOf(g||'middle')),later=all.filter(s=>!now.includes(s));
@@ -1071,7 +1087,7 @@ PAGES.org=()=>{const order=[...M.divisions].sort((a,b)=>(b.name==='Дизайн'
 function reqsHTML(ri,g){const r=M.roles[ri],all=Object.keys(r.requirements).map(Number).sort((a,b)=>COMP[a].layer-COMP[b].layer||a-b),rq=Object.fromEntries(reqs(ri,g).map(q=>[q.comp,q.thr]));
  return all.map(cid=>{const c=compForRole(COMP[cid],ri),thr=rq[cid],open=!!rqOpen[cid],at=compAtoms(cid,ri).filter(a=>thr&&a.level<=thr);
   const body=open&&thr?`<div class="rqbody">${[1,2,3,4].filter(l=>l<=thr).map(l=>{const list=at.filter(a=>a.level===l);if(!list.length)return '';
-    return `<div class="rqlv"><div class="small muted">Уровень ${l} · ${LVWORD[l]}</div><ul>${list.map(a=>`<li>${a.text}${a.anchor?' <span class="tag">для всех</span>':''}${a.task_type===5?' <span class="tag">результат</span>':''}${FB.active?` <button type="button" class="btn sec fb-role-btn" data-fb="${a.id}" aria-label="Комментарий к навыку: ${esc(a.text.slice(0,60))}">${FB.get('atom:'+a.id)?'Комментарий сохранён':'Комментарий'}</button>`:''}</li>`).join('')}</ul></div>`;}).join('')}<p class="small"><a href="#/comp/${cid}${c.code==='B'&&r.group===IT_GROUP?'/it':''}">Открыть компетенцию</a></p></div>`:'';
+    return `<div class="rqlv"><div class="small muted">Уровень ${l} · ${LVWORD[l]}</div><ul>${list.map(a=>`<li>${a.text}${a.anchor?' <span class="tag">для всех</span>':''}${a.task_type===5?' <span class="tag">результат</span>':''}</li>`).join('')}</ul></div>`;}).join('')}<p class="small"><a href="#/comp/${cid}${c.code==='B'&&r.group===IT_GROUP?'/it':''}">Открыть компетенцию</a></p></div>`:'';
   return `<div class="rq${thr?'':' na'}"><div class="rqhead">${thr?`<button class="tlx ${open?'op':''}" data-rq="${cid}" aria-expanded="${open}"><span aria-hidden="true">▸</span><b>${c.name}</b></button>`:`<b style="padding-left:24px">${c.name}</b>`}
    <span class="rqlvl">${thr?`${hb(thr)} <span>уровень ${thr} · ${LVWORD[thr]}</span><span class="small muted rqtog">${open?'скрыть навыки':'показать навыки'}</span>`:'<span class="muted small">не требуется</span>'}</span></div>
    ${thr?`<div class="muted small rqdesc">${c.levels[thr]}${at.length?` · ${at.length} ${plural(at.length,['навык','навыка','навыков'])}`:''}</div>`:''}${body}</div>`;}).join('');}
@@ -1080,6 +1096,7 @@ function roleStackHTML(ri,g){const St=DATA.stack||{},codes=reqs(ri,g).map(q=>COM
  <p><button class="btn sec" data-stk="1">${stkOpen?'Скрыть инструменты':'Показать инструменты'}</button></p>
  ${stkOpen?codes.map(code=>`<h3 style="margin-top:18px">${C2[code].name}</h3><div class="scroll"><table class="stack"><tr><th class="l">Задача</th><th>Основной</th><th>Альтернатива</th><th>Российский или свой контур</th></tr>${St[code].map(x=>`<tr><td class="l"><b>${x.task}</b>${x.note&&!/[A-Z]\d\d|якор/i.test(x.note)?`<div class="muted small">${x.note}</div>`:''}</td><td>${x.main}</td><td>${x.alt}</td><td>${x.ru}</td></tr>`).join('')}</table></div>`).join(''):''}`;}
 PAGES.role=(i,g,emp)=>{const ri=+i,r=M.roles[ri];if(!r)return PAGES.notfound();const it=isIT(r);g=it?(GRADES[g]?g:'middle'):null;
+  if(FB.active&&FB.who?.async_only&&FB.who.roles.includes(r.name))return reviewRoleHTML(ri,g);
   const who=emp!=null?people(ri)[+emp]:null;
   const sameDiv=M.roles.map((x,j)=>({x,j})).filter(o=>o.x.group===r.group&&o.j!==ri);
   const nextRoles=it?[]:sameDiv.filter(o=>o.x.step===r.step+1),peers=sameDiv.filter(o=>it||o.x.step===r.step).slice(0,5);
@@ -1089,7 +1106,6 @@ PAGES.role=(i,g,emp)=>{const ri=+i,r=M.roles[ri];if(!r)return PAGES.notfound();c
   ${it?`<div class="seg" role="group" aria-label="Грейд">${Object.entries(GRADES).map(([k,v])=>`<button class="${k===g?'on':''}" data-go="#/role/${ri}/${k}${emp!=null?'/'+emp:''}">${v}</button>`).join('')}</div>`:''}
   <p class="lead">${r.oneliner||''}</p>${r.where_ai?`<h2>Где здесь ИИ</h2><p>${r.where_ai}</p>`:(()=>{const src=sameDiv.filter(o=>o.x.where_ai&&o.x.step).sort((p,q)=>Math.abs(p.x.step-r.step)-Math.abs(q.x.step-r.step)||p.x.step-q.x.step)[0];return src?`<h2>Где здесь ИИ</h2><p class="muted small">Рабочие сценарии те же, что у должности «<a href="#/role/${src.j}">${src.x.name}</a>»:</p><p>${src.x.where_ai}</p>`:'';})()}
   ${r.same_as?`<p class="muted small">Требования совпадают с должностью ${r.same_as}.</p>`:''}${r.note?`<p class="muted small">${r.note}.</p>`:''}
-  ${FB.active?fbHead({rolePage:true}):''}
   <h2>Что нужно уметь${it?' · '+GRADES[g]:''}</h2><p class="muted small">Уровень — что человек делает сам на этой должности: по образцу, самостоятельно, по ситуации или для других. Компетенция раскладывается на навыки — конкретные действия, которые видно в работе. Нажмите на компетенцию: покажем навыки нужного уровня и ниже.</p>
   <div class="reqs" id="reqs" data-ri="${ri}" data-g="${g||''}">${reqsHTML(ri,g)}</div>
   ${WORK_DETAILS.roles.includes(r.name)?skillsHTML(r,g):''}
@@ -1098,8 +1114,7 @@ PAGES.role=(i,g,emp)=>{const ri=+i,r=M.roles[ri];if(!r)return PAGES.notfound();c
   <div id="stk">${roleStackHTML(ri,g)}</div>
   <h2>Соседние роли</h2>${nextRoles.length?`<p>Следующая ступень: ${nextRoles.map(o=>`<a href="#/role/${o.j}">${o.x.name}</a>`).join(', ')}</p>`:it&&g!=='senior'?`<p>Следующий грейд: <a href="#/role/${ri}/${g==='junior'?'middle':'senior'}">${g==='junior'?'Middle':'Senior'}</a></p>`:''}<div class="chips">${peers.map(o=>`<a class="chip" href="#/role/${o.j}">${o.x.name}</a>`).join('')}</div>
   <p class="muted small" style="margin-top:28px">Что человек уже умеет и чего не хватает — это <a href="#/diag/${ri}/${g||'-'}">оценка</a>, другая часть продукта: <a href="#/diag/${ri}/${g||'-'}">пройти оценку на эту должность</a>.</p>`;};
-PAGES.role.after=(i,g,emp)=>{const box=$('#reqs');if(!box)return;const ri=+box.dataset.ri,gg=box.dataset.g||null;
-  fbWire();
+PAGES.role.after=(i,g,emp)=>{fbWire();const box=$('#reqs');if(!box)return;const ri=+box.dataset.ri,gg=box.dataset.g||null;
   box.onclick=e=>{const b=e.target.closest('[data-rq]');if(!b)return;const c=+b.dataset.rq;rqOpen[c]=!rqOpen[c];box.innerHTML=reqsHTML(ri,gg);};
   const st=$('#stk');if(st)st.onclick=e=>{if(!e.target.closest('[data-stk]'))return;stkOpen=!stkOpen;st.innerHTML=roleStackHTML(ri,gg);};};
 /* уровни компетенции с разбором на навыки — общий кусок для страницы компетенции и PDF */
@@ -1180,7 +1195,6 @@ function fbWire(){
 }
 /* отметить карточку навыка как отвеченную, не перерисовывая страницу */
 function fbMark(id){
-  document.querySelectorAll('.fb-role-btn[data-fb="'+id+'"]').forEach(b=>{b.textContent='Комментарий сохранён';});
   const card=document.querySelector(`.lvitem[data-fb="${id}"]`);if(!card)return;
   card.classList.add('fbdone');
   if(!card.querySelector('.fbok')){const s=document.createElement('span');s.className='fbok';s.title='ваш ответ сохранён';s.textContent='✓';card.appendChild(s);}
@@ -1194,7 +1208,7 @@ function fbSwitch(){
 function fbHead({rolePage=false}={}){
   if(!FB.active) return `<p class="muted small fbhint">Фидбек по модели собираем по личной ссылке тимлида — если нужна, напишите нам.</p>`;
   const fac=FB.fac;
-  const instruction=rolePage?'Раскройте компетенцию и нажмите «Комментарий» рядом с навыком.':'Нажмите на любой навык в сетке уровней, чтобы оставить фидбек.';
+  const instruction=rolePage?'Откройте компетенцию и нажмите на карточку навыка в сетке уровней.':'Нажмите на любой навык в сетке уровней, чтобы оставить фидбек.';
   return `<div class="fbbar" id="fbbar"><div><b>${fac?'Созвон с лидами':FB.who.name}</b><div class="muted small">${fac
     ?`Ответ запишется на того, кто выбран справа: сейчас это <b>${FB.speakerName()}</b>. Нажмите на любой навык в сетке уровней. <a href="#/call">Повестка созвона</a>.`
     :`Отвечаете за: ${FB.who.roles.join(', ')}. ${instruction} Ответы сохраняются сразу — кнопку «отправить» жать не нужно.`}</div>${fac?fbSwitch():''}</div>
@@ -1208,7 +1222,7 @@ function fbComp(c){
    <p class="muted small">Сохраняется само, как только вы уйдёте из поля.</p></div>`;}
 function fbPanel(atomId){
   const source=M.atoms.find(x=>x.id===atomId);if(!source)return '';
-  const roleBox=$('#reqs'),ri=roleBox?+roleBox.dataset.ri:M.roles.findIndex(r=>FB.who?.roles.includes(r.name));
+  const roleBox=$('#reqs'),contextBox=$('#comp-context'),ri=contextBox?+contextBox.dataset.role:roleBox?+roleBox.dataset.ri:M.roles.findIndex(r=>FB.who?.roles.includes(r.name));
   const a=atomInGroup(source,M.roles[ri]?.group);
   const c=COMP[a.comp], cur=FB.get('atom:'+atomId)||{};
   const v=cur.value||{};
@@ -1373,22 +1387,23 @@ PAGES.call.after=()=>{const app=$('#app');if(!app||!FB.fac)return;
     FB.save({key:'note:'+Date.now(),kind:'заметка',comp:'',atom:'',field:'',value:'',comment:v});
     nw.value='';render('#/call');setTimeout(()=>{const n=$('#calnew');if(n)n.focus();},0);
   });};
-PAGES.comp=(id,context)=>{const original=COMP[+id];if(!original)return PAGES.notfound();const group=context==='it'?IT_GROUP:null,ri=contextRole(group),c=group?compForRole(original,ri):original,cs=group?((DATA.cases.groups||{})[group]?.[c.code]||CASES[c.code]):CASES[c.code];
+PAGES.comp=(id,context,role,g)=>{const original=COMP[+id],scope=compViewContext(+id,context,role,g);if(!original||!scope)return PAGES.notfound();const {group,ri,roleMode,grade,thr}=scope,c=ri==null?original:compForRole(original,ri),cs=ri==null?CASES[c.code]:caseForRole(ri,c.code);
   const who=M.roles.map((r,ri)=>{const q=reqs(ri,'middle').find(q=>q.comp===c.id);return q&&{ri,r,thr:q.thr};}).filter(Boolean).sort((a,b)=>b.thr-a.thr);
-  const tryIds=compAtoms(c.id).filter(a=>TASKS[a.id]).sort((a,b)=>Math.abs(a.level-2)-Math.abs(b.level-2)||b.task_type-a.task_type).map(a=>a.id),tryId=tryIds[0];
+  const tryIds=compAtoms(c.id,ri).filter(a=>TASKS[a.id]).sort((a,b)=>Math.abs(a.level-2)-Math.abs(b.level-2)||b.task_type-a.task_type).map(a=>a.id),tryId=tryIds[0];
   const units=compAtoms(c.id,ri).filter(a=>a.task_type!==5).sort((a,b)=>(!!UNITS.full[b.id]-!!UNITS.full[a.id])||a.level-b.level).slice(0,5).sort((a,b)=>a.level-b.level);
-  const art=compAtoms(c.id).find(a=>a.task_type===5);
-  return `${crumbs(['Компетенции','#/comps'],[c.name])}<h1>${c.name}</h1><p class="lead">${c.tagline}</p>${c.optional?`<span class="tag">По отдельным задачам</span><p>${c.activation}</p>`:''}${c.code==='B'?`<div class="seg" role="group" aria-label="Рабочий контекст"><a class="btn ${group?'sec':''}" href="#/comp/${c.id}">Общие задачи</a><a class="btn ${group?'':'sec'}" href="#/comp/${c.id}/it">Задачи IT</a></div>`:''}
+  const art=compAtoms(c.id,ri).find(a=>a.task_type===5),roleURL=roleMode?`#/role/${ri}/${grade}`:null;
+  const breadcrumb=roleMode?crumbs(['Обратная связь IT','#/review/it'],[M.roles[ri].name,roleURL],[c.name]):crumbs(['Компетенции','#/comps'],[c.name]);
+  return `${breadcrumb}<h1>${c.name}</h1><p class="lead">${c.tagline}</p>${roleMode?`<div class="card review-context" id="comp-context" data-role="${ri}" data-grade="${grade}"><a href="${roleURL}">К компетенциям должности</a><p class="small">${roleTitle(ri,grade)}</p><div class="review-level">${thr?`${hb(thr)}<span>Для должности нужен уровень ${thr} · ${LVWORD[thr]}</span>`:'<span class="tag">По отдельным задачам</span>'}</div></div>`:''}${c.optional?`<span class="tag">По отдельным задачам</span><p>${c.activation}</p>`:''}${c.code==='B'&&!roleMode?`<div class="seg" role="group" aria-label="Рабочий контекст"><a class="btn ${group?'sec':''}" href="#/comp/${c.id}">Общие задачи</a><a class="btn ${group?'':'sec'}" href="#/comp/${c.id}/it">Задачи IT</a></div>`:''}
   ${fbHead()}
   <h2>Как это выглядит</h2><p>${c.how_it_looks.charAt(0).toUpperCase()+c.how_it_looks.slice(1)}</p>
-  <h2>Уровни</h2>${levelsHTML(c,{group})}${fbComp(c)}
+  <h2>Уровни</h2>${levelsHTML(c,{group,roleIds:roleMode?[ri]:null})}${fbComp(c)}
   ${art?`<p class="muted small" style="margin-top:10px">Уровень 4 подтверждается не заданием, а рабочим результатом: «${art.task_brief}» — его смотрит эксперт.</p>`:''}
   ${cs?`<p style="margin-top:20px"><button class="btn big" id="caseBtn">Посмотреть кейс оценки</button></p><p class="muted small">Так эту компетенцию проверяют: одна рабочая ситуация и открытый ответ. Разбор в прототипе упрощённый.</p><div id="caseBox" class="card" style="display:none;margin-top:10px" data-c="${c.id}"></div>`
     :tryId?`<p style="margin-top:20px"><button class="btn big" id="tryBtn">Попробовать задание</button></p><p class="muted small">Оценка в прототипе упрощённая.</p><div id="tryBox" class="card" style="display:none;margin-top:10px" data-ids="${tryIds.join(',')}"></div>`:''}
   ${stackHTML(c)}
   <h2>${c.optional?'Кому подключается по задаче':'Кому нужна'}</h2><p class="muted small">${c.who_needs||''}</p><div class="req card">${c.optional?M.roles.map((r,i)=>({r,i})).filter(w=>c.groups?.includes(w.r.group)).map(w=>`<a href="#/role/${w.i}">${w.r.name}</a><span class="small muted">По рабочему заданию</span>`).join(''):who.map(w=>`<a href="#/role/${w.ri}">${w.r.name}${isIT(w.r)?' <span class="muted small">Middle</span>':''}</a><span>${scale(w.thr)} <span class="small muted">${w.thr}</span></span>`).join('')}</div>
-  <h2>Уроки</h2><div class="grid">${units.map(a=>`<a class="card" href="#/unit/${a.id}${group?'/it':''}"><h3>${unitTitle(a.id,ri)}</h3><div class="muted small">${unitMin(a.id)} мин · уровень ${a.level}</div><p class="small muted">Закрывает пробел: ${a.text.charAt(0).toLowerCase()+a.text.slice(1)}</p>${(o=>o?`<p class="small ustep">Шаг к результату: «${o.s.name}»</p>`:'')(outcomeOf(a.id))}</a>`).join('')}</div>${c.model_name&&c.model_name!==c.name?`<details class="small muted" style="margin-top:24px"><summary>Как называется в исходной модели</summary><p>«${c.model_name}»</p></details>`:''}`;};
-PAGES.comp.after=(id,context)=>{fbWire();const ri=contextRole(context==='it'?IT_GROUP:null);
+  <h2>Уроки</h2><div class="grid">${units.map(a=>`<a class="card" href="#/unit/${a.id}${group===IT_GROUP?'/it':''}"><h3>${unitTitle(a.id,ri)}</h3><div class="muted small">${unitMin(a.id)} мин · уровень ${a.level}</div><p class="small muted">Закрывает пробел: ${a.text.charAt(0).toLowerCase()+a.text.slice(1)}</p>${(o=>o?`<p class="small ustep">Шаг к результату: «${o.s.name}»</p>`:'')(outcomeOf(a.id))}</a>`).join('')}</div>${c.model_name&&c.model_name!==c.name?`<details class="small muted" style="margin-top:24px"><summary>Как называется в исходной модели</summary><p>«${c.model_name}»</p></details>`:''}`;};
+PAGES.comp.after=(id,context,role,g)=>{const scope=compViewContext(+id,context,role,g);if(!scope)return;fbWire();const {ri}=scope;
   const cb=$('#caseBtn');if(cb){const box=$('#caseBox'),c=COMP[+box.dataset.c];
     cb.onclick=()=>{box.style.display='block';cb.style.display='none';tryCase(box,ri==null?CASES[c.code]:caseForRole(ri,c.code),c);};return;}
   const b=$('#tryBtn');if(!b)return;const box=$('#tryBox'),ids=box.dataset.ids.split(',');let k=0;const open=()=>{const id=ids[k%ids.length];box.style.display='block';b.style.display='none';box.innerHTML=`<div class="small muted">Уровень ${ATOM[id].level} · ${TYPE_TAG[TASKS[id].type]}</div><div id="tryTask"></div>`;mountTask($('#tryTask'),id,{roleIndex:ri,skip:false,nextLabel:ids.length>1?'Другое задание':'Попробовать ещё раз',onDone:(p,next)=>{if(next){k++;open();}}});};b.onclick=open;};
